@@ -1,0 +1,3 @@
+-- Seed data is intentionally minimal because business rows require real auth.users.
+-- Create a development user through Supabase Auth first, then use a server-only
+-- seed script to create its profile, workspace, membership, and demo records.
