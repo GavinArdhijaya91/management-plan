@@ -1,16 +1,68 @@
-# v0 sandbox internal files
+# Dependencies and framework output
+node_modules/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+
+# Deployment and platform-local state
+.vercel/
+.snowflake/
+.v0-trash/
 __v0_runtime_loader.js
 __v0_devtools.tsx
 __v0_jsx-dev-runtime.ts
-.snowflake/
-.v0-trash/
-.vercel/
 
-# Environment variables
-.env*.local
+# Local agent and editor state
+.agents/
+.codex/
+.idea/
+.vscode/
+*.code-workspace
 
-# Common ignores
-node_modules
-.next/
-*.tsbuildinfo
+# Supabase local and linked-project state
+supabase/.temp/
+supabase/.branches/
+
+# Personal skills and artifact tooling
+SKILL.md
+**/SKILL.md
+artifacts-builder/
+*.sh
+
+# Private planning, architecture, and design notes
+/docs/
+DESIGN.md
+architecture-system*.md
+*brainstorm*.md
+*personal*.md
+*private*.md
+
+# Local archives and transferred component bundles
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+*.7z
+
+# Operating system files
 .DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
