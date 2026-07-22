@@ -4,7 +4,7 @@
 
 Siapin is a business management application designed to help MSME owners manage transactions, profit and loss, schedules, product trends, notifications, and workspace profiles in one place.
 
-![Siapin dashboard preview](./desktop-dashboard.png)
+![Siapin dashboard preview](./Siapin.png)
 
 ## Technology stack
 
