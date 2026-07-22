@@ -7,12 +7,17 @@ interface SalesChartProps {
   data: ChartDataPoint[]
   type?: 'bar' | 'line'
   title: string
+  variant?: 'default' | 'monochrome'
 }
 
-export function SalesChart({ data, type = 'bar', title }: SalesChartProps) {
+export function SalesChart({ data, type = 'bar', title, variant = 'default' }: SalesChartProps) {
+  const colors = variant === 'monochrome'
+    ? { primary: '#18181b', secondary: '#a1a1aa', tertiary: '#d4d4d8' }
+    : { primary: '#2563eb', secondary: '#10b981', tertiary: '#f59e0b' }
+
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-4 md:p-6">
-      <h3 className="text-lg font-bold text-gray-900 mb-4">{title}</h3>
+    <div className={variant === 'monochrome' ? 'rounded-2xl border border-zinc-200/80 bg-white p-4 md:p-6' : 'rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md md:p-6'}>
+      <h3 className={variant === 'monochrome' ? 'mb-4 text-base font-semibold text-zinc-950' : 'mb-4 text-lg font-bold text-gray-900'}>{title}</h3>
       <div className="w-full h-80">
         <ResponsiveContainer width="100%" height="100%">
           {type === 'bar' ? (
@@ -28,9 +33,9 @@ export function SalesChart({ data, type = 'bar', title }: SalesChartProps) {
                 }}
               />
               <Legend />
-              <Bar dataKey="penjualan" fill="#2563eb" radius={[8, 8, 0, 0]} />
-              <Bar dataKey="modal" fill="#10b981" radius={[8, 8, 0, 0]} />
-              {data[0]?.profit !== undefined && <Bar dataKey="profit" fill="#f59e0b" radius={[8, 8, 0, 0]} />}
+              <Bar dataKey="penjualan" fill={colors.primary} radius={[6, 6, 0, 0]} />
+              <Bar dataKey="modal" fill={colors.secondary} radius={[6, 6, 0, 0]} />
+              {data[0]?.profit !== undefined && <Bar dataKey="profit" fill={colors.tertiary} radius={[6, 6, 0, 0]} />}
             </BarChart>
           ) : (
             <LineChart data={data} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
@@ -45,10 +50,10 @@ export function SalesChart({ data, type = 'bar', title }: SalesChartProps) {
                 }}
               />
               <Legend />
-              <Line type="monotone" dataKey="penjualan" stroke="#2563eb" strokeWidth={2} dot={{ fill: '#2563eb' }} />
-              <Line type="monotone" dataKey="modal" stroke="#10b981" strokeWidth={2} dot={{ fill: '#10b981' }} />
+              <Line type="monotone" dataKey="penjualan" stroke={colors.primary} strokeWidth={2} dot={{ fill: colors.primary }} />
+              <Line type="monotone" dataKey="modal" stroke={colors.secondary} strokeWidth={2} dot={{ fill: colors.secondary }} />
               {data[0]?.profit !== undefined && (
-                <Line type="monotone" dataKey="profit" stroke="#f59e0b" strokeWidth={2} dot={{ fill: '#f59e0b' }} />
+                <Line type="monotone" dataKey="profit" stroke={colors.tertiary} strokeWidth={2} dot={{ fill: colors.tertiary }} />
               )}
             </LineChart>
           )}

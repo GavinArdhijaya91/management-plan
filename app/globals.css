@@ -5,6 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-sans: var(--font-arimo);
+  --font-serif: var(--font-poppins);
+  --font-mono: var(--font-jetbrains-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -117,12 +120,16 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: var(--font-arimo), Arial, sans-serif;
   }
 
   button,
@@ -143,4 +150,62 @@
   .siapin-card {
     @apply rounded-lg border border-border bg-card text-card-foreground shadow-sm transition-shadow hover:shadow-md;
   }
+
+  .app-shell { @apply min-h-screen bg-[#f7f7f5] text-zinc-950; }
+  .app-card { @apply rounded-2xl border border-zinc-200/80 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.035)] transition-shadow hover:shadow-[0_8px_30px_rgba(0,0,0,0.055)]; }
+  .app-heading { @apply font-serif text-4xl font-semibold leading-[1.08] tracking-[-0.035em] text-zinc-950 md:text-5xl; }
+  .app-data { @apply font-mono tracking-[-0.035em]; }
+  .app-label { @apply font-mono text-[0.7rem] font-medium uppercase tracking-[0.12em] text-zinc-500; }
+  .app-input { @apply rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm outline-none transition-colors placeholder:text-zinc-400 focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950; }
+  .app-button { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-zinc-950 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800; }
+}
+
+@keyframes logo-arrive {
+  from { opacity: 0; transform: rotate(-6deg) scale(0.82); }
+  to { opacity: 1; transform: rotate(0) scale(1); }
+}
+
+@keyframes cursor-blink { 50% { opacity: 0; } }
+@keyframes dialog-arrive { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+.motion-logo {
+  animation: logo-arrive 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: transform 180ms ease, background-color 180ms ease;
+}
+
+a:hover .motion-logo { transform: translateY(-2px) rotate(-2deg); }
+a:active .motion-logo { transform: scale(0.96); }
+
+.typewriter-cursor {
+  display: inline-block;
+  width: 0.055em;
+  height: 0.82em;
+  margin-left: 0.08em;
+  translate: 0 0.06em;
+  background: currentColor;
+  animation: cursor-blink 900ms steps(1, end) infinite;
+}
+.motion-dialog { animation: dialog-arrive 200ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+.motion-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 560ms cubic-bezier(0.22, 1, 0.36, 1), transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.motion-reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+.motion-press { transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease; }
+.motion-press:active { transform: scale(0.98); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+  .motion-reveal { opacity: 1; transform: none; }
 }

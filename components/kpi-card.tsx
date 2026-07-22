@@ -10,18 +10,17 @@ interface KPICardProps {
     direction: TrendDirection
     percentage: number
   }
-  bgColor?: string
 }
 
-export function KPICard({ title, value, icon, trend, bgColor = 'bg-blue-50' }: KPICardProps) {
+export function KPICard({ title, value, icon, trend }: KPICardProps) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-4 md:p-6 flex flex-col gap-2">
+    <div className="flex flex-col gap-3 rounded-2xl border border-zinc-200/80 bg-white p-4 transition-colors hover:border-zinc-300 md:p-5">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-gray-600 text-sm md:text-base font-medium">{title}</p>
-          <p className="text-2xl md:text-3xl font-bold text-gray-900 mt-1">{value}</p>
+          <p className="app-label">{title}</p>
+          <p className="app-data mt-2 text-2xl font-semibold text-zinc-950 md:text-[1.7rem]">{value}</p>
         </div>
-        <div className={`w-10 h-10 md:w-12 md:h-12 rounded-lg ${bgColor} flex items-center justify-center text-blue-600`}>
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-950 text-white">
           {icon}
         </div>
       </div>
@@ -29,13 +28,13 @@ export function KPICard({ title, value, icon, trend, bgColor = 'bg-blue-50' }: K
         <div className="flex items-center gap-1 mt-2">
           {trend.direction === 'up' ? (
             <>
-              <TrendingUp className="w-4 h-4 text-emerald-600" />
-              <span className="text-emerald-600 text-sm font-medium">+{trend.percentage}%</span>
+              <TrendingUp className="h-4 w-4 text-zinc-950" />
+              <span className="font-mono text-sm font-medium text-zinc-950">+{trend.percentage}%</span>
             </>
           ) : (
             <>
-              <TrendingDown className="w-4 h-4 text-red-600" />
-              <span className="text-red-600 text-sm font-medium">-{trend.percentage}%</span>
+              <TrendingDown className="h-4 w-4 text-zinc-500" />
+              <span className="font-mono text-sm font-medium text-zinc-600">-{trend.percentage}%</span>
             </>
           )}
           <span className="text-gray-500 text-xs md:text-sm ml-1">vs bulan lalu</span>

@@ -1,6 +1,7 @@
 interface StatusBadgeProps {
   status: 'untung' | 'rugi' | 'aman' | 'warning' | 'urgent' | 'tercapai'
   label: string
+  monochrome?: boolean
 }
 
 const statusConfig = {
@@ -12,6 +13,6 @@ const statusConfig = {
   urgent: 'bg-red-100 text-red-700',
 }
 
-export function StatusBadge({ status, label }: StatusBadgeProps) {
-  return <span className={`${statusConfig[status]} px-3 py-1 rounded-full text-xs font-medium`}>{label}</span>
+export function StatusBadge({ status, label, monochrome = false }: StatusBadgeProps) {
+  return <span className={`${monochrome ? 'bg-zinc-950 text-white' : statusConfig[status]} rounded-full px-3 py-1 text-xs font-medium`}>{label}</span>
 }
