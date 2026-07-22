@@ -24,7 +24,7 @@ Siapin is a business management application designed to help MSME owners manage 
 
 Make sure your system has:
 
-- [Node.js](https://nodejs.org/) 20.9 or newer
+- [Node.js](https://nodejs.org/) 22.13 or newer
 - [Corepack](https://nodejs.org/api/corepack.html)
 - A [Supabase](https://supabase.com/) account and project
 - Git
