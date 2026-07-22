@@ -208,29 +208,29 @@ This endpoint only reports the service status and whether the Supabase environme
 
 ## Available pages
 
-| Page | Local URL |
-| --- | --- |
-| Landing page | [localhost:3000](http://localhost:3000) |
-| Dashboard | [localhost:3000/dashboard](http://localhost:3000/dashboard) |
-| Transaction management | [localhost:3000/manajemen](http://localhost:3000/manajemen) |
-| Calendar | [localhost:3000/kalender](http://localhost:3000/kalender) |
-| Market trends | [localhost:3000/tren-pasar](http://localhost:3000/tren-pasar) |
-| Contact | [localhost:3000/hubungi-kami](http://localhost:3000/hubungi-kami) |
-| Notifications | [localhost:3000/notifikasi](http://localhost:3000/notifikasi) |
-| Profile | [localhost:3000/profil](http://localhost:3000/profil) |
+| Page                   | Local URL                                                         |
+| ---------------------- | ----------------------------------------------------------------- |
+| Landing page           | [localhost:3000](http://localhost:3000)                           |
+| Dashboard              | [localhost:3000/dashboard](http://localhost:3000/dashboard)       |
+| Transaction management | [localhost:3000/manajemen](http://localhost:3000/manajemen)       |
+| Calendar               | [localhost:3000/kalender](http://localhost:3000/kalender)         |
+| Market trends          | [localhost:3000/tren-pasar](http://localhost:3000/tren-pasar)     |
+| Contact                | [localhost:3000/hubungi-kami](http://localhost:3000/hubungi-kami) |
+| Notifications          | [localhost:3000/notifikasi](http://localhost:3000/notifikasi)     |
+| Profile                | [localhost:3000/profil](http://localhost:3000/profil)             |
 
 ## Language support
 
 The shared application navigation currently supports six persisted interface languages:
 
-| Region | Country reference | Language | Locale |
-| --- | --- | --- | --- |
-| Asia | Indonesia | Bahasa Indonesia | `id` |
-| Asia | Japan | Japanese | `ja` |
-| America | United States | English | `en` |
-| America | Mexico | Spanish | `es` |
-| Europe | France | French | `fr` |
-| Europe | Germany | German | `de` |
+| Region  | Country reference | Language         | Locale |
+| ------- | ----------------- | ---------------- | ------ |
+| Asia    | Indonesia         | Bahasa Indonesia | `id`   |
+| Asia    | Japan             | Japanese         | `ja`   |
+| America | United States     | English          | `en`   |
+| America | Mexico            | Spanish          | `es`   |
+| Europe  | France            | French           | `fr`   |
+| Europe  | Germany           | German           | `de`   |
 
 The selected locale is stored under `siapin:locale` in local storage. Typed dictionaries are located in `app/_i18n`, while the selector is a shared component. Route-specific content can be migrated into the same dictionary structure incrementally.
 
@@ -241,6 +241,7 @@ Run these commands before committing or opening a pull request:
 ```bash
 pnpm typecheck
 pnpm lint
+pnpm format:check
 pnpm test
 pnpm build
 ```
@@ -254,18 +255,20 @@ pnpm start
 
 ## Project scripts
 
-| Command | Purpose |
-| --- | --- |
-| `pnpm dev` | Start the development server |
-| `pnpm typecheck` | Check TypeScript types |
-| `pnpm lint` | Run ESLint |
-| `pnpm test` | Run Vitest unit tests |
-| `pnpm build` | Create a production build |
-| `pnpm start` | Start the production build |
-| `pnpm db:link` | Link the repository to a Supabase project |
-| `pnpm db:status` | Compare local and remote migrations |
-| `pnpm db:push` | Apply pending database migrations |
-| `pnpm db:types` | Generate database types to standard output |
+| Command             | Purpose                                      |
+| ------------------- | -------------------------------------------- |
+| `pnpm dev`          | Start the development server                 |
+| `pnpm typecheck`    | Check TypeScript types                       |
+| `pnpm lint`         | Run ESLint                                   |
+| `pnpm format`       | Format supported project files with Prettier |
+| `pnpm format:check` | Verify formatting without changing files     |
+| `pnpm test`         | Run Vitest unit tests                        |
+| `pnpm build`        | Create a production build                    |
+| `pnpm start`        | Start the production build                   |
+| `pnpm db:link`      | Link the repository to a Supabase project    |
+| `pnpm db:status`    | Compare local and remote migrations          |
+| `pnpm db:push`      | Apply pending database migrations            |
+| `pnpm db:types`     | Generate database types to standard output   |
 
 ## Project structure
 
@@ -293,6 +296,15 @@ pnpm start
 - Never run `db reset --linked` against production.
 - Create a new migration when changing an applied schema.
 - Add rate limiting before exposing contact, upload, export, or integration endpoints.
+
+## Continuous integration
+
+GitHub Actions runs two read-only workflows for pushes to `main` and pull requests:
+
+- `Format` verifies that supported source and documentation files match the committed Prettier configuration.
+- `CI` installs the frozen pnpm lockfile, checks TypeScript, runs ESLint and unit tests, and creates a production build.
+
+Deployment is intentionally excluded. Continuous delivery will be introduced only after the production environment and release policy are defined.
 
 ## Development status
 
