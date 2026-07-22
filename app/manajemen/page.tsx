@@ -61,7 +61,20 @@ export default function ManajemenPage() {
             <h1 className="app-heading">Manajemen modal & penjualan</h1>
             <p className="mt-2 text-zinc-500">Kelola transaksi, modal, dan proyeksi laba/rugi Anda.</p>
           </div>
-          <div className="flex flex-col gap-2 sm:flex-row"><button type="button" onClick={() => setResetOpen(true)} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium hover:bg-zinc-50"><RotateCcw className="size-4" />Reset Demo</button><button onClick={openCreate} className="app-button w-full md:w-auto"><Plus className="size-5" />Tambah Transaksi</button></div>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button
+              type="button"
+              onClick={() => setResetOpen(true)}
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium hover:bg-zinc-50"
+            >
+              <RotateCcw className="size-4" />
+              Reset Demo
+            </button>
+            <button onClick={openCreate} className="app-button w-full md:w-auto">
+              <Plus className="size-5" />
+              Tambah Transaksi
+            </button>
+          </div>
         </div>
 
         <TransactionSummary transactions={transactions} />
@@ -88,15 +101,45 @@ export default function ManajemenPage() {
           onDelete={setDeleteId}
           onEdit={openEdit}
         />
-        <TransactionPagination page={page} pageCount={pageCount} totalItems={totalFilteredTransactions} onPageChange={setPage} />
+        <TransactionPagination
+          page={page}
+          pageCount={pageCount}
+          totalItems={totalFilteredTransactions}
+          onPageChange={setPage}
+        />
       </div>
 
-      <Modal open={modalOpen} onClose={closeModal} title={editingId ? 'Edit transaksi' : 'Tambah transaksi'} description="Data akan disimpan otomatis di perangkat ini.">
-        <TransactionForm key={`${editingId ?? 'new'}-${modalOpen}`} initialValues={formInitialValues} submitLabel={editingId === null ? 'Tambah transaksi' : 'Simpan perubahan'} onCancel={closeModal} onSubmit={saveTransaction} />
+      <Modal
+        open={modalOpen}
+        onClose={closeModal}
+        title={editingId ? 'Edit transaksi' : 'Tambah transaksi'}
+        description="Data akan disimpan otomatis di perangkat ini."
+      >
+        <TransactionForm
+          key={`${editingId ?? 'new'}-${modalOpen}`}
+          initialValues={formInitialValues}
+          submitLabel={editingId === null ? 'Tambah transaksi' : 'Simpan perubahan'}
+          onCancel={closeModal}
+          onSubmit={saveTransaction}
+        />
       </Modal>
 
-      <ConfirmationDialog open={deleteId !== null} title="Hapus transaksi?" description="Transaksi yang dihapus tidak dapat dikembalikan, kecuali dengan mereset seluruh data demo." confirmLabel="Hapus transaksi" onCancel={() => setDeleteId(null)} onConfirm={confirmDelete} />
-      <ConfirmationDialog open={resetOpen} title="Kembalikan data demo?" description="Semua transaksi buatan dan perubahan Anda akan diganti dengan data contoh awal." confirmLabel="Reset data demo" onCancel={() => setResetOpen(false)} onConfirm={confirmReset} />
+      <ConfirmationDialog
+        open={deleteId !== null}
+        title="Hapus transaksi?"
+        description="Transaksi yang dihapus tidak dapat dikembalikan, kecuali dengan mereset seluruh data demo."
+        confirmLabel="Hapus transaksi"
+        onCancel={() => setDeleteId(null)}
+        onConfirm={confirmDelete}
+      />
+      <ConfirmationDialog
+        open={resetOpen}
+        title="Kembalikan data demo?"
+        description="Semua transaksi buatan dan perubahan Anda akan diganti dengan data contoh awal."
+        confirmLabel="Reset data demo"
+        onCancel={() => setResetOpen(false)}
+        onConfirm={confirmReset}
+      />
       <TransactionToast message={toastMessage} onClose={() => setToastMessage(null)} />
     </main>
   )

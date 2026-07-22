@@ -23,12 +23,19 @@ export default function Dashboard() {
   const { locale } = useLanguage()
   const copy = dashboardCopy[locale]
   const summary = useMemo(() => transactionAggregate.summarize(transactions), [transactions])
-  const chartData = useMemo<ChartDataPoint[]>(() => transactions.slice(0, 6).reverse().map((item) => ({
-    name: item.date.slice(0, 6),
-    penjualan: item.type === 'Penjualan' ? item.amount : 0,
-    modal: item.modal,
-    profit: item.profit,
-  })), [transactions])
+  const chartData = useMemo<ChartDataPoint[]>(
+    () =>
+      transactions
+        .slice(0, 6)
+        .reverse()
+        .map((item) => ({
+          name: item.date.slice(0, 6),
+          penjualan: item.type === 'Penjualan' ? item.amount : 0,
+          modal: item.modal,
+          profit: item.profit,
+        })),
+    [transactions],
+  )
   const unfinished = tasks.filter((task) => !task.completed).length
 
   return (
@@ -36,29 +43,99 @@ export default function Dashboard() {
       <Header variant="monochrome" />
       <div className="page-shell">
         <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-          <div><p className="app-label mb-3">{copy.eyebrow}</p><h1 className="app-heading">{copy.title}</h1><p className="mt-2 text-zinc-500">{copy.description}</p></div>
-          <Link href="/manajemen" className="app-button">{copy.manage}</Link>
+          <div>
+            <p className="app-label mb-3">{copy.eyebrow}</p>
+            <h1 className="app-heading">{copy.title}</h1>
+            <p className="mt-2 text-zinc-500">{copy.description}</p>
+          </div>
+          <Link href="/manajemen" className="app-button">
+            {copy.manage}
+          </Link>
         </div>
         <DemoDataNotice>{copy.demo}</DemoDataNotice>
 
         <section aria-label="Ringkasan bisnis" className="my-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <KPICard title={copy.sales} value={rupiah.format(summary.totalSales)} icon={<CircleDollarSign className="size-5" />} />
-          <KPICard title={copy.capital} value={rupiah.format(summary.totalModal)} icon={<ListChecks className="size-5" />} />
-          <KPICard title={copy.profit} value={rupiah.format(summary.totalProfit)} icon={<TrendingUp className="size-5" />} />
-          <KPICard title={copy.remainingPlans} value={`${unfinished} ${copy.tasks}`} icon={<CalendarDays className="size-5" />} />
+          <KPICard
+            title={copy.sales}
+            value={rupiah.format(summary.totalSales)}
+            icon={<CircleDollarSign className="size-5" />}
+          />
+          <KPICard
+            title={copy.capital}
+            value={rupiah.format(summary.totalModal)}
+            icon={<ListChecks className="size-5" />}
+          />
+          <KPICard
+            title={copy.profit}
+            value={rupiah.format(summary.totalProfit)}
+            icon={<TrendingUp className="size-5" />}
+          />
+          <KPICard
+            title={copy.remainingPlans}
+            value={`${unfinished} ${copy.tasks}`}
+            icon={<CalendarDays className="size-5" />}
+          />
         </section>
 
         <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2"><SalesChart data={chartData} type="bar" title={copy.chart} variant="monochrome" /></div>
+          <div className="lg:col-span-2">
+            <SalesChart data={chartData} type="bar" title={copy.chart} variant="monochrome" />
+          </div>
           <aside className="rounded-2xl bg-zinc-950 p-6 text-white">
             <p className="app-label !text-zinc-400">{copy.insights}</p>
-            <div className="mt-5 space-y-5">{[[copy.marginTitle, copy.marginDescription], [copy.expenseTitle, copy.expenseDescription]].map(([title, description]) => <div key={title} className="border-b border-white/10 pb-5 last:border-0 last:pb-0"><h2 className="font-serif font-semibold">{title}</h2><p className="mt-1 text-sm text-zinc-400">{description}</p></div>)}</div>
+            <div className="mt-5 space-y-5">
+              {[
+                [copy.marginTitle, copy.marginDescription],
+                [copy.expenseTitle, copy.expenseDescription],
+              ].map(([title, description]) => (
+                <div key={title} className="border-b border-white/10 pb-5 last:border-0 last:pb-0">
+                  <h2 className="font-serif font-semibold">{title}</h2>
+                  <p className="mt-1 text-sm text-zinc-400">{description}</p>
+                </div>
+              ))}
+            </div>
           </aside>
         </div>
 
         <section className="app-card mt-6 p-5 md:p-6">
-          <div className="mb-4 flex items-center justify-between"><div><p className="app-label">{copy.action}</p><h2 className="mt-1 font-serif text-xl font-semibold">{copy.weekly}</h2></div><span className="app-data text-sm text-zinc-500">{unfinished} {copy.remaining}</span></div>
-          <div className="grid gap-2 md:grid-cols-2">{tasks.map((task) => <label key={task.id} className="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl bg-zinc-50 px-4 py-3 hover:bg-zinc-100"><input type="checkbox" checked={task.completed} onChange={() => setTasks((current) => current.map((entry) => entry.id === task.id ? { ...entry, completed: !entry.completed } : entry))} className="size-4 accent-zinc-950" /><span className={task.completed ? 'text-sm text-zinc-400 line-through' : 'text-sm text-zinc-700'}>{copy.taskLabels[task.id] ?? task.title}</span>{task.priority === 'high' && <span className="ml-auto rounded-full bg-zinc-950 px-2 py-1 text-[10px] font-semibold uppercase text-white">{copy.important}</span>}</label>)}</div>
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <p className="app-label">{copy.action}</p>
+              <h2 className="mt-1 font-serif text-xl font-semibold">{copy.weekly}</h2>
+            </div>
+            <span className="app-data text-sm text-zinc-500">
+              {unfinished} {copy.remaining}
+            </span>
+          </div>
+          <div className="grid gap-2 md:grid-cols-2">
+            {tasks.map((task) => (
+              <label
+                key={task.id}
+                className="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl bg-zinc-50 px-4 py-3 hover:bg-zinc-100"
+              >
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onChange={() =>
+                    setTasks((current) =>
+                      current.map((entry) =>
+                        entry.id === task.id ? { ...entry, completed: !entry.completed } : entry,
+                      ),
+                    )
+                  }
+                  className="size-4 accent-zinc-950"
+                />
+                <span className={task.completed ? 'text-sm text-zinc-400 line-through' : 'text-sm text-zinc-700'}>
+                  {copy.taskLabels[task.id] ?? task.title}
+                </span>
+                {task.priority === 'high' && (
+                  <span className="ml-auto rounded-full bg-zinc-950 px-2 py-1 text-[10px] font-semibold uppercase text-white">
+                    {copy.important}
+                  </span>
+                )}
+              </label>
+            ))}
+          </div>
         </section>
       </div>
     </main>

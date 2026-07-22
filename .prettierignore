@@ -1,0 +1,13 @@
+.next/
+node_modules/
+coverage/
+out/
+docs/
+artifacts-builder/
+public/
+pnpm-lock.yaml
+lib/supabase/database.types.ts
+supabase/.temp/
+supabase/.branches/
+*.tar.gz
+*.tsbuildinfo

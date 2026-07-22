@@ -14,5 +14,11 @@ const statusConfig = {
 }
 
 export function StatusBadge({ status, label, monochrome = false }: StatusBadgeProps) {
-  return <span className={`${monochrome ? 'bg-zinc-950 text-white' : statusConfig[status]} rounded-full px-3 py-1 text-xs font-medium`}>{label}</span>
+  return (
+    <span
+      className={`${monochrome ? 'bg-zinc-950 text-white' : statusConfig[status]} rounded-full px-3 py-1 text-xs font-medium`}
+    >
+      {label}
+    </span>
+  )
 }

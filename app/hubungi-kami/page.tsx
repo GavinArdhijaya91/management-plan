@@ -39,11 +39,17 @@ export default function HubungiKamiPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const result = contactSchema.safeParse(formData)
-    if (!result.success) { setErrors(Object.fromEntries(result.error.issues.map((issue) => [String(issue.path[0]), issue.message]))); return }
-    setErrors({}); setPending(true)
+    if (!result.success) {
+      setErrors(Object.fromEntries(result.error.issues.map((issue) => [String(issue.path[0]), issue.message])))
+      return
+    }
+    setErrors({})
+    setPending(true)
     window.setTimeout(() => {
       setMessages((current) => [...current, { id: Date.now(), createdAt: new Date().toISOString(), ...result.data }])
-      setSubmitted(true); setPending(false); setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
+      setSubmitted(true)
+      setPending(false)
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
     }, 500)
   }
 
@@ -56,7 +62,9 @@ export default function HubungiKamiPage() {
           <h1 className="app-heading">Hubungi kami</h1>
           <p className="mt-2 text-zinc-500">Ada pertanyaan? Tim kami siap membantu kapan saja.</p>
         </div>
-        <DemoDataNotice>Pengiriman pada fase demo masuk ke kotak pesan lokal. Tidak ada email yang benar-benar dikirim.</DemoDataNotice>
+        <DemoDataNotice>
+          Pengiriman pada fase demo masuk ke kotak pesan lokal. Tidak ada email yang benar-benar dikirim.
+        </DemoDataNotice>
 
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
           {/* Contact Methods */}
@@ -101,7 +109,9 @@ export default function HubungiKamiPage() {
 
             {submitted && (
               <div className="mb-4 rounded-xl bg-zinc-950 p-4">
-                <p className="text-sm font-medium text-white">Pesan Anda telah dikirim. Tim kami akan segera menghubungi.</p>
+                <p className="text-sm font-medium text-white">
+                  Pesan Anda telah dikirim. Tim kami akan segera menghubungi.
+                </p>
               </div>
             )}
 
@@ -177,14 +187,13 @@ export default function HubungiKamiPage() {
                   rows={5}
                   className="app-input w-full resize-none"
                 />
-                <div className="mt-1 flex justify-between text-xs"><span className="text-red-600">{errors.message}</span><span className="text-zinc-400">{formData.message.length}/1000</span></div>
+                <div className="mt-1 flex justify-between text-xs">
+                  <span className="text-red-600">{errors.message}</span>
+                  <span className="text-zinc-400">{formData.message.length}/1000</span>
+                </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={pending}
-                className="app-button w-full disabled:opacity-50 md:w-auto"
-              >
+              <button type="submit" disabled={pending} className="app-button w-full disabled:opacity-50 md:w-auto">
                 <Send className="w-4 h-4" />
                 {pending ? 'Menyimpan...' : 'Kirim Pesan'}
               </button>
@@ -198,22 +207,38 @@ export default function HubungiKamiPage() {
               FAQ
             </h2>
             <div className="space-y-3">
-              <p className="rounded-xl bg-zinc-100 p-3 text-xs text-zinc-600">{messages.length} pesan demo tersimpan di perangkat ini.</p>
+              <p className="rounded-xl bg-zinc-100 p-3 text-xs text-zinc-600">
+                {messages.length} pesan demo tersimpan di perangkat ini.
+              </p>
               <details className="group">
-                <summary className="cursor-pointer font-medium text-gray-900 text-sm">Bagaimana cara mulai menggunakan Siapin?</summary>
-                <p className="text-gray-600 text-sm mt-2">Daftar akun gratis, ikuti tutorial onboarding, dan mulai kelola bisnis Anda.</p>
+                <summary className="cursor-pointer font-medium text-gray-900 text-sm">
+                  Bagaimana cara mulai menggunakan Siapin?
+                </summary>
+                <p className="text-gray-600 text-sm mt-2">
+                  Daftar akun gratis, ikuti tutorial onboarding, dan mulai kelola bisnis Anda.
+                </p>
               </details>
               <details className="group">
-                <summary className="cursor-pointer font-medium text-gray-900 text-sm">Apakah ada biaya tersembunyi?</summary>
-                <p className="text-gray-600 text-sm mt-2">Tidak. Harga kami transparan dan tidak ada biaya tersembunyi.</p>
+                <summary className="cursor-pointer font-medium text-gray-900 text-sm">
+                  Apakah ada biaya tersembunyi?
+                </summary>
+                <p className="text-gray-600 text-sm mt-2">
+                  Tidak. Harga kami transparan dan tidak ada biaya tersembunyi.
+                </p>
               </details>
               <details className="group">
-                <summary className="cursor-pointer font-medium text-gray-900 text-sm">Bagaimana keamanan data saya?</summary>
-                <p className="text-gray-600 text-sm mt-2">Data Anda dienkripsi dan dilindungi dengan standar keamanan internasional.</p>
+                <summary className="cursor-pointer font-medium text-gray-900 text-sm">
+                  Bagaimana keamanan data saya?
+                </summary>
+                <p className="text-gray-600 text-sm mt-2">
+                  Data Anda dienkripsi dan dilindungi dengan standar keamanan internasional.
+                </p>
               </details>
               <details className="group">
                 <summary className="cursor-pointer font-medium text-gray-900 text-sm">Apakah ada versi mobile?</summary>
-                <p className="text-gray-600 text-sm mt-2">Siapin fully responsive dan bisa diakses dari smartphone Anda.</p>
+                <p className="text-gray-600 text-sm mt-2">
+                  Siapin fully responsive dan bisa diakses dari smartphone Anda.
+                </p>
               </details>
             </div>
           </div>

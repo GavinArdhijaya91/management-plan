@@ -62,25 +62,55 @@ export default function KalenderPage() {
     }
   }
 
-  const monthEvents = events.filter((event) => event.month === currentMonth.getMonth() && event.year === currentMonth.getFullYear())
+  const monthEvents = events.filter(
+    (event) => event.month === currentMonth.getMonth() && event.year === currentMonth.getFullYear(),
+  )
   const selectedDateEvents = monthEvents.filter((event) => event.date === selectedDate)
 
   const saveEvent = (event: React.FormEvent) => {
     event.preventDefault()
     if (!selectedDate) return
-    setEvents((current) => editingId === null
-      ? [...current, { id: Date.now(), date: selectedDate, month: currentMonth.getMonth(), year: currentMonth.getFullYear(), ...eventForm }]
-      : current.map((item) => item.id === editingId ? { ...item, ...eventForm } : item))
+    setEvents((current) =>
+      editingId === null
+        ? [
+            ...current,
+            {
+              id: Date.now(),
+              date: selectedDate,
+              month: currentMonth.getMonth(),
+              year: currentMonth.getFullYear(),
+              ...eventForm,
+            },
+          ]
+        : current.map((item) => (item.id === editingId ? { ...item, ...eventForm } : item)),
+    )
     setEventForm({ title: '', type: 'supplier', time: '09:00' })
     setModalOpen(false)
     setEditingId(null)
     setToast(editingId === null ? 'Agenda berhasil ditambahkan.' : 'Agenda berhasil diperbarui.')
   }
 
-  const openCreate = () => { setEditingId(null); setEventForm({ title: '', type: 'supplier', time: '09:00' }); setModalOpen(true) }
-  const openEdit = (item: CalendarEvent) => { setEditingId(item.id); setEventForm({ title: item.title, type: item.type, time: item.time ?? '09:00' }); setModalOpen(true) }
-  const confirmDelete = () => { if (deleteId === null) return; setEvents((current) => current.filter((item) => item.id !== deleteId)); setDeleteId(null); setToast('Agenda berhasil dihapus.') }
-  const confirmReset = () => { setEvents(initialEvents); setResetOpen(false); setToast('Data kalender demo berhasil dikembalikan.') }
+  const openCreate = () => {
+    setEditingId(null)
+    setEventForm({ title: '', type: 'supplier', time: '09:00' })
+    setModalOpen(true)
+  }
+  const openEdit = (item: CalendarEvent) => {
+    setEditingId(item.id)
+    setEventForm({ title: item.title, type: item.type, time: item.time ?? '09:00' })
+    setModalOpen(true)
+  }
+  const confirmDelete = () => {
+    if (deleteId === null) return
+    setEvents((current) => current.filter((item) => item.id !== deleteId))
+    setDeleteId(null)
+    setToast('Agenda berhasil dihapus.')
+  }
+  const confirmReset = () => {
+    setEvents(initialEvents)
+    setResetOpen(false)
+    setToast('Data kalender demo berhasil dikembalikan.')
+  }
 
   return (
     <main className="app-shell">
@@ -88,8 +118,16 @@ export default function KalenderPage() {
 
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8">
         <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-          <div><h1 className="app-heading">Kalender &amp; pengingat</h1><p className="mt-2 text-zinc-500">Kelola jadwal penting dan pengingat bisnis Anda.</p></div>
-          <button onClick={() => setResetOpen(true)} className="min-h-11 rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium hover:bg-zinc-50">Reset Demo</button>
+          <div>
+            <h1 className="app-heading">Kalender &amp; pengingat</h1>
+            <p className="mt-2 text-zinc-500">Kelola jadwal penting dan pengingat bisnis Anda.</p>
+          </div>
+          <button
+            onClick={() => setResetOpen(true)}
+            className="min-h-11 rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium hover:bg-zinc-50"
+          >
+            Reset Demo
+          </button>
         </div>
         <DemoDataNotice />
 
@@ -137,11 +175,17 @@ export default function KalenderPage() {
                     key={day}
                     onClick={() => setSelectedDate(day)}
                     className={`relative aspect-square rounded-lg p-2 font-mono text-sm font-medium transition-all ${
-                      isSelected ? 'bg-zinc-950 text-white' : dayEvents.length > 0 ? 'border border-zinc-300 bg-zinc-100 text-zinc-950' : 'text-zinc-900 hover:bg-zinc-100'
+                      isSelected
+                        ? 'bg-zinc-950 text-white'
+                        : dayEvents.length > 0
+                          ? 'border border-zinc-300 bg-zinc-100 text-zinc-950'
+                          : 'text-zinc-900 hover:bg-zinc-100'
                     }`}
                   >
                     {day}
-                    {dayEvents.length > 0 && !isSelected && <div className="absolute bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-zinc-950" />}
+                    {dayEvents.length > 0 && !isSelected && (
+                      <div className="absolute bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-zinc-950" />
+                    )}
                   </button>
                 )
               })}
@@ -167,9 +211,21 @@ export default function KalenderPage() {
                           <span className="text-xs opacity-75">{getEventTypeLabel(event.type)}</span>
                         </div>
                       </div>
-                      <div className="flex gap-1"><button onClick={() => openEdit(event)} className="rounded px-2 py-1 text-xs opacity-75 hover:opacity-100">Edit</button><button onClick={() => setDeleteId(event.id)} aria-label={`Hapus ${event.title}`} className="text-current opacity-60 hover:opacity-100 transition-opacity">
-                        <X className="w-4 h-4" />
-                      </button></div>
+                      <div className="flex gap-1">
+                        <button
+                          onClick={() => openEdit(event)}
+                          className="rounded px-2 py-1 text-xs opacity-75 hover:opacity-100"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => setDeleteId(event.id)}
+                          aria-label={`Hapus ${event.title}`}
+                          className="text-current opacity-60 hover:opacity-100 transition-opacity"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -181,7 +237,11 @@ export default function KalenderPage() {
               </div>
             )}
 
-            <button onClick={openCreate} disabled={!selectedDate} className="app-button mt-4 w-full disabled:cursor-not-allowed disabled:opacity-40">
+            <button
+              onClick={openCreate}
+              disabled={!selectedDate}
+              className="app-button mt-4 w-full disabled:cursor-not-allowed disabled:opacity-40"
+            >
               + Tambah Event
             </button>
           </div>
@@ -194,9 +254,14 @@ export default function KalenderPage() {
             {[...monthEvents]
               .sort((a, b) => a.date - b.date)
               .map((event) => (
-                <div key={event.id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                <div
+                  key={event.id}
+                  className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                >
                   <div className="flex items-center gap-3 flex-1">
-                    <div className={`px-2 py-1 rounded text-xs font-medium ${getEventTypeColor(event.type)}`}>{getEventTypeLabel(event.type)}</div>
+                    <div className={`px-2 py-1 rounded text-xs font-medium ${getEventTypeColor(event.type)}`}>
+                      {getEventTypeLabel(event.type)}
+                    </div>
                     <div>
                       <p className="text-sm font-medium text-gray-900">{event.title}</p>
                       <p className="text-xs text-gray-500">
@@ -211,18 +276,78 @@ export default function KalenderPage() {
         </div>
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingId === null ? 'Tambah event' : 'Edit event'} description={selectedDate ? `${selectedDate} ${monthName}` : undefined}>
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={editingId === null ? 'Tambah event' : 'Edit event'}
+        description={selectedDate ? `${selectedDate} ${monthName}` : undefined}
+      >
         <form onSubmit={saveEvent} className="space-y-4">
-          <label className="block text-sm font-medium">Agenda<input required value={eventForm.title} onChange={(event) => setEventForm({ ...eventForm, title: event.target.value })} placeholder="Contoh: Bayar supplier" className="app-input mt-1.5 w-full" /></label>
+          <label className="block text-sm font-medium">
+            Agenda
+            <input
+              required
+              value={eventForm.title}
+              onChange={(event) => setEventForm({ ...eventForm, title: event.target.value })}
+              placeholder="Contoh: Bayar supplier"
+              className="app-input mt-1.5 w-full"
+            />
+          </label>
           <div className="grid grid-cols-2 gap-4">
-            <label className="block text-sm font-medium">Kategori<select value={eventForm.type} onChange={(event) => setEventForm({ ...eventForm, type: event.target.value as CalendarEvent['type'] })} className="app-input mt-1.5 w-full"><option value="supplier">Supplier</option><option value="gaji">Gaji</option><option value="stok">Stok</option><option value="lainnya">Lainnya</option></select></label>
-            <label className="block text-sm font-medium">Waktu<input required type="time" value={eventForm.time} onChange={(event) => setEventForm({ ...eventForm, time: event.target.value })} className="app-input mt-1.5 w-full" /></label>
+            <label className="block text-sm font-medium">
+              Kategori
+              <select
+                value={eventForm.type}
+                onChange={(event) => setEventForm({ ...eventForm, type: event.target.value as CalendarEvent['type'] })}
+                className="app-input mt-1.5 w-full"
+              >
+                <option value="supplier">Supplier</option>
+                <option value="gaji">Gaji</option>
+                <option value="stok">Stok</option>
+                <option value="lainnya">Lainnya</option>
+              </select>
+            </label>
+            <label className="block text-sm font-medium">
+              Waktu
+              <input
+                required
+                type="time"
+                value={eventForm.time}
+                onChange={(event) => setEventForm({ ...eventForm, time: event.target.value })}
+                className="app-input mt-1.5 w-full"
+              />
+            </label>
           </div>
-          <div className="flex justify-end gap-2 pt-2"><button type="button" onClick={() => setModalOpen(false)} className="min-h-11 rounded-xl border border-zinc-200 px-4 text-sm font-medium">Batal</button><button type="submit" className="app-button">Simpan event</button></div>
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={() => setModalOpen(false)}
+              className="min-h-11 rounded-xl border border-zinc-200 px-4 text-sm font-medium"
+            >
+              Batal
+            </button>
+            <button type="submit" className="app-button">
+              Simpan event
+            </button>
+          </div>
         </form>
       </Modal>
-      <ConfirmationDialog open={deleteId !== null} title="Hapus agenda?" description="Agenda yang dihapus tidak dapat dikembalikan kecuali melalui Reset Demo." confirmLabel="Hapus agenda" onCancel={() => setDeleteId(null)} onConfirm={confirmDelete} />
-      <ConfirmationDialog open={resetOpen} title="Kembalikan data kalender?" description="Semua perubahan kalender lokal akan diganti dengan data awal demo." confirmLabel="Reset Demo" onCancel={() => setResetOpen(false)} onConfirm={confirmReset} />
+      <ConfirmationDialog
+        open={deleteId !== null}
+        title="Hapus agenda?"
+        description="Agenda yang dihapus tidak dapat dikembalikan kecuali melalui Reset Demo."
+        confirmLabel="Hapus agenda"
+        onCancel={() => setDeleteId(null)}
+        onConfirm={confirmDelete}
+      />
+      <ConfirmationDialog
+        open={resetOpen}
+        title="Kembalikan data kalender?"
+        description="Semua perubahan kalender lokal akan diganti dengan data awal demo."
+        confirmLabel="Reset Demo"
+        onCancel={() => setResetOpen(false)}
+        onConfirm={confirmReset}
+      />
       <AppToast message={toast} onClose={() => setToast(null)} />
     </main>
   )

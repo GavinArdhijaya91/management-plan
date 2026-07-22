@@ -1,5 +1,10 @@
 import { Search } from 'lucide-react'
-import type { TransactionPeriodFilter, TransactionSortDirection, TransactionSortField, TransactionTypeFilter } from '@/app/manajemen/_domain/transaction-aggregate'
+import type {
+  TransactionPeriodFilter,
+  TransactionSortDirection,
+  TransactionSortField,
+  TransactionTypeFilter,
+} from '@/app/manajemen/_domain/transaction-aggregate'
 
 interface TransactionFiltersProps {
   periodFilter: TransactionPeriodFilter
@@ -63,11 +68,25 @@ export function TransactionFilters({
           <option value="3 Bulan">3 Bulan Terakhir</option>
         </select>
 
-        <select aria-label="Urutkan transaksi" value={sortField} onChange={(event) => onSortFieldChange(event.target.value as TransactionSortField)} className="app-input">
-          <option value="date">Urutkan: Tanggal</option><option value="amount">Jumlah</option><option value="modal">Modal</option><option value="profit">Profit</option>
+        <select
+          aria-label="Urutkan transaksi"
+          value={sortField}
+          onChange={(event) => onSortFieldChange(event.target.value as TransactionSortField)}
+          className="app-input"
+        >
+          <option value="date">Urutkan: Tanggal</option>
+          <option value="amount">Jumlah</option>
+          <option value="modal">Modal</option>
+          <option value="profit">Profit</option>
         </select>
-        <select aria-label="Arah urutan" value={sortDirection} onChange={(event) => onSortDirectionChange(event.target.value as TransactionSortDirection)} className="app-input">
-          <option value="desc">Terbesar/Terbaru</option><option value="asc">Terkecil/Terlama</option>
+        <select
+          aria-label="Arah urutan"
+          value={sortDirection}
+          onChange={(event) => onSortDirectionChange(event.target.value as TransactionSortDirection)}
+          className="app-input"
+        >
+          <option value="desc">Terbesar/Terbaru</option>
+          <option value="asc">Terkecil/Terlama</option>
         </select>
       </div>
     </section>

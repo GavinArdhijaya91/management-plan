@@ -30,7 +30,8 @@ export const metadata: Metadata = {
     default: 'Siapin | Platform Manajemen UMKM',
     template: '%s | Siapin',
   },
-  description: 'Siapin dulu rencananya, baru dijalankan. Kelola modal, penjualan, laba, dan rencana bisnis UMKM dalam satu tempat.',
+  description:
+    'Siapin dulu rencananya, baru dijalankan. Kelola modal, penjualan, laba, dan rencana bisnis UMKM dalam satu tempat.',
   icons: {
     icon: [
       {
@@ -66,7 +67,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body className={`${arimo.variable} ${poppins.variable} ${jetbrainsMono.variable} min-h-dvh bg-background text-foreground antialiased`}>
+      <body
+        className={`${arimo.variable} ${poppins.variable} ${jetbrainsMono.variable} min-h-dvh bg-background text-foreground antialiased`}
+      >
         <LanguageProvider>{children}</LanguageProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

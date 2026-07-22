@@ -34,11 +34,19 @@ export function useTransactionOrchestrator() {
   const toastTimer = useRef<number | null>(null)
 
   useEffect(() => {
-    const timer = window.setTimeout(() => { setDebouncedSearchTerm(searchTerm); setPage(1) }, 400)
+    const timer = window.setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm)
+      setPage(1)
+    }, 400)
     return () => window.clearTimeout(timer)
   }, [searchTerm])
 
-  useEffect(() => () => { if (toastTimer.current) window.clearTimeout(toastTimer.current) }, [])
+  useEffect(
+    () => () => {
+      if (toastTimer.current) window.clearTimeout(toastTimer.current)
+    },
+    [],
+  )
 
   const showToast = useCallback((message: string) => {
     setToastMessage(message)
@@ -47,7 +55,12 @@ export function useTransactionOrchestrator() {
   }, [])
 
   const filteredTransactions = useMemo(
-    () => transactionAggregate.filter(transactions, { search: debouncedSearchTerm, type: typeFilter, period: periodFilter }),
+    () =>
+      transactionAggregate.filter(transactions, {
+        search: debouncedSearchTerm,
+        type: typeFilter,
+        period: periodFilter,
+      }),
     [debouncedSearchTerm, periodFilter, transactions, typeFilter],
   )
   const sortedTransactions = useMemo(
@@ -59,10 +72,22 @@ export function useTransactionOrchestrator() {
     [page, sortedTransactions],
   )
 
-  const setTypeFilter = (value: TransactionTypeFilter) => { setTypeFilterState(value); setPage(1) }
-  const setPeriodFilter = (value: TransactionPeriodFilter) => { setPeriodFilterState(value); setPage(1) }
-  const setSortField = (value: TransactionSortField) => { setSortFieldState(value); setPage(1) }
-  const setSortDirection = (value: TransactionSortDirection) => { setSortDirectionState(value); setPage(1) }
+  const setTypeFilter = (value: TransactionTypeFilter) => {
+    setTypeFilterState(value)
+    setPage(1)
+  }
+  const setPeriodFilter = (value: TransactionPeriodFilter) => {
+    setPeriodFilterState(value)
+    setPage(1)
+  }
+  const setSortField = (value: TransactionSortField) => {
+    setSortFieldState(value)
+    setPage(1)
+  }
+  const setSortDirection = (value: TransactionSortDirection) => {
+    setSortDirectionState(value)
+    setPage(1)
+  }
 
   const clearFilters = () => {
     setSearchTermState('')
@@ -87,9 +112,11 @@ export function useTransactionOrchestrator() {
   const closeModal = () => setModalOpen(false)
 
   const saveTransaction = (draft: TransactionDraft) => {
-    setTransactions((current) => editingId === null
-      ? transactionAggregate.create(current, draft, Date.now())
-      : transactionAggregate.update(current, editingId, draft))
+    setTransactions((current) =>
+      editingId === null
+        ? transactionAggregate.create(current, draft, Date.now())
+        : transactionAggregate.update(current, editingId, draft),
+    )
     showToast(editingId === null ? 'Transaksi berhasil ditambahkan.' : 'Transaksi berhasil diperbarui.')
     closeModal()
   }

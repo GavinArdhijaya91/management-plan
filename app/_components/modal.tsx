@@ -26,7 +26,9 @@ export function Modal({ open, title, description, children, onClose }: ModalProp
     document.body.style.overflow = 'hidden'
 
     const dialog = dialogRef.current
-    const focusable = dialog?.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+    const focusable = dialog?.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    )
     focusable?.[0]?.focus()
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -34,8 +36,14 @@ export function Modal({ open, title, description, children, onClose }: ModalProp
       if (event.key !== 'Tab' || !focusable?.length) return
       const first = focusable[0]
       const last = focusable[focusable.length - 1]
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus() }
-      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus() }
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      }
+      if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
     }
 
     document.addEventListener('keydown', handleKeyDown)
@@ -49,7 +57,11 @@ export function Modal({ open, title, description, children, onClose }: ModalProp
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-end justify-center bg-black/40 p-0 backdrop-blur-sm sm:items-center sm:p-4" role="presentation" onMouseDown={onClose}>
+    <div
+      className="fixed inset-0 z-[70] flex items-end justify-center bg-black/40 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+      role="presentation"
+      onMouseDown={onClose}
+    >
       <section
         ref={dialogRef}
         role="dialog"
@@ -60,10 +72,17 @@ export function Modal({ open, title, description, children, onClose }: ModalProp
       >
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
-            <h2 id="modal-title" className="font-serif text-2xl font-semibold text-zinc-950">{title}</h2>
+            <h2 id="modal-title" className="font-serif text-2xl font-semibold text-zinc-950">
+              {title}
+            </h2>
             {description && <p className="mt-1 text-sm text-zinc-500">{description}</p>}
           </div>
-          <button type="button" onClick={onClose} aria-label="Tutup" className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Tutup"
+            className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950"
+          >
             <X className="size-5" />
           </button>
         </div>

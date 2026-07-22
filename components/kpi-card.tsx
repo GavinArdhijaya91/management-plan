@@ -20,9 +20,7 @@ export function KPICard({ title, value, icon, trend }: KPICardProps) {
           <p className="app-label">{title}</p>
           <p className="app-data mt-2 text-2xl font-semibold text-zinc-950 md:text-[1.7rem]">{value}</p>
         </div>
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-950 text-white">
-          {icon}
-        </div>
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-950 text-white">{icon}</div>
       </div>
       {trend && (
         <div className="flex items-center gap-1 mt-2">

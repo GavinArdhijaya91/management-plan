@@ -30,7 +30,13 @@ describe('transactionAggregate', () => {
   })
 
   it('menghitung summary secara konsisten', () => {
-    expect(transactionAggregate.summarize(seed)).toEqual({ margin: 17, totalModal: 125_000, totalProfit: 25_000, totalSales: 150_000, transactionCount: 2 })
+    expect(transactionAggregate.summarize(seed)).toEqual({
+      margin: 17,
+      totalModal: 125_000,
+      totalProfit: 25_000,
+      totalSales: 150_000,
+      transactionCount: 2,
+    })
   })
 
   it('mengurutkan dan membagi data ke halaman', () => {

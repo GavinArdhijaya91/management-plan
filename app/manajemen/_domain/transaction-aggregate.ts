@@ -72,7 +72,20 @@ function transactionFromDraft(draft: TransactionDraft, id: number): Transaction 
 }
 
 function dateValue(date: string) {
-  const months: Record<string, number> = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, Mei: 4, Jun: 5, Jul: 6, Agu: 7, Sep: 8, Okt: 9, Nov: 10, Des: 11 }
+  const months: Record<string, number> = {
+    Jan: 0,
+    Feb: 1,
+    Mar: 2,
+    Apr: 3,
+    Mei: 4,
+    Jun: 5,
+    Jul: 6,
+    Agu: 7,
+    Sep: 8,
+    Okt: 9,
+    Nov: 10,
+    Des: 11,
+  }
   const [day, month, year] = date.split(' ')
   return new Date(Number(year), months[month] ?? 0, Number(day)).getTime()
 }
@@ -84,7 +97,7 @@ export const transactionAggregate = {
 
   update(transactions: Transaction[], id: number, draft: TransactionDraft) {
     const updated = transactionFromDraft(draft, id)
-    return transactions.map((transaction) => transaction.id === id ? updated : transaction)
+    return transactions.map((transaction) => (transaction.id === id ? updated : transaction))
   },
 
   remove(transactions: Transaction[], id: number) {
@@ -97,7 +110,11 @@ export const transactionAggregate = {
 
   toDraft(transaction: Transaction): TransactionDraft {
     const date = new Date(dateValue(transaction.date))
-    const isoDate = [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-')
+    const isoDate = [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, '0'),
+      String(date.getDate()).padStart(2, '0'),
+    ].join('-')
 
     return {
       amount: String(Math.abs(transaction.amount)),
@@ -111,11 +128,13 @@ export const transactionAggregate = {
     const search = filters.search.trim().toLowerCase()
 
     return transactions.filter((transaction) => {
-      const matchesSearch = transaction.type.toLowerCase().includes(search) || transaction.date.toLowerCase().includes(search)
+      const matchesSearch =
+        transaction.type.toLowerCase().includes(search) || transaction.date.toLowerCase().includes(search)
       const matchesType = filters.type === 'Semua' || transaction.type === filters.type
-      const matchesPeriod = filters.period === '3 Bulan'
-        || (filters.period === 'Bulan Ini' && transaction.date.includes('Jul 2026'))
-        || (filters.period === 'Bulan Lalu' && transaction.date.includes('Jun 2026'))
+      const matchesPeriod =
+        filters.period === '3 Bulan' ||
+        (filters.period === 'Bulan Ini' && transaction.date.includes('Jul 2026')) ||
+        (filters.period === 'Bulan Lalu' && transaction.date.includes('Jun 2026'))
 
       return matchesSearch && matchesType && matchesPeriod
     })
@@ -162,17 +181,38 @@ export const transactionAggregate = {
   insights(transactions: Transaction[]): TransactionInsight[] {
     if (transactions.length === 0) return []
     const summary = this.summarize(transactions)
-    const expenseTotal = transactions.filter((item) => item.type === 'Pengeluaran').reduce((sum, item) => sum + Math.abs(item.amount), 0)
+    const expenseTotal = transactions
+      .filter((item) => item.type === 'Pengeluaran')
+      .reduce((sum, item) => sum + Math.abs(item.amount), 0)
     const insights: TransactionInsight[] = []
 
-    insights.push(summary.margin >= 25
-      ? { title: 'Margin berada di jalur sehat', description: `Margin ${summary.margin}% memberi ruang untuk biaya operasional dan pertumbuhan.`, tone: 'positive' }
-      : { title: 'Margin perlu diperhatikan', description: `Margin ${summary.margin}% masih tipis. Tinjau harga jual atau biaya modal terbesar.`, tone: 'warning' })
+    insights.push(
+      summary.margin >= 25
+        ? {
+            title: 'Margin berada di jalur sehat',
+            description: `Margin ${summary.margin}% memberi ruang untuk biaya operasional dan pertumbuhan.`,
+            tone: 'positive',
+          }
+        : {
+            title: 'Margin perlu diperhatikan',
+            description: `Margin ${summary.margin}% masih tipis. Tinjau harga jual atau biaya modal terbesar.`,
+            tone: 'warning',
+          },
+    )
 
     if (expenseTotal > summary.totalProfit && expenseTotal > 0) {
-      insights.push({ title: 'Pengeluaran cukup dominan', description: 'Pengeluaran tercatat lebih besar daripada profit bersih. Periksa biaya yang dapat dijadwalkan atau dikurangi.', tone: 'warning' })
+      insights.push({
+        title: 'Pengeluaran cukup dominan',
+        description:
+          'Pengeluaran tercatat lebih besar daripada profit bersih. Periksa biaya yang dapat dijadwalkan atau dikurangi.',
+        tone: 'warning',
+      })
     } else {
-      insights.push({ title: 'Arus biaya masih terkendali', description: 'Pengeluaran belum melampaui profit bersih pada data yang tercatat.', tone: 'neutral' })
+      insights.push({
+        title: 'Arus biaya masih terkendali',
+        description: 'Pengeluaran belum melampaui profit bersih pada data yang tercatat.',
+        tone: 'neutral',
+      })
     }
 
     return insights

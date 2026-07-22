@@ -57,11 +57,14 @@ export function TypewriterText({
     return () => window.clearTimeout(timer)
   }, [characterIndex, currentItem, deleting, deletingSpeed, items.length, pauseDuration, reducedMotion, typingSpeed])
 
-  const visibleText = reducedMotion ? items[0] ?? '' : currentItem.slice(0, characterIndex)
+  const visibleText = reducedMotion ? (items[0] ?? '') : currentItem.slice(0, characterIndex)
 
   return (
     <span className={`block ${className}`}>
-      <span aria-hidden="true">{visibleText}<span className="typewriter-cursor" /></span>
+      <span aria-hidden="true">
+        {visibleText}
+        <span className="typewriter-cursor" />
+      </span>
       <span className="sr-only">{items[0]}</span>
     </span>
   )
