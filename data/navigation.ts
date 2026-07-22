@@ -8,6 +8,7 @@ export const appRoutes: AppRoute[] = [
     shortLabel: 'Beranda',
     description: 'Lihat ringkasan performa dan kondisi bisnis.',
     icon: LayoutDashboard,
+    translationKey: 'dashboard',
   },
   {
     href: '/manajemen',
@@ -15,6 +16,7 @@ export const appRoutes: AppRoute[] = [
     shortLabel: 'Kelola',
     description: 'Catat modal, penjualan, dan laba atau rugi.',
     icon: WalletCards,
+    translationKey: 'management',
   },
   {
     href: '/kalender',
@@ -22,6 +24,7 @@ export const appRoutes: AppRoute[] = [
     shortLabel: 'Jadwal',
     description: 'Rencanakan pembayaran, stok, dan agenda bisnis.',
     icon: CalendarDays,
+    translationKey: 'calendar',
   },
   {
     href: '/tren-pasar',
@@ -29,6 +32,7 @@ export const appRoutes: AppRoute[] = [
     shortLabel: 'Tren',
     description: 'Pelajari performa produk dan peluang pasar.',
     icon: BarChart3,
+    translationKey: 'market',
   },
   {
     href: '/hubungi-kami',
@@ -36,5 +40,6 @@ export const appRoutes: AppRoute[] = [
     shortLabel: 'Bantuan',
     description: 'Temukan bantuan atau kirim pertanyaan kepada tim.',
     icon: Headphones,
+    translationKey: 'contact',
   },
 ]

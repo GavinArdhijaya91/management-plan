@@ -1,10 +1,33 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
+import { Arimo, JetBrains_Mono, Poppins } from 'next/font/google'
 import './globals.css'
+import { LanguageProvider } from '@/app/_i18n/language-provider'
+
+const arimo = Arimo({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-arimo',
+  display: 'swap',
+})
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['500', '600', '700'],
+  variable: '--font-poppins',
+  display: 'swap',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-jetbrains-mono',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: {
-    default: 'Siapin — Platform Manajemen UMKM',
+    default: 'Siapin | Platform Manajemen UMKM',
     template: '%s | Siapin',
   },
   description: 'Siapin dulu rencananya, baru dijalankan. Kelola modal, penjualan, laba, dan rencana bisnis UMKM dalam satu tempat.',
@@ -29,7 +52,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   colorScheme: 'light',
-  themeColor: '#2563EB',
+  themeColor: '#18181B',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -43,8 +66,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body className="min-h-dvh bg-background text-foreground antialiased">
-        {children}
+      <body className={`${arimo.variable} ${poppins.variable} ${jetbrainsMono.variable} min-h-dvh bg-background text-foreground antialiased`}>
+        <LanguageProvider>{children}</LanguageProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
