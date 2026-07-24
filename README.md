@@ -246,6 +246,42 @@ pnpm test
 pnpm build
 ```
 
+## Image optimization and SEO assets
+
+Raster assets in `public/` support PNG, JPG, and JPEG source files. Generate
+their optimized WebP counterparts with:
+
+```bash
+pnpm images:optimize
+```
+
+Verify that every public raster source has a generated WebP file:
+
+```bash
+pnpm images:check
+```
+
+Regenerate the 1200×630 Open Graph and social-sharing preview from
+`Siapin.png`:
+
+```bash
+pnpm images:og
+```
+
+SVG assets remain vector files and are not converted to WebP. Trusted SVG
+files can be stored in `public/` and referenced using paths such as
+`/icon.svg`. Do not publish untrusted user-uploaded SVG files because they may
+contain active content.
+
+Run all image checks and project quality gates together:
+
+```bash
+pnpm verify
+```
+
+See [Asset and SEO Guide](./docs/ASSET_AND_SEO_GUIDE.md) for resize options,
+SEO routes, social metadata, and SVG security guidance.
+
 To test the production build locally:
 
 ```bash
@@ -255,20 +291,25 @@ pnpm start
 
 ## Project scripts
 
-| Command             | Purpose                                      |
-| ------------------- | -------------------------------------------- |
-| `pnpm dev`          | Start the development server                 |
-| `pnpm typecheck`    | Check TypeScript types                       |
-| `pnpm lint`         | Run ESLint                                   |
-| `pnpm format`       | Format supported project files with Prettier |
-| `pnpm format:check` | Verify formatting without changing files     |
-| `pnpm test`         | Run Vitest unit tests                        |
-| `pnpm build`        | Create a production build                    |
-| `pnpm start`        | Start the production build                   |
-| `pnpm db:link`      | Link the repository to a Supabase project    |
-| `pnpm db:status`    | Compare local and remote migrations          |
-| `pnpm db:push`      | Apply pending database migrations            |
-| `pnpm db:types`     | Generate database types to standard output   |
+| Command                | Purpose                                       |
+| ---------------------- | --------------------------------------------- |
+| `pnpm dev`             | Start the development server                  |
+| `pnpm typecheck`       | Check TypeScript types                        |
+| `pnpm lint`            | Run ESLint                                    |
+| `pnpm format`          | Format supported project files with Prettier  |
+| `pnpm format:check`    | Verify formatting without changing files      |
+| `pnpm images:optimize` | Convert public PNG/JPG/JPEG assets to WebP    |
+| `pnpm images:check`    | Verify public raster assets have WebP output  |
+| `pnpm images:og`       | Regenerate the 1200×630 social preview        |
+| `pnpm data:check`      | Validate database and presentation boundaries |
+| `pnpm test`            | Run Vitest unit tests                         |
+| `pnpm build`           | Create a production build                     |
+| `pnpm start`           | Start the production build                    |
+| `pnpm db:link`         | Link the repository to a Supabase project     |
+| `pnpm db:status`       | Compare local and remote migrations           |
+| `pnpm db:push`         | Apply pending database migrations             |
+| `pnpm db:types`        | Generate database types to standard output    |
+| `pnpm db:test`         | Run SQL contracts on local isolated Supabase  |
 
 ## Project structure
 
@@ -288,14 +329,60 @@ pnpm start
 `-- types/                  # Shared TypeScript types
 ```
 
+## Contributing and domain language
+
+Before adding a feature or database table, read:
+
+- [Contributing guide](./CONTRIBUTING.md)
+- [Domain glossary](./docs/DOMAIN_GLOSSARY.md)
+- [Database conventions](./docs/DATABASE_CONVENTIONS.md)
+
+These documents define the difference between plans, goals, metrics,
+initiatives, actions, schedules, reviews, members, and external partners.
+Product UI may be translated, while code and database identifiers remain in
+consistent English.
+
 ## Security
 
 - Never commit `.env.local`.
 - Never use the secret key in a Client Component.
 - Do not disable RLS to work around query issues.
+- Treat the active-workspace cookie as a UI preference only. Authorization must use the authenticated database user, active membership, canonical workspace role, and effective permissions.
 - Never run `db reset --linked` against production.
 - Create a new migration when changing an applied schema.
 - Add rate limiting before exposing contact, upload, export, or integration endpoints.
+
+## Authentication and workspace session
+
+The private backend flow is:
+
+```text
+sign up -> confirm email -> exchange auth code -> authenticated cookie session
+        -> create/select workspace -> validate active membership
+        -> resolve canonical role and effective permissions -> private page
+```
+
+The Next.js proxy refreshes Supabase cookies and performs an optimistic route
+check. Server Components and Server Actions repeat the authoritative check with
+`supabase.auth.getUser()`. Workspace access is resolved by
+`get_my_workspace_access()`, which only returns memberships belonging to
+`auth.uid()`.
+
+Apply migrations and regenerate database types before testing a newly linked
+environment:
+
+```bash
+pnpm db:status
+pnpm db:dry-run
+pnpm db:push
+pnpm db:types
+pnpm verify
+```
+
+Supabase Auth must allow the application origin and
+`/auth/callback?next=/workspace/select` as redirect URLs. Email confirmation
+must also be configured in the Supabase project according to the target
+environment.
 
 ## Continuous integration
 
@@ -308,4 +395,8 @@ Deployment is intentionally excluded. Continuous delivery will be introduced onl
 
 ## Development status
 
-The app-first UI workflow and initial PostgreSQL schema are available. Application pages continue to use local storage until Auth, Supabase queries, caching, and optimistic mutations are integrated incrementally.
+Authentication, cookie session refresh, private-route protection, workspace
+onboarding, active-workspace selection, and role/permission resolution are
+integrated. Business feature pages still use clearly marked demo/local-storage
+data; their Supabase queries, caching, and optimistic mutations remain a
+separate integration phase.
