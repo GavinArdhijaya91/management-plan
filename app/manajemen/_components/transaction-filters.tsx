@@ -52,9 +52,9 @@ export function TransactionFilters({
           onChange={(event) => onTypeFilterChange(event.target.value as TransactionTypeFilter)}
           className="app-input"
         >
-          <option value="Semua">Semua Tipe</option>
-          <option value="Penjualan">Penjualan</option>
-          <option value="Pengeluaran">Pengeluaran</option>
+          <option value="all">Semua Tipe</option>
+          <option value="sale">Penjualan</option>
+          <option value="expense">Pengeluaran</option>
         </select>
 
         <select
@@ -74,10 +74,10 @@ export function TransactionFilters({
           onChange={(event) => onSortFieldChange(event.target.value as TransactionSortField)}
           className="app-input"
         >
-          <option value="date">Urutkan: Tanggal</option>
+          <option value="transactionDate">Urutkan: Tanggal</option>
           <option value="amount">Jumlah</option>
-          <option value="modal">Modal</option>
-          <option value="profit">Profit</option>
+          <option value="costAmount">Biaya Pokok</option>
+          <option value="netResult">Hasil Bersih</option>
         </select>
         <select
           aria-label="Arah urutan"

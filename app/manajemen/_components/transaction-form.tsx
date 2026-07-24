@@ -52,18 +52,18 @@ export function TransactionForm({ initialValues, submitLabel, onCancel, onSubmit
         Tanggal
         <input
           type="date"
-          {...register('date')}
-          aria-invalid={Boolean(errors.date)}
+          {...register('transactionDate')}
+          aria-invalid={Boolean(errors.transactionDate)}
           className="app-input mt-1.5 w-full"
         />
-        <FieldError message={errors.date?.message} />
+        <FieldError message={errors.transactionDate?.message} />
       </label>
 
       <label className="block text-sm font-medium">
         Tipe
-        <select {...register('type')} className="app-input mt-1.5 w-full">
-          <option value="Penjualan">Penjualan</option>
-          <option value="Pengeluaran">Pengeluaran</option>
+        <select {...register('transactionType')} className="app-input mt-1.5 w-full">
+          <option value="sale">Penjualan</option>
+          <option value="expense">Pengeluaran</option>
         </select>
       </label>
 
@@ -81,16 +81,16 @@ export function TransactionForm({ initialValues, submitLabel, onCancel, onSubmit
           <FieldError message={errors.amount?.message} />
         </label>
         <label className="block text-sm font-medium">
-          Modal
+          Biaya Pokok
           <input
             type="number"
             inputMode="numeric"
             min="0"
-            {...register('modal')}
-            aria-invalid={Boolean(errors.modal)}
+            {...register('costAmount')}
+            aria-invalid={Boolean(errors.costAmount)}
             className="app-input mt-1.5 w-full"
           />
-          <FieldError message={errors.modal?.message} />
+          <FieldError message={errors.costAmount?.message} />
         </label>
       </div>
 

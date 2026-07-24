@@ -1,14 +1,15 @@
 import { Edit, ReceiptText, SearchX, Trash2 } from 'lucide-react'
+import { formatTransactionDate } from '@/app/manajemen/_domain/transaction-aggregate'
 import { StatusBadge } from '@/components/status-badge'
-import type { Transaction } from '@/types'
+import type { DemoTransaction } from '@/types'
 
 interface TransactionTableProps {
-  transactions: Transaction[]
+  transactions: DemoTransaction[]
   hasTransactions: boolean
   onClearFilters: () => void
   onCreate: () => void
   onDelete: (id: number) => void
-  onEdit: (transaction: Transaction) => void
+  onEdit: (transaction: DemoTransaction) => void
 }
 
 function formatRupiah(value: number) {
@@ -54,7 +55,9 @@ export function TransactionTable({
               <th className="px-4 py-3 text-left font-semibold text-gray-900 md:px-6">Tanggal</th>
               <th className="px-4 py-3 text-left font-semibold text-gray-900 md:px-6">Tipe</th>
               <th className="px-4 py-3 text-right font-semibold text-gray-900 md:px-6">Jumlah</th>
-              <th className="hidden px-4 py-3 text-right font-semibold text-gray-900 md:table-cell md:px-6">Modal</th>
+              <th className="hidden px-4 py-3 text-right font-semibold text-gray-900 md:table-cell md:px-6">
+                Biaya Pokok
+              </th>
               <th className="hidden px-4 py-3 text-right font-semibold text-gray-900 md:table-cell md:px-6">
                 Profit/Rugi
               </th>
@@ -68,25 +71,29 @@ export function TransactionTable({
                 key={transaction.id}
                 className="border-b border-gray-200 transition-colors last:border-b-0 hover:bg-gray-50"
               >
-                <td className="px-4 py-4 text-gray-900 md:px-6">{transaction.date}</td>
-                <td className="px-4 py-4 text-gray-900 md:px-6">{transaction.type}</td>
+                <td className="px-4 py-4 text-gray-900 md:px-6">
+                  {formatTransactionDate(transaction.transactionDate)}
+                </td>
+                <td className="px-4 py-4 text-gray-900 md:px-6">
+                  {transaction.transactionType === 'sale' ? 'Penjualan' : 'Pengeluaran'}
+                </td>
                 <td className="px-4 py-4 text-right font-medium text-gray-900 md:px-6">
-                  {transaction.amount > 0 ? '+' : ''}
+                  {transaction.transactionType === 'sale' ? '+' : '-'}
                   {formatRupiah(transaction.amount)}
                 </td>
                 <td className="hidden px-4 py-4 text-right text-gray-600 md:table-cell md:px-6">
-                  {formatRupiah(transaction.modal)}
+                  {formatRupiah(transaction.costAmount)}
                 </td>
                 <td className="hidden px-4 py-4 text-right font-medium md:table-cell md:px-6">
-                  <span className={transaction.profit > 0 ? 'text-zinc-950' : 'text-zinc-500'}>
-                    {transaction.profit > 0 ? '+' : ''}
-                    {formatRupiah(transaction.profit)}
+                  <span className={transaction.netResult > 0 ? 'text-zinc-950' : 'text-zinc-500'}>
+                    {transaction.netResult > 0 ? '+' : ''}
+                    {formatRupiah(transaction.netResult)}
                   </span>
                 </td>
                 <td className="px-4 py-4 text-center md:px-6">
                   <StatusBadge
-                    status={transaction.status}
-                    label={transaction.status === 'untung' ? 'Untung' : 'Rugi'}
+                    status={transaction.resultStatus === 'profit' ? 'untung' : 'rugi'}
+                    label={transaction.resultStatus === 'profit' ? 'Untung' : 'Rugi'}
                     monochrome
                   />
                 </td>
@@ -95,7 +102,7 @@ export function TransactionTable({
                     <button
                       type="button"
                       onClick={() => onEdit(transaction)}
-                      aria-label={`Edit transaksi ${transaction.date}`}
+                      aria-label={`Edit transaksi ${formatTransactionDate(transaction.transactionDate)}`}
                       className="rounded-lg p-2.5 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-950"
                     >
                       <Edit className="size-4" aria-hidden="true" />
@@ -103,7 +110,7 @@ export function TransactionTable({
                     <button
                       type="button"
                       onClick={() => onDelete(transaction.id)}
-                      aria-label={`Hapus transaksi ${transaction.date}`}
+                      aria-label={`Hapus transaksi ${formatTransactionDate(transaction.transactionDate)}`}
                       className="rounded-lg p-2.5 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-950"
                     >
                       <Trash2 className="size-4" aria-hidden="true" />

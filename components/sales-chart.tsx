@@ -12,10 +12,10 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
-import type { ChartDataPoint } from '@/types'
+import type { DashboardChartDataPoint } from '@/types'
 
 interface SalesChartProps {
-  data: ChartDataPoint[]
+  data: DashboardChartDataPoint[]
   type?: 'bar' | 'line'
   title: string
   variant?: 'default' | 'monochrome'
@@ -59,9 +59,11 @@ export function SalesChart({ data, type = 'bar', title, variant = 'default' }: S
                 }}
               />
               <Legend />
-              <Bar dataKey="penjualan" fill={colors.primary} radius={[6, 6, 0, 0]} />
-              <Bar dataKey="modal" fill={colors.secondary} radius={[6, 6, 0, 0]} />
-              {data[0]?.profit !== undefined && <Bar dataKey="profit" fill={colors.tertiary} radius={[6, 6, 0, 0]} />}
+              <Bar dataKey="salesAmount" name="Penjualan" fill={colors.primary} radius={[6, 6, 0, 0]} />
+              <Bar dataKey="costAmount" name="Biaya Pokok" fill={colors.secondary} radius={[6, 6, 0, 0]} />
+              {data[0]?.netResult !== undefined && (
+                <Bar dataKey="netResult" name="Hasil Bersih" fill={colors.tertiary} radius={[6, 6, 0, 0]} />
+              )}
             </BarChart>
           ) : (
             <LineChart data={data} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
@@ -78,22 +80,25 @@ export function SalesChart({ data, type = 'bar', title, variant = 'default' }: S
               <Legend />
               <Line
                 type="monotone"
-                dataKey="penjualan"
+                dataKey="salesAmount"
+                name="Penjualan"
                 stroke={colors.primary}
                 strokeWidth={2}
                 dot={{ fill: colors.primary }}
               />
               <Line
                 type="monotone"
-                dataKey="modal"
+                dataKey="costAmount"
+                name="Biaya Pokok"
                 stroke={colors.secondary}
                 strokeWidth={2}
                 dot={{ fill: colors.secondary }}
               />
-              {data[0]?.profit !== undefined && (
+              {data[0]?.netResult !== undefined && (
                 <Line
                   type="monotone"
-                  dataKey="profit"
+                  dataKey="netResult"
+                  name="Hasil Bersih"
                   stroke={colors.tertiary}
                   strokeWidth={2}
                   dot={{ fill: colors.tertiary }}

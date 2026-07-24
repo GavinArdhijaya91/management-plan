@@ -8,9 +8,9 @@ import { AppToast } from '@/app/_components/app-toast'
 import { DemoDataNotice } from '@/app/_components/demo-data-notice'
 import { ConfirmationDialog } from '@/app/manajemen/_components/confirmation-dialog'
 import { useLocalStorage } from '@/app/_lib/use-local-storage'
-import type { CalendarEvent } from '@/types'
+import type { DemoCalendarEvent } from '@/types'
 
-const initialEvents: CalendarEvent[] = [
+const initialEvents: DemoCalendarEvent[] = [
   { id: 1, date: 15, month: 6, year: 2026, title: 'Bayar Supplier A', type: 'supplier', time: '10:00' },
   { id: 2, date: 20, month: 6, year: 2026, title: 'Gaji Karyawan', type: 'gaji', time: '09:00' },
   { id: 3, date: 20, month: 6, year: 2026, title: 'Cek Stok', type: 'stok', time: '14:00' },
@@ -21,13 +21,17 @@ const initialEvents: CalendarEvent[] = [
 export default function KalenderPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date(2026, 6, 20)) // July 2026
   const [selectedDate, setSelectedDate] = useState<number | null>(20)
-  const [events, setEvents] = useLocalStorage<CalendarEvent[]>('siapin:events', initialEvents)
+  const [events, setEvents] = useLocalStorage<DemoCalendarEvent[]>('siapin:events', initialEvents)
   const [modalOpen, setModalOpen] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [deleteId, setDeleteId] = useState<number | null>(null)
   const [resetOpen, setResetOpen] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
-  const [eventForm, setEventForm] = useState({ title: '', type: 'supplier' as CalendarEvent['type'], time: '09:00' })
+  const [eventForm, setEventForm] = useState({
+    title: '',
+    type: 'supplier' as DemoCalendarEvent['type'],
+    time: '09:00',
+  })
 
   const monthName = currentMonth.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })
   const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate()
@@ -95,7 +99,7 @@ export default function KalenderPage() {
     setEventForm({ title: '', type: 'supplier', time: '09:00' })
     setModalOpen(true)
   }
-  const openEdit = (item: CalendarEvent) => {
+  const openEdit = (item: DemoCalendarEvent) => {
     setEditingId(item.id)
     setEventForm({ title: item.title, type: item.type, time: item.time ?? '09:00' })
     setModalOpen(true)
@@ -298,7 +302,12 @@ export default function KalenderPage() {
               Kategori
               <select
                 value={eventForm.type}
-                onChange={(event) => setEventForm({ ...eventForm, type: event.target.value as CalendarEvent['type'] })}
+                onChange={(event) =>
+                  setEventForm({
+                    ...eventForm,
+                    type: event.target.value as DemoCalendarEvent['type'],
+                  })
+                }
                 className="app-input mt-1.5 w-full"
               >
                 <option value="supplier">Supplier</option>

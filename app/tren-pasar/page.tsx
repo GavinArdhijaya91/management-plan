@@ -9,29 +9,29 @@ import { SalesChart } from '@/components/sales-chart'
 import { AlertCircle, Lightbulb, Pencil, Plus, TrendingDown, TrendingUp } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
-interface MarketProduct {
+interface DemoMarketProduct {
   id: number
   name: string
   change: number
   market: string
 }
-const initialProducts: MarketProduct[] = [
+const initialProducts: DemoMarketProduct[] = [
   { id: 1, name: 'Produk A', change: 25, market: 'Sedang naik' },
   { id: 2, name: 'Produk B', change: 15, market: 'Stabil' },
   { id: 3, name: 'Produk C', change: -10, market: 'Menurun' },
   { id: 4, name: 'Produk D', change: 32, market: 'Naik pesat' },
 ]
 const trendData = [
-  { name: 'Feb', penjualan: 180000, modal: 120000, profit: 60000 },
-  { name: 'Mar', penjualan: 210000, modal: 140000, profit: 70000 },
-  { name: 'Apr', penjualan: 195000, modal: 130000, profit: 65000 },
-  { name: 'Mei', penjualan: 245000, modal: 160000, profit: 85000 },
-  { name: 'Jun', penjualan: 280000, modal: 185000, profit: 95000 },
-  { name: 'Jul', penjualan: 270000, modal: 175000, profit: 95000 },
+  { name: 'Feb', salesAmount: 180000, costAmount: 120000, netResult: 60000 },
+  { name: 'Mar', salesAmount: 210000, costAmount: 140000, netResult: 70000 },
+  { name: 'Apr', salesAmount: 195000, costAmount: 130000, netResult: 65000 },
+  { name: 'Mei', salesAmount: 245000, costAmount: 160000, netResult: 85000 },
+  { name: 'Jun', salesAmount: 280000, costAmount: 185000, netResult: 95000 },
+  { name: 'Jul', salesAmount: 270000, costAmount: 175000, netResult: 95000 },
 ]
 
 export default function TrenPasarPage() {
-  const [products, setProducts] = useLocalStorage<MarketProduct[]>('siapin:market-products', initialProducts)
+  const [products, setProducts] = useLocalStorage<DemoMarketProduct[]>('siapin:market-products', initialProducts)
   const [period, setPeriod] = useState('6')
   const [modalOpen, setModalOpen] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
@@ -46,7 +46,7 @@ export default function TrenPasarPage() {
     setForm({ name: '', change: 0, market: 'Stabil' })
     setModalOpen(true)
   }
-  const openEdit = (product: MarketProduct) => {
+  const openEdit = (product: DemoMarketProduct) => {
     setEditingId(product.id)
     setForm({ name: product.name, change: product.change, market: product.market })
     setModalOpen(true)

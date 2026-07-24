@@ -1,9 +1,49 @@
-import type { Transaction } from '@/types'
+import type { DemoTransaction } from '@/types'
 
-export const transactions: Transaction[] = [
-  { id: 1, date: '20 Jul 2026', type: 'Penjualan', amount: 150_000, modal: 100_000, profit: 50_000, status: 'untung' },
-  { id: 2, date: '19 Jul 2026', type: 'Penjualan', amount: 125_000, modal: 85_000, profit: 40_000, status: 'untung' },
-  { id: 3, date: '18 Jul 2026', type: 'Pengeluaran', amount: -75_000, modal: 75_000, profit: -75_000, status: 'rugi' },
-  { id: 4, date: '17 Jul 2026', type: 'Penjualan', amount: 200_000, modal: 120_000, profit: 80_000, status: 'untung' },
-  { id: 5, date: '16 Jul 2026', type: 'Penjualan', amount: 95_000, modal: 65_000, profit: 30_000, status: 'untung' },
+export const transactions: DemoTransaction[] = [
+  {
+    id: 1,
+    transactionDate: '2026-07-20',
+    transactionType: 'sale',
+    amount: 150_000,
+    costAmount: 100_000,
+    netResult: 50_000,
+    resultStatus: 'profit',
+  },
+  {
+    id: 2,
+    transactionDate: '2026-07-19',
+    transactionType: 'sale',
+    amount: 125_000,
+    costAmount: 85_000,
+    netResult: 40_000,
+    resultStatus: 'profit',
+  },
+  {
+    id: 3,
+    transactionDate: '2026-07-18',
+    transactionType: 'expense',
+    amount: 75_000,
+    costAmount: 0,
+    netResult: -75_000,
+    resultStatus: 'loss',
+  },
+  {
+    id: 4,
+    transactionDate: '2026-07-17',
+    transactionType: 'sale',
+    amount: 200_000,
+    costAmount: 120_000,
+    netResult: 80_000,
+    resultStatus: 'profit',
+  },
+  {
+    id: 5,
+    transactionDate: '2026-07-16',
+    transactionType: 'sale',
+    amount: 95_000,
+    costAmount: 65_000,
+    netResult: 30_000,
+    resultStatus: 'profit',
+  },
 ]

@@ -1,27 +1,31 @@
-export type TrendDirection = 'up' | 'down'
+export type DashboardTrendDirection = 'up' | 'down'
 
-export type TransactionStatus = 'untung' | 'rugi'
+export type DemoTransactionStatus = 'profit' | 'loss'
 
-export interface ChartDataPoint {
+export interface DashboardChartDataPoint {
   name: string
-  penjualan: number
-  modal: number
-  profit?: number
+  salesAmount: number
+  costAmount: number
+  netResult?: number
 }
 
-export interface BusinessTask {
+export interface DemoBusinessTask {
   id: number
   title: string
   completed: boolean
   priority: 'normal' | 'high'
 }
 
-export interface Transaction {
+/**
+ * Presentation-only transaction used by the local-storage demo.
+ * This is intentionally not the `public.transactions` database row.
+ */
+export interface DemoTransaction {
   id: number
-  date: string
-  type: 'Penjualan' | 'Pengeluaran'
+  transactionDate: string
+  transactionType: 'sale' | 'expense'
   amount: number
-  modal: number
-  profit: number
-  status: TransactionStatus
+  costAmount: number
+  netResult: number
+  resultStatus: DemoTransactionStatus
 }

@@ -58,8 +58,8 @@ export default function ManajemenPage() {
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
           <div>
-            <h1 className="app-heading">Manajemen modal & penjualan</h1>
-            <p className="mt-2 text-zinc-500">Kelola transaksi, modal, dan proyeksi laba/rugi Anda.</p>
+            <h1 className="app-heading">Manajemen transaksi & penjualan</h1>
+            <p className="mt-2 text-zinc-500">Kelola transaksi, biaya pokok, dan hasil bersih usaha Anda.</p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
             <button

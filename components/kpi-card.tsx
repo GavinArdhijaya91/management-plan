@@ -1,13 +1,13 @@
 import { ReactNode } from 'react'
 import { TrendingUp, TrendingDown } from 'lucide-react'
-import type { TrendDirection } from '@/types'
+import type { DashboardTrendDirection } from '@/types'
 
 interface KPICardProps {
   title: string
   value: string | number
   icon: ReactNode
   trend?: {
-    direction: TrendDirection
+    direction: DashboardTrendDirection
     percentage: number
   }
 }

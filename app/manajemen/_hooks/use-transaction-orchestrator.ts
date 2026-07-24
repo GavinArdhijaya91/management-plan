@@ -11,18 +11,18 @@ import {
   type TransactionTypeFilter,
 } from '@/app/manajemen/_domain/transaction-aggregate'
 import { transactions as initialTransactions } from '@/data/transactions'
-import type { Transaction } from '@/types'
+import type { DemoTransaction } from '@/types'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 const PAGE_SIZE = 20
 
 export function useTransactionOrchestrator() {
-  const [transactions, setTransactions] = useLocalStorage<Transaction[]>('siapin:transactions', initialTransactions)
+  const [transactions, setTransactions] = useLocalStorage<DemoTransaction[]>('siapin:transactions', initialTransactions)
   const [searchTerm, setSearchTermState] = useState('')
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
-  const [typeFilter, setTypeFilterState] = useState<TransactionTypeFilter>('Semua')
+  const [typeFilter, setTypeFilterState] = useState<TransactionTypeFilter>('all')
   const [periodFilter, setPeriodFilterState] = useState<TransactionPeriodFilter>('3 Bulan')
-  const [sortField, setSortFieldState] = useState<TransactionSortField>('date')
+  const [sortField, setSortFieldState] = useState<TransactionSortField>('transactionDate')
   const [sortDirection, setSortDirectionState] = useState<TransactionSortDirection>('desc')
   const [page, setPage] = useState(1)
   const [editingId, setEditingId] = useState<number | null>(null)
@@ -92,7 +92,7 @@ export function useTransactionOrchestrator() {
   const clearFilters = () => {
     setSearchTermState('')
     setDebouncedSearchTerm('')
-    setTypeFilterState('Semua')
+    setTypeFilterState('all')
     setPeriodFilterState('3 Bulan')
     setPage(1)
   }
@@ -103,7 +103,7 @@ export function useTransactionOrchestrator() {
     setModalOpen(true)
   }
 
-  const openEdit = (transaction: Transaction) => {
+  const openEdit = (transaction: DemoTransaction) => {
     setEditingId(transaction.id)
     setFormInitialValues(transactionAggregate.toDraft(transaction))
     setModalOpen(true)

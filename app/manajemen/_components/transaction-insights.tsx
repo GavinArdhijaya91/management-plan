@@ -1,8 +1,8 @@
 import { CircleAlert, Lightbulb } from 'lucide-react'
 import { transactionAggregate } from '@/app/manajemen/_domain/transaction-aggregate'
-import type { Transaction } from '@/types'
+import type { DemoTransaction } from '@/types'
 
-export function TransactionInsights({ transactions }: { transactions: Transaction[] }) {
+export function TransactionInsights({ transactions }: { transactions: DemoTransaction[] }) {
   const insights = transactionAggregate.insights(transactions)
   if (insights.length === 0) return null
 

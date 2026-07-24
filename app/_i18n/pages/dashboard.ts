@@ -7,7 +7,7 @@ interface DashboardCopy {
   manage: string
   demo: string
   sales: string
-  capital: string
+  costAmount: string
   profit: string
   remainingPlans: string
   tasks: string
@@ -32,7 +32,7 @@ export const dashboardCopy: Record<Locale, DashboardCopy> = {
     manage: 'Kelola transaksi',
     demo: 'Mode demo aktif. Perubahan disimpan hanya di perangkat ini.',
     sales: 'Total penjualan',
-    capital: 'Total modal',
+    costAmount: 'Total biaya pokok',
     profit: 'Laba bersih',
     remainingPlans: 'Rencana tersisa',
     tasks: 'tugas',
@@ -55,7 +55,7 @@ export const dashboardCopy: Record<Locale, DashboardCopy> = {
     manage: 'Manage transactions',
     demo: 'Demo mode is active. Changes are stored only on this device.',
     sales: 'Total sales',
-    capital: 'Total capital',
+    costAmount: 'Total direct cost',
     profit: 'Net profit',
     remainingPlans: 'Remaining plans',
     tasks: 'tasks',
@@ -83,7 +83,7 @@ export const dashboardCopy: Record<Locale, DashboardCopy> = {
     manage: '取引を管理',
     demo: 'デモモードです。変更はこの端末にのみ保存されます。',
     sales: '総売上',
-    capital: '総資本',
+    costAmount: '直接原価合計',
     profit: '純利益',
     remainingPlans: '残りの計画',
     tasks: '件',
@@ -106,7 +106,7 @@ export const dashboardCopy: Record<Locale, DashboardCopy> = {
     manage: 'Gestionar transacciones',
     demo: 'El modo de demostración está activo. Los cambios solo se guardan en este dispositivo.',
     sales: 'Ventas totales',
-    capital: 'Capital total',
+    costAmount: 'Total biaya langsung',
     profit: 'Beneficio neto',
     remainingPlans: 'Planes pendientes',
     tasks: 'tareas',
@@ -134,7 +134,7 @@ export const dashboardCopy: Record<Locale, DashboardCopy> = {
     manage: 'Gérer les transactions',
     demo: 'Le mode démonstration est actif. Les modifications sont stockées uniquement sur cet appareil.',
     sales: 'Ventes totales',
-    capital: 'Capital total',
+    costAmount: 'Coût direct total',
     profit: 'Bénéfice net',
     remainingPlans: 'Plans restants',
     tasks: 'tâches',
@@ -162,7 +162,7 @@ export const dashboardCopy: Record<Locale, DashboardCopy> = {
     manage: 'Transaktionen verwalten',
     demo: 'Der Demomodus ist aktiv. Änderungen werden nur auf diesem Gerät gespeichert.',
     sales: 'Gesamtumsatz',
-    capital: 'Gesamtkapital',
+    costAmount: 'Gesamte direkte Kosten',
     profit: 'Nettogewinn',
     remainingPlans: 'Offene Pläne',
     tasks: 'Aufgaben',

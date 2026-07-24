@@ -3,12 +3,13 @@
 import { DemoDataNotice } from '@/app/_components/demo-data-notice'
 import { useLocalStorage } from '@/app/_lib/use-local-storage'
 import { transactionAggregate } from '@/app/manajemen/_domain/transaction-aggregate'
+import { formatTransactionDate } from '@/app/manajemen/_domain/transaction-aggregate'
 import { Header } from '@/components/header'
 import { KPICard } from '@/components/kpi-card'
 import { SalesChart } from '@/components/sales-chart'
 import { transactions as initialTransactions } from '@/data/transactions'
 import { weeklyTasks } from '@/data/dashboard'
-import type { BusinessTask, ChartDataPoint, Transaction } from '@/types'
+import type { DashboardChartDataPoint, DemoBusinessTask, DemoTransaction } from '@/types'
 import { CalendarDays, CircleDollarSign, ListChecks, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 import { useMemo } from 'react'
@@ -18,21 +19,21 @@ import { dashboardCopy } from '@/app/_i18n/pages/dashboard'
 const rupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 })
 
 export default function Dashboard() {
-  const [transactions] = useLocalStorage<Transaction[]>('siapin:transactions', initialTransactions)
-  const [tasks, setTasks] = useLocalStorage<BusinessTask[]>('siapin:tasks', weeklyTasks)
+  const [transactions] = useLocalStorage<DemoTransaction[]>('siapin:transactions', initialTransactions)
+  const [tasks, setTasks] = useLocalStorage<DemoBusinessTask[]>('siapin:tasks', weeklyTasks)
   const { locale } = useLanguage()
   const copy = dashboardCopy[locale]
   const summary = useMemo(() => transactionAggregate.summarize(transactions), [transactions])
-  const chartData = useMemo<ChartDataPoint[]>(
+  const chartData = useMemo<DashboardChartDataPoint[]>(
     () =>
       transactions
         .slice(0, 6)
         .reverse()
         .map((item) => ({
-          name: item.date.slice(0, 6),
-          penjualan: item.type === 'Penjualan' ? item.amount : 0,
-          modal: item.modal,
-          profit: item.profit,
+          name: formatTransactionDate(item.transactionDate).slice(0, 6),
+          salesAmount: item.transactionType === 'sale' ? item.amount : 0,
+          costAmount: item.costAmount,
+          netResult: item.netResult,
         })),
     [transactions],
   )
@@ -61,13 +62,13 @@ export default function Dashboard() {
             icon={<CircleDollarSign className="size-5" />}
           />
           <KPICard
-            title={copy.capital}
-            value={rupiah.format(summary.totalModal)}
+            title={copy.costAmount}
+            value={rupiah.format(summary.totalCostAmount)}
             icon={<ListChecks className="size-5" />}
           />
           <KPICard
             title={copy.profit}
-            value={rupiah.format(summary.totalProfit)}
+            value={rupiah.format(summary.totalNetResult)}
             icon={<TrendingUp className="size-5" />}
           />
           <KPICard
