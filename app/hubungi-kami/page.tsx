@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { useLocalStorage } from '@/app/_lib/use-local-storage'
 import { DemoDataNotice } from '@/app/_components/demo-data-notice'
 import { AppToast } from '@/app/_components/app-toast'
-import type { ContactMessage } from '@/types'
+import type { ContactFormEntry } from '@/types'
 import { z } from 'zod'
 
 const contactSchema = z.object({
@@ -29,7 +29,7 @@ export default function HubungiKamiPage() {
   const [submitted, setSubmitted] = useState(false)
   const [pending, setPending] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const [messages, setMessages] = useLocalStorage<ContactMessage[]>('siapin:messages', [])
+  const [messages, setMessages] = useLocalStorage<ContactFormEntry[]>('siapin:messages', [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
