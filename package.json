@@ -13,12 +13,19 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "images:optimize": "node scripts/optimize-images.mjs public",
+    "images:check": "node scripts/optimize-images.mjs public --check",
+    "images:og": "node scripts/optimize-images.mjs Siapin.png --output public/images/siapin.webp --width 1200 --height 630 --quality 84",
+    "data:check": "node scripts/check-data-boundaries.mjs",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "db:link": "supabase link",
     "db:status": "supabase migration list",
+    "db:dry-run": "supabase db push --dry-run",
     "db:push": "supabase db push",
-    "db:types": "supabase gen types typescript --linked --schema public"
+    "db:test": "supabase test db --local",
+    "db:types": "supabase gen types typescript --linked --schema public",
+    "verify": "pnpm images:check && pnpm data:check && pnpm test && pnpm typecheck && pnpm lint && pnpm format:check && pnpm build"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
@@ -47,6 +54,7 @@
     "eslint-config-next": "^16.2.10",
     "postcss": "^8.5",
     "prettier": "^3.9.6",
+    "sharp": "^0.35.3",
     "supabase": "^2.109.1",
     "tailwindcss": "^4.3.3",
     "typescript": "5.7.3",
