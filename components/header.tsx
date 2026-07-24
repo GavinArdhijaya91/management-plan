@@ -4,12 +4,12 @@ import Link from 'next/link'
 import { Menu, Bell, User, LogOut } from 'lucide-react'
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { appRoutes } from '@/data/navigation'
 import { ConfirmationDialog } from '@/app/manajemen/_components/confirmation-dialog'
 import { LanguageSelector } from '@/app/_components/language-selector'
 import { useLanguage } from '@/app/_i18n/language-provider'
+import { logout as logoutAction } from '@/app/auth/actions'
 
 interface HeaderProps {
   variant?: 'default' | 'monochrome'
@@ -21,7 +21,6 @@ export function Header({ variant = 'default' }: HeaderProps) {
   const [profileOpen, setProfileOpen] = useState(false)
   const [logoutOpen, setLogoutOpen] = useState(false)
   const pathname = usePathname()
-  const router = useRouter()
   const { dictionary } = useLanguage()
 
   const logout = () => {
@@ -224,7 +223,7 @@ export function Header({ variant = 'default' }: HeaderProps) {
         description={dictionary.header.logoutDescription}
         confirmLabel={dictionary.header.logout}
         onCancel={() => setLogoutOpen(false)}
-        onConfirm={() => router.push('/')}
+        onConfirm={() => logoutAction()}
       />
     </>
   )
