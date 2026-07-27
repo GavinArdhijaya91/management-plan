@@ -8,7 +8,7 @@ describe('language dictionaries', () => {
   })
 
   it('provides complete navigation labels for every locale', () => {
-    const requiredKeys = ['dashboard', 'management', 'calendar', 'market', 'contact', 'profile']
+    const requiredKeys = ['dashboard', 'planning', 'management', 'calendar', 'market', 'contact', 'profile']
     for (const dictionary of Object.values(dictionaries)) {
       expect(Object.keys(dictionary.nav).sort()).toEqual(requiredKeys.sort())
       expect(Object.values(dictionary.nav).every((label) => label.trim().length > 0)).toBe(true)

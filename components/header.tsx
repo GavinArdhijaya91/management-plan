@@ -75,7 +75,7 @@ export function Header({ variant = 'default' }: HeaderProps) {
                         : 'bg-blue-50 font-medium text-blue-700'),
                   )}
                 >
-                  {dictionary.nav[item.translationKey]}
+                  {dictionary.nav[item.translationKey] ?? item.label}
                 </Link>
               ))}
             </nav>
@@ -196,7 +196,7 @@ export function Header({ variant = 'default' }: HeaderProps) {
                     )}
                   >
                     <Icon className="size-5" aria-hidden="true" />
-                    {dictionary.nav[item.translationKey]}
+                    {dictionary.nav[item.translationKey] ?? item.label}
                   </Link>
                 )
               })}

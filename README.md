@@ -212,6 +212,7 @@ This endpoint only reports the service status and whether the Supabase environme
 | ---------------------- | ----------------------------------------------------------------- |
 | Landing page           | [localhost:3000](http://localhost:3000)                           |
 | Dashboard              | [localhost:3000/dashboard](http://localhost:3000/dashboard)       |
+| Business planning      | [localhost:3000/planning](http://localhost:3000/planning)         |
 | Transaction management | [localhost:3000/manajemen](http://localhost:3000/manajemen)       |
 | Calendar               | [localhost:3000/kalender](http://localhost:3000/kalender)         |
 | Market trends          | [localhost:3000/tren-pasar](http://localhost:3000/tren-pasar)     |
@@ -397,6 +398,7 @@ Deployment is intentionally excluded. Continuous delivery will be introduced onl
 
 Authentication, cookie session refresh, private-route protection, workspace
 onboarding, active-workspace selection, and role/permission resolution are
-integrated. Business feature pages still use clearly marked demo/local-storage
-data; their Supabase queries, caching, and optimistic mutations remain a
-separate integration phase.
+integrated. Planning reads live workspace data and routes lifecycle mutations
+through validated Server Actions plus canonical Supabase RPCs. The remaining
+business feature pages still use clearly marked demo/local-storage data; their
+Supabase integration remains a separate phase.

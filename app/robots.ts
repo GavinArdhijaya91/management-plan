@@ -8,7 +8,16 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: ['/', '/hubungi-kami'],
-      disallow: ['/api/', '/dashboard', '/kalender', '/manajemen', '/notifikasi', '/profil', '/tren-pasar'],
+      disallow: [
+        '/api/',
+        '/dashboard',
+        '/kalender',
+        '/manajemen',
+        '/notifikasi',
+        '/planning',
+        '/profil',
+        '/tren-pasar',
+      ],
     },
     sitemap: new URL('/sitemap.xml', siteUrl).toString(),
     host: siteUrl.origin,

@@ -22,6 +22,7 @@ export const localeOptions: LocaleOption[] = [
 const id = {
   language: { change: 'Ubah bahasa', title: 'Bahasa', region: 'Wilayah' },
   nav: {
+    planning: 'Planning',
     dashboard: 'Dashboard',
     management: 'Manajemen',
     calendar: 'Kalender',
@@ -50,7 +51,15 @@ const id = {
 
 export type Dictionary = {
   language: { change: string; title: string; region: string }
-  nav: { dashboard: string; management: string; calendar: string; market: string; contact: string; profile: string }
+  nav: {
+    planning?: string
+    dashboard: string
+    management: string
+    calendar: string
+    market: string
+    contact: string
+    profile: string
+  }
   header: {
     mainNavigation: string
     mobileNavigation: string
@@ -70,7 +79,7 @@ export type Dictionary = {
   }
 }
 
-export const dictionaries: Record<Locale, Dictionary> = {
+const baseDictionaries: Record<Locale, Dictionary> = {
   id,
   ja: {
     language: { change: '言語を変更', title: '言語', region: '地域' },
@@ -214,6 +223,19 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
   },
 }
+
+export const dictionaries = Object.fromEntries(
+  localeCodes.map((locale) => [
+    locale,
+    {
+      ...baseDictionaries[locale],
+      nav: {
+        planning: 'Planning',
+        ...baseDictionaries[locale].nav,
+      },
+    },
+  ]),
+) as Record<Locale, Dictionary>
 
 export function isLocale(value: string | null): value is Locale {
   return localeCodes.includes(value as Locale)
