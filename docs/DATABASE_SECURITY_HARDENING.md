@@ -104,6 +104,21 @@ also verifies that actor-owned columns cannot be forged during direct writes.
 - SVG image responses remain attachment-only with their own restrictive
   sandbox CSP.
 
+## Dependency and CI supply chain
+
+- Production dependencies must pass `pnpm security:audit`; the CI quality job
+  fails on every known production advisory, including low severity.
+- GitHub Actions are pinned to reviewed full commit SHAs. Version comments keep
+  Dependabot updates understandable without trusting a mutable tag at runtime.
+- Dependabot monitors both pnpm dependencies and GitHub Actions every week.
+- Runtime tooling that is not imported by the application must not remain in
+  `dependencies`; unused CLIs are removed rather than shipped.
+- A current development-only `brace-expansion` advisory remains upstream-bound
+  through ESLint 9 plugins. Forcing the patched major breaks `minimatch` and
+  ESLint 10 is not yet supported by the Next.js plugin set. Production audit is
+  clean; this residual must be reevaluated when those plugins add ESLint 10
+  support.
+
 ## Phase definition of done
 
 - Threats and trust boundaries are updated when a new asset or actor appears.

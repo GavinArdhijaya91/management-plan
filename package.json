@@ -11,6 +11,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "security:audit": "pnpm audit --prod --audit-level low",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "images:optimize": "node scripts/optimize-images.mjs public",
