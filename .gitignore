@@ -46,6 +46,7 @@ artifacts-builder/
 !/docs/DATA_ACCESS_CONTRACT.md
 !/docs/DATABASE_AUDIT_2026-07-23.md
 !/docs/DATABASE_OPERATIONS.md
+!/docs/DATABASE_SECURITY_HARDENING.md
 !/docs/ASSET_AND_SEO_GUIDE.md
 DESIGN.md
 architecture-system*.md
