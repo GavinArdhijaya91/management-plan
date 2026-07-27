@@ -345,7 +345,7 @@ begin
     seed_initiative_id,
     'Siapkan materi promosi',
     'Buat foto dan teks promosi untuk menu unggulan.',
-    'in_progress',
+    'todo',
     2,
     seed_user_id,
     current_date + 7,
