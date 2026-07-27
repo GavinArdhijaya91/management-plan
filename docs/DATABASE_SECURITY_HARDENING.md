@@ -143,6 +143,19 @@ configured and the challenge token is passed to Supabase Auth.
 - Public delivery is intentional for display assets; anonymous upload, update,
   and deletion remain forbidden.
 
+## Audit evidence boundary
+
+- Audit rows are written only by database triggers and attribute browser
+  mutations to `auth.uid()`.
+- Update evidence stores changed column names, never previous or new business
+  values. A database transaction identifier supports correlation without
+  copying request headers or submitted payloads.
+- Metadata must remain a bounded JSON object. Invitation tokens, recipients,
+  provider identifiers, delivery errors, financial values, and free-form
+  business content are not audit metadata.
+- Authenticated users may read audit history only with `audit.read`; no browser
+  role may insert, update, or delete audit evidence.
+
 ## Dependency and CI supply chain
 
 - Production dependencies must pass `pnpm security:audit`; the CI quality job
