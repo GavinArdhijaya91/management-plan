@@ -91,6 +91,19 @@ also verifies that actor-owned columns cannot be forged during direct writes.
   reloaded from the database, suspended access is rejected, and logout removes
   the hint to prevent cross-account session confusion.
 
+## HTTP and API boundary
+
+- A global Content Security Policy limits scripts, styles, connections, images,
+  forms, frames, workers, and object embedding to the origins required by
+  Next.js and Supabase. Development-only sources are excluded in production.
+- Clickjacking, MIME sniffing, permissive referrers, browser capabilities, and
+  insecure production transport are restricted through response headers.
+- API helpers default to `Cache-Control: no-store` and a stable JSON envelope.
+- Public health checks expose liveness only. They do not reveal environment,
+  database configuration, timestamps, dependency versions, or secrets.
+- SVG image responses remain attachment-only with their own restrictive
+  sandbox CSP.
+
 ## Phase definition of done
 
 - Threats and trust boundaries are updated when a new asset or actor appears.
