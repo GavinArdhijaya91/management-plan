@@ -13,6 +13,38 @@ begin
     raise exception 'A browser role can resolve objects in the private schema';
   end if;
 
+  if not has_function_privilege(
+    'authenticated',
+    'private.is_workspace_member(uuid)',
+    'execute'
+  ) or not has_function_privilege(
+    'authenticated',
+    'private.has_workspace_permission(uuid,text)',
+    'execute'
+  ) or not has_function_privilege(
+    'authenticated',
+    'private.can_read_business_plan(uuid)',
+    'execute'
+  ) then
+    raise exception 'Authenticated cannot evaluate a required RLS predicate';
+  end if;
+
+  if has_function_privilege(
+    'anon',
+    'private.is_workspace_member(uuid)',
+    'execute'
+  ) or has_function_privilege(
+    'anon',
+    'private.has_workspace_permission(uuid,text)',
+    'execute'
+  ) or has_function_privilege(
+    'anon',
+    'private.can_read_business_plan(uuid)',
+    'execute'
+  ) then
+    raise exception 'Anonymous role can execute a private RLS predicate';
+  end if;
+
   select format('%I.%I', table_schema, table_name)
   into insecure_object
   from information_schema.role_table_grants
