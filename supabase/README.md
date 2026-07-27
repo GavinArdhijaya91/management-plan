@@ -117,6 +117,19 @@ Collaboration mutations are exposed through atomic owner-only RPCs:
 Direct role, permission, and membership mutations have no authenticated write
 policies. This keeps ownership and lifecycle invariants inside the database.
 
+Workspace deletion is also an explicit owner-only lifecycle:
+
+- `request_workspace_deletion` requires the exact workspace name and schedules
+  deletion at least 72 hours later
+- `cancel_workspace_deletion` preserves the cancelled request and audit evidence
+- `execute_workspace_deletion` requires a second exact-name confirmation after
+  the grace period
+
+Authenticated clients cannot delete a workspace directly. The application must
+reauthenticate the owner before calling the request or execute RPC; password
+verification belongs at the Auth/application boundary and is intentionally not
+simulated from an ordinary database JWT.
+
 ## Transactional email delivery
 
 `email_deliveries` tracks invitation-email delivery without storing the raw

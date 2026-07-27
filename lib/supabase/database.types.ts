@@ -3020,6 +3020,44 @@ export type Database = {
           },
         ]
       }
+      workspace_deletion_requests: {
+        Row: {
+          cancelled_at: string | null
+          cancelled_by: string | null
+          id: string
+          requested_at: string
+          requested_by: string
+          scheduled_for: string
+          workspace_id: string
+        }
+        Insert: {
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          id?: string
+          requested_at?: string
+          requested_by: string
+          scheduled_for: string
+          workspace_id: string
+        }
+        Update: {
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          id?: string
+          requested_at?: string
+          requested_by?: string
+          scheduled_for?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_deletion_requests_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       accept_workspace_invitation: {
@@ -3032,6 +3070,10 @@ export type Database = {
           target_workspace_id: string
           target_workspace_role_id: string
         }
+        Returns: undefined
+      }
+      cancel_workspace_deletion: {
+        Args: { target_deletion_request_id: string }
         Returns: undefined
       }
       create_transaction: {
@@ -3177,6 +3219,13 @@ export type Database = {
         Args: { target_notification_id: string }
         Returns: undefined
       }
+      execute_workspace_deletion: {
+        Args: {
+          confirmation_workspace_name: string
+          target_deletion_request_id: string
+        }
+        Returns: undefined
+      }
       refresh_business_review_snapshots: {
         Args: { target_business_review_id: string }
         Returns: undefined
@@ -3184,6 +3233,13 @@ export type Database = {
       remove_workspace_member: {
         Args: { target_user_id: string; target_workspace_id: string }
         Returns: undefined
+      }
+      request_workspace_deletion: {
+        Args: {
+          confirmation_workspace_name: string
+          target_workspace_id: string
+        }
+        Returns: string
       }
       resend_workspace_invitation: {
         Args: { target_invitation_id: string; valid_for_days?: number }
