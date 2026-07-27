@@ -125,6 +125,19 @@ configured and the challenge token is passed to Supabase Auth.
 - SVG image responses remain attachment-only with their own restrictive
   sandbox CSP.
 
+## Storage asset boundary
+
+- User-generated assets are limited to JPEG, PNG, and WebP; SVG is never an
+  accepted upload MIME type.
+- Avatar paths are bound to the owning profile identity. Logo and banner paths
+  are bound to the owning workspace, preventing cross-tenant asset references.
+- Avatar inserts bind both the object folder and Storage ownership metadata to
+  `auth.uid()`.
+- Workspace logo and branding policies preserve their distinct manager and
+  owner boundaries.
+- Public delivery is intentional for display assets; anonymous upload, update,
+  and deletion remain forbidden.
+
 ## Dependency and CI supply chain
 
 - Production dependencies must pass `pnpm security:audit`; the CI quality job
