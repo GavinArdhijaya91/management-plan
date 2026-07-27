@@ -290,6 +290,12 @@ values (
   'Audit test transaction'
 );
 
+-- The following records are fixtures for deferred allocation constraints, not
+-- an RLS contract. Planning authorization is covered independently by
+-- planning_visibility_permissions.test.sql, so create these fixtures with the
+-- test runner role and restore the authenticated owner before user-flow checks.
+reset role;
+
 do $$
 declare
   plan_id uuid;
@@ -415,6 +421,13 @@ begin
   end if;
 end;
 $$;
+
+set local role authenticated;
+select set_config(
+  'request.jwt.claims',
+  '{"sub":"10000000-0000-0000-0000-000000000001","role":"authenticated","email":"owner@siapin.test"}',
+  true
+);
 
 do $$
 declare
