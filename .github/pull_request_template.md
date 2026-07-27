@@ -8,6 +8,7 @@
 - [ ] Typecheck, lint, and format checks pass.
 - [ ] Production build passes when application code changes.
 - [ ] No credentials, private business data, or generated environment files are included.
+- [ ] `pnpm security:secrets` passes for the tracked repository tree.
 
 ## Security and data boundary
 

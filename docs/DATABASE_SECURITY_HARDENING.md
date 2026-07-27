@@ -160,6 +160,9 @@ settings without printing the access token or raw hosted configuration.
 
 ## Dependency and CI supply chain
 
+- Tracked source files must pass `pnpm security:secrets`. The gate rejects
+  private-key material, known credential formats, sensitive credential files,
+  and tracked environment files other than the placeholder-only `.env.example`.
 - Production dependencies must pass `pnpm security:audit`; the CI quality job
   fails on every known production advisory, including low severity.
 - CodeQL scans JavaScript and TypeScript on pull requests, pushes to `main`,
@@ -188,3 +191,5 @@ settings without printing the access token or raw hosted configuration.
 - Lifecycle/evidence records cannot be forged through direct table mutation.
 - A database created from all migrations and the seed passes every pgTAP file.
 - Application tests, type checking, linting, formatting, and build remain green.
+- `pnpm security:verify` passes before release; hosted Auth and database pgTAP
+  gates run separately because they require deployment credentials and Docker.

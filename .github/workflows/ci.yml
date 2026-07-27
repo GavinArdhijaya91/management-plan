@@ -40,6 +40,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Reject tracked credentials
+        run: pnpm security:secrets
+
       - name: Audit production dependencies
         run: pnpm security:audit
 

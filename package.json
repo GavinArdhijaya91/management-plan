@@ -13,6 +13,8 @@
     "lint": "eslint .",
     "security:audit": "pnpm audit --prod --audit-level low",
     "security:hosted": "node scripts/check-hosted-auth-security.mjs",
+    "security:secrets": "node scripts/check-tracked-secrets.mjs",
+    "security:verify": "pnpm security:secrets && pnpm security:audit && pnpm test && pnpm typecheck && pnpm lint && pnpm format:check",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "images:optimize": "node scripts/optimize-images.mjs public",
