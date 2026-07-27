@@ -422,13 +422,6 @@ begin
 end;
 $$;
 
-set local role authenticated;
-select set_config(
-  'request.jwt.claims',
-  '{"sub":"10000000-0000-0000-0000-000000000001","role":"authenticated","email":"owner@siapin.test"}',
-  true
-);
-
 do $$
 declare
   plan_id uuid;
@@ -490,9 +483,13 @@ begin
     raise exception 'Business review financial snapshot was not captured';
   end if;
 
+  set local role authenticated;
+
   update public.business_reviews
   set summary = 'A finalized review must reject this direct rewrite.'
   where id = review_id;
+
+  reset role;
 
   if exists (
     select 1
@@ -553,6 +550,13 @@ begin
 end;
 $$;
 
+set local role authenticated;
+select set_config(
+  'request.jwt.claims',
+  '{"sub":"10000000-0000-0000-0000-000000000001","role":"authenticated","email":"owner@siapin.test"}',
+  true
+);
+
 do $$
 declare
   first_generated_count integer;
@@ -593,6 +597,11 @@ begin
   end if;
 end;
 $$;
+
+-- Cross-plan and category-cycle records below are integrity fixtures. Their
+-- authorization paths have dedicated contracts, so avoid coupling these
+-- constraint checks to Planning RLS.
+reset role;
 
 do $$
 declare
