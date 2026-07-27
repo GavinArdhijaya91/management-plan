@@ -2,6 +2,8 @@
 
 begin;
 
+select plan(1);
+
 do $$
 begin
   if (
@@ -83,5 +85,8 @@ begin
   end if;
 end;
 $$;
+
+select pass('seed persona contracts passed');
+select * from finish();
 
 rollback;

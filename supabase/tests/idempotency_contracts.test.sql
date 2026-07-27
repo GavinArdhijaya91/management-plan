@@ -2,6 +2,8 @@
 
 begin;
 
+select plan(1);
+
 insert into auth.users (
   id,
   email,
@@ -294,5 +296,8 @@ begin
   end if;
 end;
 $$;
+
+select pass('idempotency contracts passed');
+select * from finish();
 
 rollback;

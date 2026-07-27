@@ -2,6 +2,8 @@
 
 begin;
 
+select plan(1);
+
 set local role authenticated;
 select set_config(
   'request.jwt.claims',
@@ -331,5 +333,8 @@ begin
   end if;
 end;
 $$;
+
+select pass('planning lifecycle contracts passed');
+select * from finish();
 
 rollback;

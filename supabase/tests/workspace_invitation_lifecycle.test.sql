@@ -2,6 +2,8 @@
 
 begin;
 
+select plan(1);
+
 insert into auth.users (
   id,
   email,
@@ -571,5 +573,8 @@ begin
   end if;
 end;
 $$;
+
+select pass('workspace invitation lifecycle contracts passed');
+select * from finish();
 
 rollback;

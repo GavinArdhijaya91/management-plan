@@ -2,6 +2,8 @@
 
 begin;
 
+select plan(1);
+
 do $$
 declare
   required_index text;
@@ -68,7 +70,7 @@ begin
         and table_record.relname = expected.column1
         and constraint_record.contype = 'u'
         and (
-          select array_agg(attribute_record.attname order by key_record.ordinality)
+          select array_agg(attribute_record.attname::text order by key_record.ordinality)
           from unnest(constraint_record.conkey)
             with ordinality as key_record(attnum, ordinality)
           join pg_catalog.pg_attribute attribute_record
@@ -84,5 +86,8 @@ begin
   end loop;
 end;
 $$;
+
+select pass('query index contracts passed');
+select * from finish();
 
 rollback;

@@ -2,6 +2,76 @@
 
 begin;
 
+select plan(1);
+
+do $$
+begin
+  if not has_table_privilege(
+    'authenticated',
+    'public.workspaces',
+    'select'
+  ) then
+    raise exception 'Authenticated lacks RLS-gated workspace reads';
+  end if;
+
+  if has_table_privilege(
+    'authenticated',
+    'public.workspaces',
+    'insert'
+  ) then
+    raise exception 'Authenticated received direct workspace creation';
+  end if;
+
+  if not has_table_privilege(
+    'authenticated',
+    'public.business_plans',
+    'select'
+  ) or not has_table_privilege(
+    'authenticated',
+    'public.business_plans',
+    'insert'
+  ) then
+    raise exception 'Authenticated lacks RLS-gated Planning access';
+  end if;
+
+  if not has_column_privilege(
+    'authenticated',
+    'public.business_plans',
+    'title',
+    'update'
+  ) or has_column_privilege(
+    'authenticated',
+    'public.business_plans',
+    'status',
+    'update'
+  ) then
+    raise exception 'Business-plan lifecycle columns are not RPC-only';
+  end if;
+
+  if not has_column_privilege(
+    'authenticated',
+    'public.notifications',
+    'read_at',
+    'update'
+  ) or has_column_privilege(
+    'authenticated',
+    'public.notifications',
+    'detail',
+    'update'
+  ) then
+    raise exception 'Notification update privileges exceeded read state';
+  end if;
+
+  if has_table_privilege(
+    'authenticated',
+    'public.business_review_goal_target_snapshots',
+    'insert, update, delete'
+  ) then
+    raise exception 'Authenticated received mutable review evidence';
+  end if;
+end;
+$$;
+
 insert into auth.users (
   id,
   email,
@@ -700,5 +770,8 @@ begin
   end if;
 end;
 $$;
+
+select pass('database security contracts passed');
+select * from finish();
 
 rollback;

@@ -2,6 +2,8 @@
 
 begin;
 
+select plan(1);
+
 -- Fixed identities make auth.uid() switching and failures reproducible.
 insert into auth.users (
   id, email, raw_app_meta_data, raw_user_meta_data,
@@ -334,5 +336,8 @@ begin
   end if;
 end;
 $$;
+
+select pass('workspace RBAC and RLS contracts passed');
+select * from finish();
 
 rollback;

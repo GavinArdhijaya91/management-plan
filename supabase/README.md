@@ -305,6 +305,15 @@ fixtures. The database CI job repeats this process from a clean local stack for
 every pull request and push to `main`. Never point database tests at a
 production project.
 
+Each SQL contract emits a one-test TAP plan for `pg_prove`. Assertions remain
+transactional `raise exception` guards; the final TAP pass is emitted only when
+every guard in that file succeeds.
+
+Authenticated table privileges mirror the operations exposed by final RLS
+policies. RLS still decides which rows are visible or mutable. Lifecycle,
+notification-content, and finalized-review evidence fields retain narrower
+column or RPC-only privileges as defense in depth.
+
 ## Query performance baseline
 
 Use the linked-project inspection commands only as read-only diagnostics:

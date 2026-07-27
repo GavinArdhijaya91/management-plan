@@ -2,6 +2,8 @@
 
 begin;
 
+select plan(1);
+
 do $$
 begin
   if has_function_privilege(
@@ -59,6 +61,7 @@ limit 1;
 
 insert into public.notifications (
   user_id,
+  event_key,
   type,
   title,
   detail,
@@ -67,6 +70,7 @@ insert into public.notifications (
 )
 select
   user_id,
+  'system_maintenance_test:expired_notification',
   'system',
   'Expired maintenance fixture',
   'This notification must be removed by system maintenance.',
@@ -113,5 +117,8 @@ end;
 $$;
 
 reset role;
+
+select pass('system operations contracts passed');
+select * from finish();
 
 rollback;
