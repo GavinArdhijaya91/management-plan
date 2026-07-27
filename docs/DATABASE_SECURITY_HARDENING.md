@@ -120,6 +120,11 @@ configured and the challenge token is passed to Supabase Auth.
 - Clickjacking, MIME sniffing, permissive referrers, browser capabilities, and
   insecure production transport are restricted through response headers.
 - API helpers default to `Cache-Control: no-store` and a stable JSON envelope.
+- Server Actions keep the framework's same-origin CSRF enforcement, define no
+  cross-origin exceptions, and cap mutation request bodies at 64 KB.
+- Planning transition input is a discriminated record/status contract. A
+  status from another planning aggregate is rejected before reaching an RPC,
+  and reason-sensitive transitions require a specific bounded explanation.
 - Public health checks expose liveness only. They do not reveal environment,
   database configuration, timestamps, dependency versions, or secrets.
 - SVG image responses remain attachment-only with their own restrictive
