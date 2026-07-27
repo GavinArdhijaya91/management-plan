@@ -83,7 +83,9 @@ jobs:
 
       - name: Show Supabase diagnostics on failure
         if: failure()
-        run: pnpm exec supabase status
+        run: |
+          pnpm exec supabase status || true
+          docker ps -a --filter "name=supabase"
 
       - name: Stop isolated Supabase
         if: always()
