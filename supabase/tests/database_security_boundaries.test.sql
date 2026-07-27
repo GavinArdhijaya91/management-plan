@@ -102,6 +102,30 @@ begin
     raise exception 'Anonymous invitation preview capability was removed';
   end if;
 
+  if has_function_privilege(
+    'authenticated',
+    'public.get_system_health_snapshot(interval)',
+    'execute'
+  ) or has_function_privilege(
+    'authenticated',
+    'public.run_system_maintenance()',
+    'execute'
+  ) or has_function_privilege(
+    'authenticated',
+    'public.mark_email_delivery_processing(uuid)',
+    'execute'
+  ) or has_function_privilege(
+    'authenticated',
+    'public.mark_email_delivery_sent(uuid,text,text)',
+    'execute'
+  ) or has_function_privilege(
+    'authenticated',
+    'public.mark_email_delivery_failed(uuid,text)',
+    'execute'
+  ) then
+    raise exception 'Authenticated can execute a service-role operation';
+  end if;
+
   if has_table_privilege(
     'authenticated',
     'public.audit_logs',

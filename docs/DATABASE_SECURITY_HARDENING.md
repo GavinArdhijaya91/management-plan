@@ -70,6 +70,12 @@ Every database change must keep these contracts green:
 9. Invitation, ownership, idempotency, lifecycle, and concurrency contracts
    remain part of the clean-database CI run.
 
+The adversarial access contract additionally submits valid foreign workspace,
+plan, role, and member identifiers. It verifies that ownership in one tenant
+does not authorize reads, writes, lifecycle RPCs, directory access, invitation
+creation, membership administration, or audit access in another tenant. It
+also verifies that actor-owned columns cannot be forged during direct writes.
+
 ## Phase definition of done
 
 - Threats and trust boundaries are updated when a new asset or actor appears.
@@ -80,4 +86,3 @@ Every database change must keep these contracts green:
 - Lifecycle/evidence records cannot be forged through direct table mutation.
 - A database created from all migrations and the seed passes every pgTAP file.
 - Application tests, type checking, linting, formatting, and build remain green.
-
