@@ -48,6 +48,9 @@ business data therefore belong to a workspace, never directly to a user.
 | Business initiative | Program | `business_initiatives` | A coordinated strategy or program intended to advance one or more goals. |
 | Action item | Tindakan | `action_items` | A concrete piece of work that can be assigned and completed. |
 | Business review | Evaluasi | `business_reviews` | A user-authored assessment of results, lessons, and next decisions. |
+| Plan visibility | Visibilitas rencana | `business_plans.visibility` | Determines whether an active workspace member also needs an explicit role or member grant to read a plan. |
+| Plan role grant | Akses rencana berdasarkan role | `business_plan_role_grants` | Gives one workspace role visibility into one restricted plan without adding mutation permissions. |
+| Plan member grant | Akses rencana berdasarkan anggota | `business_plan_member_grants` | Gives one active workspace member visibility into one restricted plan without adding mutation permissions. |
 | Review goal-target snapshot | Snapshot target evaluasi | `business_review_goal_target_snapshots` | The target definition and calculated actual captured for one review period. |
 | Review financial snapshot | Snapshot finansial evaluasi | `business_review_financial_snapshots` | Revenue, expense, and net actuals captured per currency for one review period. |
 | Review action-item snapshot | Snapshot tindakan evaluasi | `business_review_action_item_snapshots` | Action-item status and overdue counts captured for one review period. |
@@ -55,6 +58,12 @@ business data therefore belong to a workspace, never directly to a user.
 | Portfolio review evidence | Bukti portfolio | `business_portfolio_reviews` | A finalized business review selected for inclusion in one business portfolio. |
 | Achievement definition | Definisi pencapaian | `achievement_definitions` | A system-owned catalog entry describing one evidence-based badge. |
 | Workspace achievement | Pencapaian usaha | `workspace_achievements` | A badge awarded automatically to a workspace with a finalized review as evidence. |
+
+Planning records are created in their initial state: a plan and goal are
+`draft`, an initiative is `planned`, and an action item is `todo`. Status is a
+business decision made through a lifecycle RPC; overdue is derived from dates
+and never stored as a status. Archiving preserves history and restoring a child
+record returns it to its initial state.
 
 ### Terms that must not be merged
 

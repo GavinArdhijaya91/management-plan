@@ -3,24 +3,12 @@ import 'server-only'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import type { GetMyWorkspaceAccessResult } from '@/lib/supabase/rpc-types'
 import { requireAuthenticatedUser } from '@/lib/auth/session'
 
 export const activeWorkspaceCookie = 'siapin-active-workspace'
 
-export type WorkspaceAccess = {
-  workspace_id: string
-  workspace_name: string
-  workspace_slug: string
-  workspace_logo_path: string | null
-  membership_status: 'active' | 'invited' | 'suspended'
-  workspace_role_id: string
-  role_code: string
-  role_name: string
-  hierarchy_rank: number
-  base_role: 'owner' | 'admin' | 'manager' | 'staff' | 'viewer'
-  is_owner_role: boolean
-  permission_codes: string[]
-}
+export type WorkspaceAccess = GetMyWorkspaceAccessResult[number]
 
 export async function getMyWorkspaceAccess(): Promise<WorkspaceAccess[]> {
   await requireAuthenticatedUser()
@@ -28,7 +16,7 @@ export async function getMyWorkspaceAccess(): Promise<WorkspaceAccess[]> {
   const { data, error } = await supabase.rpc('get_my_workspace_access')
 
   if (error) throw new Error(`Unable to resolve workspace access: ${error.message}`)
-  return (data ?? []) as WorkspaceAccess[]
+  return data ?? []
 }
 
 export async function getActiveWorkspace(): Promise<WorkspaceAccess | null> {

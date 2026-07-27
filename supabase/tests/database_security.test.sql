@@ -242,7 +242,7 @@ begin
   values (
     '20000000-0000-0000-0000-000000000001',
     'Allocation Constraint Test',
-    'active',
+    'draft',
     current_date,
     current_date + 30,
     '10000000-0000-0000-0000-000000000001',
@@ -254,6 +254,7 @@ begin
     workspace_id,
     business_plan_id,
     title,
+    unlinked_goal_context,
     status,
     owner_id,
     created_by
@@ -262,7 +263,8 @@ begin
     '20000000-0000-0000-0000-000000000001',
     plan_id,
     'Allocation Initiative Test',
-    'active',
+    'Supports allocation-integrity tests without a goal relationship.',
+    'planned',
     '10000000-0000-0000-0000-000000000001',
     '10000000-0000-0000-0000-000000000001'
   )
@@ -538,7 +540,7 @@ begin
   values (
     '20000000-0000-0000-0000-000000000001',
     'Cross Plan Integrity Test',
-    'active',
+    'draft',
     current_date,
     current_date + 30,
     '10000000-0000-0000-0000-000000000001',
@@ -558,7 +560,7 @@ begin
     '20000000-0000-0000-0000-000000000001',
     second_plan_id,
     'Second Plan Goal',
-    'active',
+    'draft',
     '10000000-0000-0000-0000-000000000001',
     '10000000-0000-0000-0000-000000000001'
   )
@@ -579,7 +581,7 @@ begin
       first_plan_id,
       second_plan_goal_id,
       'Invalid Cross Plan Initiative',
-      'active',
+      'planned',
       '10000000-0000-0000-0000-000000000001',
       '10000000-0000-0000-0000-000000000001'
     );

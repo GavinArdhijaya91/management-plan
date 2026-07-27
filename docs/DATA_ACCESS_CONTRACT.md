@@ -20,6 +20,12 @@ the same object.
    `workspace_members.role` is only a synchronized compatibility tier.
 8. Snapshot, achievement, invitation lifecycle, membership lifecycle, and
    notification-event writes must use their RPCs.
+9. `plan.read` is necessary but not sufficient for a restricted business plan.
+   Every plan-derived query must also pass the canonical plan-visibility
+   helper; a role or member visibility grant never adds mutation permission.
+10. Planning lifecycle fields are RPC-only. Clients may edit content directly
+    when RLS permits it, but must never update `status`, archive metadata,
+    blocked metadata, completion metadata, or reopening metadata themselves.
 
 ## Preferred application sources
 
@@ -30,7 +36,8 @@ the same object.
 | Workspace settings | `workspaces` | permitted update | One private business boundary. |
 | Member and role display | `get_workspace_member_directory` | membership RPCs | Safe identity fields only; do not infer access from `base_role`. |
 | Invitation management | `workspace_invitation_access` | invitation RPCs | Invitation role activation is `workspace_role_id`. |
-| Plans and execution | canonical planning tables | permitted table writes | Goal is an outcome; initiative is a strategy; action item is work. |
+| Plans and execution | canonical planning tables | lifecycle RPCs plus permitted content writes | Goal is an outcome; initiative is a strategy; action item is work. |
+| Restricted planning | plan hierarchy under `business_plans` | owner-managed role/member grants | Child records inherit plan visibility; managers have no implicit bypass. |
 | Review preparation | `business_reviews` and snapshot tables | review RPCs | Finalized evidence is immutable. |
 | Transaction editing | `transactions` | permitted table writes | Amount is unsigned; type supplies financial direction. |
 | Transaction result | `transaction_financial_results` | read-only | `net_result` is calculated consistently by the database. |
@@ -71,6 +78,8 @@ database row. Do not cast it to one.
 - Role, member, and invitation lifecycle
 - Invitation email-delivery lifecycle
 - Business-review snapshot refresh and finalization
+- Business-plan, goal, initiative, and action-item lifecycle transitions
+- Goal, initiative, and action-item archive and restore operations
 - Reminder generation and notification read actions
 - Safe workspace member directory reads
 

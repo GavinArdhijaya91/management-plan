@@ -223,7 +223,7 @@ begin
   values (
     target_workspace_id,
     'Idempotent Review Plan',
-    'active',
+    'draft',
     current_date,
     current_date + 30,
     '99000000-0000-0000-0000-000000000002',

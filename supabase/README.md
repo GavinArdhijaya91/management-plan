@@ -329,3 +329,43 @@ to retry and never deletes audit logs or business-domain history.
 
 Scheduling, backup retention, restore drills, and incident boundaries are
 documented in [Database Operations](../docs/DATABASE_OPERATIONS.md).
+
+## Planning visibility and granular permissions
+
+Planning authorization separates workspace permission from record visibility.
+`workspace` plans require `plan.read`; `restricted` plans additionally require
+an owner, role grant, or member grant. Grants never add write permission, and a
+suspended member remains denied.
+
+Planning writes use granular permissions for plans, goals, metrics,
+initiatives, assigned actions, all actions, and review finalization.
+`plan.write` remains only as a compatibility marker for older custom roles and
+is not used by new Planning RLS policies.
+
+## Planning lifecycle
+
+Planning records always enter through one initial state: `draft` for plans and
+goals, `planned` for initiatives, and `todo` for action items. Clients edit
+ordinary content through RLS but move lifecycle state only through:
+
+- `transition_business_plan`
+- `transition_business_goal`
+- `transition_business_initiative`
+- `transition_action_item`
+- `set_planning_record_archived`
+
+Plan activation requires at least one non-archived goal. Missed goals require a
+reason and a replacement target date when reopened. Blocked actions require a
+reason, while cancellation requires a reason and cannot leave unresolved
+actions underneath an initiative. An assignee and due date are mandatory for
+every action item.
+
+The archive operation is recoverable. Restoring a goal, initiative, or action
+returns it to `draft`, `planned`, or `todo`; audit metadata records who archived
+or reopened it. Permanent deletion and finalized-evidence protection belong to
+later lifecycle stages and are intentionally not inferred by these RPCs.
+
+`supabase/tests/planning_lifecycle.test.sql` is the executable transition
+contract. It guards activation prerequisites, transition edges, required
+reasons, unresolved-action cancellation, direct-status-write denial, and
+archive restoration.

@@ -95,49 +95,70 @@ export type Database = {
       }
       action_items: {
         Row: {
-          assignee_id: string | null
+          archived_at: string | null
+          archived_by: string | null
+          assignee_id: string
+          blocked_at: string | null
+          blocked_reason: string | null
           business_initiative_id: string
           completed_at: string | null
           created_at: string
           created_by: string
           description: string | null
-          due_on: string | null
+          due_on: string
           id: string
           priority: number
+          reopened_at: string | null
+          reopened_by: string | null
           starts_on: string | null
           status: Database["public"]["Enums"]["action_item_status"]
+          status_reason: string | null
           title: string
           updated_at: string
           workspace_id: string
         }
         Insert: {
-          assignee_id?: string | null
+          archived_at?: string | null
+          archived_by?: string | null
+          assignee_id: string
+          blocked_at?: string | null
+          blocked_reason?: string | null
           business_initiative_id: string
           completed_at?: string | null
           created_at?: string
           created_by: string
           description?: string | null
-          due_on?: string | null
+          due_on: string
           id?: string
           priority?: number
+          reopened_at?: string | null
+          reopened_by?: string | null
           starts_on?: string | null
           status?: Database["public"]["Enums"]["action_item_status"]
+          status_reason?: string | null
           title: string
           updated_at?: string
           workspace_id: string
         }
         Update: {
-          assignee_id?: string | null
+          archived_at?: string | null
+          archived_by?: string | null
+          assignee_id?: string
+          blocked_at?: string | null
+          blocked_reason?: string | null
           business_initiative_id?: string
           completed_at?: string | null
           created_at?: string
           created_by?: string
           description?: string | null
-          due_on?: string | null
+          due_on?: string
           id?: string
           priority?: number
+          reopened_at?: string | null
+          reopened_by?: string | null
           starts_on?: string | null
           status?: Database["public"]["Enums"]["action_item_status"]
+          status_reason?: string | null
           title?: string
           updated_at?: string
           workspace_id?: string
@@ -240,6 +261,8 @@ export type Database = {
       }
       business_goals: {
         Row: {
+          archived_at: string | null
+          archived_by: string | null
           business_plan_id: string
           created_at: string
           created_by: string
@@ -247,12 +270,15 @@ export type Database = {
           id: string
           owner_id: string | null
           status: Database["public"]["Enums"]["business_goal_status"]
+          status_reason: string | null
           target_date: string | null
           title: string
           updated_at: string
           workspace_id: string
         }
         Insert: {
+          archived_at?: string | null
+          archived_by?: string | null
           business_plan_id: string
           created_at?: string
           created_by: string
@@ -260,12 +286,15 @@ export type Database = {
           id?: string
           owner_id?: string | null
           status?: Database["public"]["Enums"]["business_goal_status"]
+          status_reason?: string | null
           target_date?: string | null
           title: string
           updated_at?: string
           workspace_id: string
         }
         Update: {
+          archived_at?: string | null
+          archived_by?: string | null
           business_plan_id?: string
           created_at?: string
           created_by?: string
@@ -273,6 +302,7 @@ export type Database = {
           id?: string
           owner_id?: string | null
           status?: Database["public"]["Enums"]["business_goal_status"]
+          status_reason?: string | null
           target_date?: string | null
           title?: string
           updated_at?: string
@@ -311,6 +341,8 @@ export type Database = {
       }
       business_initiatives: {
         Row: {
+          archived_at: string | null
+          archived_by: string | null
           budget_amount: number | null
           business_goal_id: string | null
           business_plan_id: string
@@ -322,11 +354,15 @@ export type Database = {
           owner_id: string | null
           starts_on: string | null
           status: Database["public"]["Enums"]["business_initiative_status"]
+          status_reason: string | null
           title: string
+          unlinked_goal_context: string | null
           updated_at: string
           workspace_id: string
         }
         Insert: {
+          archived_at?: string | null
+          archived_by?: string | null
           budget_amount?: number | null
           business_goal_id?: string | null
           business_plan_id: string
@@ -338,11 +374,15 @@ export type Database = {
           owner_id?: string | null
           starts_on?: string | null
           status?: Database["public"]["Enums"]["business_initiative_status"]
+          status_reason?: string | null
           title: string
+          unlinked_goal_context?: string | null
           updated_at?: string
           workspace_id: string
         }
         Update: {
+          archived_at?: string | null
+          archived_by?: string | null
           budget_amount?: number | null
           business_goal_id?: string | null
           business_plan_id?: string
@@ -354,7 +394,9 @@ export type Database = {
           owner_id?: string | null
           starts_on?: string | null
           status?: Database["public"]["Enums"]["business_initiative_status"]
+          status_reason?: string | null
           title?: string
+          unlinked_goal_context?: string | null
           updated_at?: string
           workspace_id?: string
         }
@@ -507,8 +549,109 @@ export type Database = {
           },
         ]
       }
+      business_plan_member_grants: {
+        Row: {
+          business_plan_id: string
+          granted_at: string
+          granted_by: string | null
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          business_plan_id: string
+          granted_at?: string
+          granted_by?: string | null
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          business_plan_id?: string
+          granted_at?: string
+          granted_by?: string | null
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_plan_member_grants_workspace_id_business_plan_id_fkey"
+            columns: ["workspace_id", "business_plan_id"]
+            isOneToOne: false
+            referencedRelation: "business_plans"
+            referencedColumns: ["workspace_id", "id"]
+          },
+          {
+            foreignKeyName: "business_plan_member_grants_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "business_plan_member_grants_workspace_id_user_id_fkey"
+            columns: ["workspace_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "workspace_member_access"
+            referencedColumns: ["workspace_id", "user_id"]
+          },
+          {
+            foreignKeyName: "business_plan_member_grants_workspace_id_user_id_fkey"
+            columns: ["workspace_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "workspace_members"
+            referencedColumns: ["workspace_id", "user_id"]
+          },
+        ]
+      }
+      business_plan_role_grants: {
+        Row: {
+          business_plan_id: string
+          granted_at: string
+          granted_by: string | null
+          workspace_id: string
+          workspace_role_id: string
+        }
+        Insert: {
+          business_plan_id: string
+          granted_at?: string
+          granted_by?: string | null
+          workspace_id: string
+          workspace_role_id: string
+        }
+        Update: {
+          business_plan_id?: string
+          granted_at?: string
+          granted_by?: string | null
+          workspace_id?: string
+          workspace_role_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_plan_role_grants_workspace_id_business_plan_id_fkey"
+            columns: ["workspace_id", "business_plan_id"]
+            isOneToOne: false
+            referencedRelation: "business_plans"
+            referencedColumns: ["workspace_id", "id"]
+          },
+          {
+            foreignKeyName: "business_plan_role_grants_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "business_plan_role_grants_workspace_id_workspace_role_id_fkey"
+            columns: ["workspace_id", "workspace_role_id"]
+            isOneToOne: false
+            referencedRelation: "workspace_roles"
+            referencedColumns: ["workspace_id", "id"]
+          },
+        ]
+      }
       business_plans: {
         Row: {
+          archived_at: string | null
+          archived_by: string | null
           created_at: string
           created_by: string
           description: string | null
@@ -517,11 +660,15 @@ export type Database = {
           owner_id: string | null
           starts_on: string
           status: Database["public"]["Enums"]["business_plan_status"]
+          status_reason: string | null
           title: string
           updated_at: string
+          visibility: Database["public"]["Enums"]["business_plan_visibility"]
           workspace_id: string
         }
         Insert: {
+          archived_at?: string | null
+          archived_by?: string | null
           created_at?: string
           created_by: string
           description?: string | null
@@ -530,11 +677,15 @@ export type Database = {
           owner_id?: string | null
           starts_on: string
           status?: Database["public"]["Enums"]["business_plan_status"]
+          status_reason?: string | null
           title: string
           updated_at?: string
+          visibility?: Database["public"]["Enums"]["business_plan_visibility"]
           workspace_id: string
         }
         Update: {
+          archived_at?: string | null
+          archived_by?: string | null
           created_at?: string
           created_by?: string
           description?: string | null
@@ -543,8 +694,10 @@ export type Database = {
           owner_id?: string | null
           starts_on?: string
           status?: Database["public"]["Enums"]["business_plan_status"]
+          status_reason?: string | null
           title?: string
           updated_at?: string
+          visibility?: Database["public"]["Enums"]["business_plan_visibility"]
           workspace_id?: string
         }
         Relationships: [
@@ -3053,6 +3206,14 @@ export type Database = {
           expired_invitations: number
         }[]
       }
+      set_planning_record_archived: {
+        Args: {
+          should_archive: boolean
+          target_record_id: string
+          target_record_type: Database["public"]["Enums"]["planning_record_type"]
+        }
+        Returns: undefined
+      }
       set_workspace_member_status: {
         Args: {
           target_status: Database["public"]["Enums"]["membership_status"]
@@ -3067,6 +3228,39 @@ export type Database = {
           previous_owner_workspace_role_id?: string
           request_idempotency_key?: string
           target_workspace_id: string
+        }
+        Returns: undefined
+      }
+      transition_action_item: {
+        Args: {
+          target_action_item_id: string
+          target_status: Database["public"]["Enums"]["action_item_status"]
+          transition_reason?: string
+        }
+        Returns: undefined
+      }
+      transition_business_goal: {
+        Args: {
+          replacement_target_date?: string
+          target_business_goal_id: string
+          target_status: Database["public"]["Enums"]["business_goal_status"]
+          transition_reason?: string
+        }
+        Returns: undefined
+      }
+      transition_business_initiative: {
+        Args: {
+          target_business_initiative_id: string
+          target_status: Database["public"]["Enums"]["business_initiative_status"]
+          transition_reason?: string
+        }
+        Returns: undefined
+      }
+      transition_business_plan: {
+        Args: {
+          target_business_plan_id: string
+          target_status: Database["public"]["Enums"]["business_plan_status"]
+          transition_reason?: string
         }
         Returns: undefined
       }
@@ -3088,7 +3282,12 @@ export type Database = {
         | "blocked"
         | "completed"
         | "cancelled"
-      business_goal_status: "draft" | "active" | "achieved" | "cancelled"
+      business_goal_status:
+        | "draft"
+        | "active"
+        | "achieved"
+        | "cancelled"
+        | "missed"
       business_initiative_status:
         | "planned"
         | "active"
@@ -3105,7 +3304,13 @@ export type Database = {
         | "customs_broker"
         | "agent"
       business_partner_status: "active" | "inactive" | "archived"
-      business_plan_status: "draft" | "active" | "completed" | "archived"
+      business_plan_status:
+        | "draft"
+        | "active"
+        | "completed"
+        | "archived"
+        | "cancelled"
+      business_plan_visibility: "workspace" | "restricted"
       business_portfolio_status: "draft" | "active" | "archived"
       business_review_period:
         | "weekly"
@@ -3148,6 +3353,10 @@ export type Database = {
         | "count"
       metric_unit_type: "number" | "currency" | "percentage"
       notification_type: "stock" | "target" | "schedule" | "system"
+      planning_record_type:
+        | "business_goal"
+        | "business_initiative"
+        | "action_item"
       profile_theme: "system" | "light" | "dark"
       transaction_type: "sale" | "expense"
       workspace_role: "owner" | "manager" | "member" | "viewer"
@@ -3285,7 +3494,13 @@ export const Constants = {
         "completed",
         "cancelled",
       ],
-      business_goal_status: ["draft", "active", "achieved", "cancelled"],
+      business_goal_status: [
+        "draft",
+        "active",
+        "achieved",
+        "cancelled",
+        "missed",
+      ],
       business_initiative_status: [
         "planned",
         "active",
@@ -3304,7 +3519,14 @@ export const Constants = {
         "agent",
       ],
       business_partner_status: ["active", "inactive", "archived"],
-      business_plan_status: ["draft", "active", "completed", "archived"],
+      business_plan_status: [
+        "draft",
+        "active",
+        "completed",
+        "archived",
+        "cancelled",
+      ],
+      business_plan_visibility: ["workspace", "restricted"],
       business_portfolio_status: ["draft", "active", "archived"],
       business_review_period: [
         "weekly",
@@ -3352,6 +3574,11 @@ export const Constants = {
       ],
       metric_unit_type: ["number", "currency", "percentage"],
       notification_type: ["stock", "target", "schedule", "system"],
+      planning_record_type: [
+        "business_goal",
+        "business_initiative",
+        "action_item",
+      ],
       profile_theme: ["system", "light", "dark"],
       transaction_type: ["sale", "expense"],
       workspace_role: ["owner", "manager", "member", "viewer"],
