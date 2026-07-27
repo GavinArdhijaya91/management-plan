@@ -259,16 +259,13 @@ declare
   blocked boolean := false;
 begin
   begin
-    delete from public.workspace_members
-    where workspace_id = '20000000-0000-0000-0000-000000000001'
-      and user_id = '10000000-0000-0000-0000-000000000001';
-
-    set constraints workspace_members_require_owner immediate;
+    perform public.remove_workspace_member(
+      '20000000-0000-0000-0000-000000000001',
+      '10000000-0000-0000-0000-000000000001'
+    );
   exception
     when check_violation then blocked := true;
   end;
-
-  set constraints workspace_members_require_owner deferred;
 
   if not blocked then
     raise exception 'The final active workspace owner could be removed';

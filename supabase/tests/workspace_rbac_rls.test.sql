@@ -116,14 +116,18 @@ begin
   if (select count(*) from public.transactions) <> 1 then
     raise exception 'Manager transaction visibility crossed workspace boundaries';
   end if;
-  if not private.has_workspace_permission(
-    '92000000-0000-0000-0000-000000000001', 'transaction.delete'
-  ) then
+  if not coalesce((
+    select 'transaction.delete' = any(permission_codes)
+    from public.get_my_workspace_access()
+    where workspace_id = '92000000-0000-0000-0000-000000000001'
+  ), false) then
     raise exception 'Default manager lost transaction.delete';
   end if;
-  if private.has_workspace_permission(
-    '92000000-0000-0000-0000-000000000001', 'workspace.delete'
-  ) then
+  if coalesce((
+    select 'workspace.delete' = any(permission_codes)
+    from public.get_my_workspace_access()
+    where workspace_id = '92000000-0000-0000-0000-000000000001'
+  ), false) then
     raise exception 'Manager unexpectedly received workspace.delete';
   end if;
 
@@ -252,9 +256,11 @@ begin
   if (select count(*) from public.transactions) <> 2 then
     raise exception 'Custom transaction auditor cannot use transaction.read';
   end if;
-  if private.has_workspace_permission(
-    '92000000-0000-0000-0000-000000000001', 'transaction.write'
-  ) then
+  if coalesce((
+    select 'transaction.write' = any(permission_codes)
+    from public.get_my_workspace_access()
+    where workspace_id = '92000000-0000-0000-0000-000000000001'
+  ), false) then
     raise exception 'Custom transaction auditor inherited write from base_role';
   end if;
   if (
@@ -324,13 +330,18 @@ begin
   if (select count(*) from public.workspaces) <> 1 then
     raise exception 'Owner can read another owner workspace';
   end if;
-  if not private.has_workspace_permission(
-    '92000000-0000-0000-0000-000000000001', 'workspace.delete'
-  ) then
+  if not coalesce((
+    select 'workspace.delete' = any(permission_codes)
+    from public.get_my_workspace_access()
+    where workspace_id = '92000000-0000-0000-0000-000000000001'
+  ), false) then
     raise exception 'Owner no longer receives immutable full access';
   end if;
-  if private.has_workspace_permission(
-    '92000000-0000-0000-0000-000000000002', 'workspace.read'
+  if exists (
+    select 1
+    from public.get_my_workspace_access()
+    where workspace_id = '92000000-0000-0000-0000-000000000002'
+      and 'workspace.read' = any(permission_codes)
   ) then
     raise exception 'Owner permission leaked into another workspace';
   end if;

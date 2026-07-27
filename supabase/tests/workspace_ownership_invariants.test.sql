@@ -34,6 +34,18 @@ values
   ('98000000-0000-0000-0000-000000000001', '97000000-0000-0000-0000-000000000004', 'member', 'suspended'),
   ('98000000-0000-0000-0000-000000000002', '97000000-0000-0000-0000-000000000006', 'owner', 'active');
 
+create temporary table ownership_test_context (
+  foreign_fallback_role_id uuid not null
+) on commit drop;
+
+insert into ownership_test_context (foreign_fallback_role_id)
+select id
+from public.workspace_roles
+where workspace_id = '98000000-0000-0000-0000-000000000002'
+  and code = 'manager';
+
+grant select on ownership_test_context to authenticated;
+
 set local role authenticated;
 select set_config(
   'request.jwt.claims',
@@ -127,11 +139,7 @@ begin
     perform public.transfer_workspace_ownership(
       '98000000-0000-0000-0000-000000000001',
       '97000000-0000-0000-0000-000000000003',
-      (
-        select id from public.workspace_roles
-        where workspace_id = '98000000-0000-0000-0000-000000000002'
-          and code = 'manager'
-      )
+      (select foreign_fallback_role_id from ownership_test_context)
     );
   exception
     when foreign_key_violation then foreign_fallback_blocked := true;
@@ -324,10 +332,11 @@ do $$
 declare
   blocked boolean := false;
 begin
-  if private.has_workspace_permission(
-    '98000000-0000-0000-0000-000000000001',
-    'workspace.delete'
-  ) then
+  if coalesce((
+    select 'workspace.delete' = any(permission_codes)
+    from public.get_my_workspace_access()
+    where workspace_id = '98000000-0000-0000-0000-000000000001'
+  ), false) then
     raise exception 'Former owner retained owner-only permission';
   end if;
 
@@ -353,10 +362,11 @@ select set_config(
 
 do $$
 begin
-  if not private.has_workspace_permission(
-    '98000000-0000-0000-0000-000000000001',
-    'workspace.delete'
-  ) then
+  if not coalesce((
+    select 'workspace.delete' = any(permission_codes)
+    from public.get_my_workspace_access()
+    where workspace_id = '98000000-0000-0000-0000-000000000001'
+  ), false) then
     raise exception 'Successor did not receive owner-only permission';
   end if;
 end;

@@ -282,7 +282,7 @@ begin
     raise exception 'Accepted invitation retry duplicated membership';
   end if;
 
-  select set_config(
+  perform set_config(
     'request.jwt.claims',
     '{"sub":"95000000-0000-0000-0000-000000000001","role":"authenticated","email":"inviter@siapin.test"}',
     true
