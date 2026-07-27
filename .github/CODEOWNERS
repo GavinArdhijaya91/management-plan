@@ -1,0 +1,13 @@
+# Default ownership keeps every contribution visible to the maintainer.
+* @GavinArdhijaya91
+
+# Security-sensitive boundaries.
+/.github/ @GavinArdhijaya91
+/app/auth/ @GavinArdhijaya91
+/lib/auth/ @GavinArdhijaya91
+/lib/supabase/ @GavinArdhijaya91
+/proxy.ts @GavinArdhijaya91
+/supabase/config.toml @GavinArdhijaya91
+/supabase/migrations/ @GavinArdhijaya91
+/supabase/tests/ @GavinArdhijaya91
+/SECURITY.md @GavinArdhijaya91

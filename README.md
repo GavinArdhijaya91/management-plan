@@ -394,6 +394,14 @@ GitHub Actions runs two read-only workflows for pushes to `main` and pull reques
 
 Deployment is intentionally excluded. Continuous delivery will be introduced only after the production environment and release policy are defined.
 
+## Security
+
+Report suspected vulnerabilities through
+[GitHub private vulnerability reporting](./SECURITY.md), not through public
+issues or discussions. Database and authorization changes must preserve the
+security contracts documented in
+[`docs/DATABASE_SECURITY_HARDENING.md`](./docs/DATABASE_SECURITY_HARDENING.md).
+
 ## Development status
 
 Authentication, cookie session refresh, private-route protection, workspace
