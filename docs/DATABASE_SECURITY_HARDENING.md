@@ -160,8 +160,13 @@ configured and the challenge token is passed to Supabase Auth.
 
 - Production dependencies must pass `pnpm security:audit`; the CI quality job
   fails on every known production advisory, including low severity.
+- CodeQL scans JavaScript and TypeScript on pull requests, pushes to `main`,
+  and a weekly schedule using the extended security query suite.
 - GitHub Actions are pinned to reviewed full commit SHAs. Version comments keep
   Dependabot updates understandable without trusting a mutable tag at runtime.
+- Automated contracts reject mutable action references, privileged
+  `pull_request_target` workflows, broad repository write access, and OIDC
+  token issuance.
 - Dependabot monitors both pnpm dependencies and GitHub Actions every week.
 - Runtime tooling that is not imported by the application must not remain in
   `dependencies`; unused CLIs are removed rather than shipped.
