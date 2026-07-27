@@ -1,20 +1,11 @@
 import { type NextRequest, NextResponse } from 'next/server'
+import { isProtectedPath } from '@/lib/auth/routes'
 import { refreshAuthSession } from '@/lib/supabase/proxy'
 
-const protectedPrefixes = [
-  '/dashboard',
-  '/kalender',
-  '/manajemen',
-  '/notifikasi',
-  '/profil',
-  '/tren-pasar',
-  '/workspace',
-]
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
-  const isProtected = protectedPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
 
-  if (!isProtected) return NextResponse.next()
+  if (!isProtectedPath(pathname)) return NextResponse.next()
 
   const { response, user } = await refreshAuthSession(request)
   if (!user) {

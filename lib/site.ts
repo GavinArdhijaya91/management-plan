@@ -24,7 +24,9 @@ export function getSiteUrl() {
   if (!configuredUrl) return new URL(fallbackSiteUrl)
 
   try {
-    return new URL(configuredUrl)
+    const url = new URL(configuredUrl)
+    if (!['http:', 'https:'].includes(url.protocol)) return new URL(fallbackSiteUrl)
+    return new URL(url.origin)
   } catch {
     return new URL(fallbackSiteUrl)
   }

@@ -1,6 +1,7 @@
 import 'server-only'
 
 import { redirect } from 'next/navigation'
+import { getSafeInternalPath } from '@/lib/auth/redirect'
 import { createClient } from '@/lib/supabase/server'
 
 export async function getAuthenticatedUser() {
@@ -17,7 +18,7 @@ export async function requireAuthenticatedUser(nextPath?: string) {
   const user = await getAuthenticatedUser()
 
   if (!user) {
-    const search = nextPath ? `?next=${encodeURIComponent(nextPath)}` : ''
+    const search = nextPath ? `?next=${encodeURIComponent(getSafeInternalPath(nextPath))}` : ''
     redirect(`/auth/login${search}`)
   }
 

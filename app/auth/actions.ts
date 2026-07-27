@@ -1,10 +1,12 @@
 'use server'
 
-import { headers } from 'next/headers'
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { getSafeInternalPath } from '@/lib/auth/redirect'
+import { getSiteUrl } from '@/lib/site'
 import { createClient } from '@/lib/supabase/server'
+import { activeWorkspaceCookie } from '@/lib/workspace/context'
 
 const credentialsSchema = z.object({
   email: z.email().max(254),
@@ -42,15 +44,13 @@ export async function signUp(formData: FormData) {
 
   if (!parsed.success) redirect(authErrorPath('/auth/sign-up', 'Periksa kembali nama, email, dan kata sandi.'))
 
-  const requestHeaders = await headers()
-  const origin = requestHeaders.get('origin')
   const supabase = await createClient()
   const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
       data: { full_name: parsed.data.fullName },
-      emailRedirectTo: origin ? `${origin}/auth/callback?next=/workspace/select` : undefined,
+      emailRedirectTo: new URL('/auth/callback?next=/workspace/select', getSiteUrl()).toString(),
     },
   })
 
@@ -61,5 +61,7 @@ export async function signUp(formData: FormData) {
 export async function logout() {
   const supabase = await createClient()
   await supabase.auth.signOut()
+  const cookieStore = await cookies()
+  cookieStore.delete(activeWorkspaceCookie)
   redirect('/')
 }

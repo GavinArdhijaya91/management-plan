@@ -76,6 +76,21 @@ does not authorize reads, writes, lifecycle RPCs, directory access, invitation
 creation, membership administration, or audit access in another tenant. It
 also verifies that actor-owned columns cannot be forged during direct writes.
 
+## Authentication and session boundary
+
+- Supabase `getUser()` is authoritative; cookies are never treated as verified
+  identity by application code.
+- Confirmation callbacks use the configured canonical site origin, never a
+  request `Origin` or `Host` value.
+- Post-authentication redirects accept application-page paths only. External,
+  protocol-relative, backslash, control-character, `/auth`, `/api`, and
+  framework-internal destinations are rejected.
+- Every private top-level route is registered in the centralized session route
+  classifier and still applies its server-side workspace boundary.
+- The active-workspace cookie is an HTTP-only selection hint. Membership is
+  reloaded from the database, suspended access is rejected, and logout removes
+  the hint to prevent cross-account session confusion.
+
 ## Phase definition of done
 
 - Threats and trust boundaries are updated when a new asset or actor appears.
