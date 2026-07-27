@@ -111,6 +111,8 @@ leaked-password protection when the selected plan supports it. CAPTCHA remains
 a separate deployment integration because it requires a provider choice and
 server-side secrets; it must not be represented as active until those keys are
 configured and the challenge token is passed to Supabase Auth.
+The read-only `pnpm security:hosted` gate verifies required Management API
+settings without printing the access token or raw hosted configuration.
 
 ## HTTP and API boundary
 

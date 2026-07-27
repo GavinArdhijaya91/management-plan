@@ -12,6 +12,7 @@
     "start": "next start",
     "lint": "eslint .",
     "security:audit": "pnpm audit --prod --audit-level low",
+    "security:hosted": "node scripts/check-hosted-auth-security.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "images:optimize": "node scripts/optimize-images.mjs public",
