@@ -14,7 +14,13 @@ export default async function SignUpPage({ searchParams }: { searchParams: Promi
       <form action={signUp} className="space-y-5">
         <AuthField label="Nama lengkap" name="fullName" minLength={2} autoComplete="name" />
         <AuthField label="Email" name="email" type="email" autoComplete="email" />
-        <AuthField label="Kata sandi" name="password" type="password" minLength={8} autoComplete="new-password" />
+        <AuthField
+          label="Kata sandi (minimal 10 karakter, huruf besar/kecil, angka, dan simbol)"
+          name="password"
+          type="password"
+          minLength={10}
+          autoComplete="new-password"
+        />
         <button className="app-button min-h-11 w-full justify-center" type="submit">
           Buat akun
         </button>

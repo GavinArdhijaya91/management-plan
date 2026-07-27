@@ -2,16 +2,11 @@
 
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { z } from 'zod'
+import { loginCredentialsSchema, signupCredentialsSchema } from '@/lib/auth/credentials'
 import { getSafeInternalPath } from '@/lib/auth/redirect'
 import { getSiteUrl } from '@/lib/site'
 import { createClient } from '@/lib/supabase/server'
 import { activeWorkspaceCookie } from '@/lib/workspace/context'
-
-const credentialsSchema = z.object({
-  email: z.email().max(254),
-  password: z.string().min(8).max(72),
-})
 
 function authErrorPath(path: string, message: string, next?: string) {
   const params = new URLSearchParams({ error: message })
@@ -20,7 +15,7 @@ function authErrorPath(path: string, message: string, next?: string) {
 }
 
 export async function login(formData: FormData) {
-  const parsed = credentialsSchema.safeParse({
+  const parsed = loginCredentialsSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
   })
@@ -36,13 +31,20 @@ export async function login(formData: FormData) {
 }
 
 export async function signUp(formData: FormData) {
-  const parsed = credentialsSchema.extend({ fullName: z.string().trim().min(2).max(100) }).safeParse({
+  const parsed = signupCredentialsSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
     fullName: formData.get('fullName'),
   })
 
-  if (!parsed.success) redirect(authErrorPath('/auth/sign-up', 'Periksa kembali nama, email, dan kata sandi.'))
+  if (!parsed.success) {
+    redirect(
+      authErrorPath(
+        '/auth/sign-up',
+        'Gunakan kata sandi 10–72 karakter dengan huruf besar, huruf kecil, angka, dan simbol.',
+      ),
+    )
+  }
 
   const supabase = await createClient()
   const { data, error } = await supabase.auth.signUp({

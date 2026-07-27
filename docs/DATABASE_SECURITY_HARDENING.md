@@ -80,6 +80,12 @@ also verifies that actor-owned columns cannot be forged during direct writes.
 
 - Supabase `getUser()` is authoritative; cookies are never treated as verified
   identity by application code.
+- Local Auth configuration explicitly enables refresh-token rotation, disables
+  anonymous sign-in, limits sign-in/sign-up and verification traffic, requires
+  email confirmation, and protects password and email changes.
+- Signup validation requires a 10–72 character password containing lowercase,
+  uppercase, numeric, and symbol characters. Login remains compatible with
+  existing accounts while the hosted password policy is rolled out.
 - Confirmation callbacks use the configured canonical site origin, never a
   request `Origin` or `Host` value.
 - Post-authentication redirects accept application-page paths only. External,
@@ -90,6 +96,15 @@ also verifies that actor-owned columns cannot be forged during direct writes.
 - The active-workspace cookie is an HTTP-only selection hint. Membership is
   reloaded from the database, suspended access is rejected, and logout removes
   the hint to prevent cross-account session confusion.
+
+The hosted Supabase project must mirror the repository baseline before a
+production release. Verify email confirmation, double-confirmed email changes,
+secure password changes, refresh-token rotation, Auth endpoint rate limits, and
+the strongest available password policy in the Supabase dashboard. Enable
+leaked-password protection when the selected plan supports it. CAPTCHA remains
+a separate deployment integration because it requires a provider choice and
+server-side secrets; it must not be represented as active until those keys are
+configured and the challenge token is passed to Supabase Auth.
 
 ## HTTP and API boundary
 
