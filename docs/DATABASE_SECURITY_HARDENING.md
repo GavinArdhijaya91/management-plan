@@ -86,6 +86,12 @@ also verifies that actor-owned columns cannot be forged during direct writes.
 - Signup validation requires a 10–72 character password containing lowercase,
   uppercase, numeric, and symbol characters. Login remains compatible with
   existing accounts while the hosted password policy is rolled out.
+- Authentication input lengths are bounded in both browser forms and
+  server-side schemas. Login and signup failures do not disclose whether an
+  email address already owns an account.
+- Auth identity provisioning independently bounds untrusted user metadata,
+  creates default preferences, grants no implicit workspace membership, and
+  keeps profile identity fields synchronized with `auth.users`.
 - Confirmation callbacks use the configured canonical site origin, never a
   request `Origin` or `Host` value.
 - Post-authentication redirects accept application-page paths only. External,

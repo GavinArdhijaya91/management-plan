@@ -22,12 +22,14 @@ export function AuthShell({
 export function AuthField({
   autoComplete,
   label,
+  maxLength,
   minLength,
   name,
   type = 'text',
 }: Readonly<{
   autoComplete: string
   label: string
+  maxLength?: number
   minLength?: number
   name: string
   type?: string
@@ -37,6 +39,7 @@ export function AuthField({
       {label}
       <input
         required
+        maxLength={maxLength}
         minLength={minLength}
         type={type}
         name={name}

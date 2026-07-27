@@ -56,7 +56,14 @@ export async function signUp(formData: FormData) {
     },
   })
 
-  if (error) redirect(authErrorPath('/auth/sign-up', 'Pendaftaran gagal. Email mungkin sudah digunakan.'))
+  if (error) {
+    redirect(
+      authErrorPath(
+        '/auth/sign-up',
+        'Pendaftaran tidak dapat diproses. Periksa data atau tunggu sebentar sebelum mencoba kembali.',
+      ),
+    )
+  }
   redirect(data.session ? '/workspace/select' : '/auth/verify-email')
 }
 
