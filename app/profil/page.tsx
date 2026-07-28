@@ -54,8 +54,8 @@ export default function ProfilePage() {
 
   return (
     <main className="app-shell">
-      <Header variant="monochrome" />
-      <div className="page-shell max-w-3xl">
+      <Header />
+      <div className="page-shell motion-page-enter max-w-3xl">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <p className="app-label mb-3">Akun &amp; ruang kerja</p>

@@ -151,8 +151,8 @@ export default async function PlanningPage({ searchParams }: PlanningPageProps) 
 
   return (
     <main className="app-shell">
-      <Header variant="monochrome" />
-      <div className="page-shell">
+      <Header />
+      <div className="page-shell motion-page-enter">
         <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="app-label">Workspace · {board.workspace.workspace_name}</p>
