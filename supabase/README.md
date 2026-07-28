@@ -234,6 +234,10 @@ action deadline, calendar occurrence, review period, or achievement.
 `profile_preferences` controls action, calendar, review, and achievement
 notifications together with a configurable reminder lead time. Call
 `generate_my_workspace_reminders` when a user opens or refreshes a workspace.
+Calendar reminders are emitted only when the recipient's active workspace role
+has `calendar.read`; the SECURITY DEFINER generator cannot bypass granular
+visibility. Client-supplied reference times are limited to the current request
+window so callers cannot pre-create future reminders.
 The same private generator can later be invoked by a trusted scheduled backend
 without changing notification semantics.
 

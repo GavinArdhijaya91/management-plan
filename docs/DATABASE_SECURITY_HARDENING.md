@@ -129,6 +129,9 @@ settings without printing the access token or raw hosted configuration.
   and reason-sensitive transitions require a specific bounded explanation.
 - Public health checks expose liveness only. They do not reveal environment,
   database configuration, timestamps, dependency versions, or secrets.
+- SECURITY DEFINER reminder generation rechecks source visibility at the
+  notification boundary. Calendar titles cannot be copied into a recipient's
+  notification unless their active role has `calendar.read`.
 - SVG image responses remain attachment-only with their own restrictive
   sandbox CSP.
 

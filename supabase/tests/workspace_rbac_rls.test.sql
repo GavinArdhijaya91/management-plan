@@ -75,6 +75,25 @@ values
   ('94000000-0000-0000-0000-000000000001', '92000000-0000-0000-0000-000000000001', '91000000-0000-0000-0000-000000000001', 'sale', 100000, current_date, 'Workspace A private transaction'),
   ('94000000-0000-0000-0000-000000000002', '92000000-0000-0000-0000-000000000002', '91000000-0000-0000-0000-000000000008', 'sale', 200000, current_date, 'Workspace B private transaction');
 
+insert into public.calendar_events (
+  id,
+  workspace_id,
+  created_by,
+  title,
+  type,
+  starts_at,
+  ends_at
+)
+values (
+  '94500000-0000-0000-0000-000000000001',
+  '92000000-0000-0000-0000-000000000001',
+  '91000000-0000-0000-0000-000000000001',
+  'Restricted calendar event',
+  'other',
+  now() + interval '1 hour',
+  now() + interval '2 hours'
+);
+
 set local role authenticated;
 
 -- Outsider: no membership means no private rows or access context.
@@ -249,6 +268,8 @@ select set_config(
 do $$
 declare
   blocked boolean := false;
+  generated_reminders integer;
+  forged_time_blocked boolean := false;
 begin
   if (select count(*) from public.transactions) <> 2 then
     raise exception 'Custom transaction auditor cannot use transaction.read';
@@ -268,6 +289,14 @@ begin
     raise exception 'Workspace context returned incorrect custom permissions';
   end if;
 
+  if exists (
+    select 1
+    from public.calendar_events
+    where id = '94500000-0000-0000-0000-000000000001'
+  ) then
+    raise exception 'Custom transaction auditor directly read a calendar event';
+  end if;
+
   begin
     insert into public.transactions (
       workspace_id, created_by, type, amount, transaction_date
@@ -284,6 +313,33 @@ begin
   end;
   if not blocked then
     raise exception 'Custom read-only role inserted a transaction';
+  end if;
+
+  generated_reminders := public.generate_my_workspace_reminders(
+    '92000000-0000-0000-0000-000000000001',
+    now()
+  );
+
+  if generated_reminders <> 0 or exists (
+    select 1
+    from public.notifications
+    where user_id = '91000000-0000-0000-0000-000000000005'
+      and source_entity_id = '94500000-0000-0000-0000-000000000001'
+  ) then
+    raise exception 'Reminder generation disclosed a restricted calendar event';
+  end if;
+
+  begin
+    perform public.generate_my_workspace_reminders(
+      '92000000-0000-0000-0000-000000000001',
+      now() + interval '1 day'
+    );
+  exception
+    when invalid_parameter_value then forged_time_blocked := true;
+  end;
+
+  if not forged_time_blocked then
+    raise exception 'Reminder generation accepted a forged reference time';
   end if;
 end;
 $$;
