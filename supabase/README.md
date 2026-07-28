@@ -384,10 +384,11 @@ every action item.
 
 The archive operation is recoverable. Restoring a goal, initiative, or action
 returns it to `draft`, `planned`, or `todo`; audit metadata records who archived
-or reopened it. Permanent deletion and finalized-evidence protection belong to
-later lifecycle stages and are intentionally not inferred by these RPCs.
+or reopened it. Archived plans, goals, initiatives, and action items cannot be
+permanently deleted until an authorized restore. The database also blocks a
+parent cascade from silently erasing archived planning evidence.
 
 `supabase/tests/planning_lifecycle.test.sql` is the executable transition
 contract. It guards activation prerequisites, transition edges, required
 reasons, unresolved-action cancellation, direct-status-write denial, and
-archive restoration.
+archive restoration and preservation.

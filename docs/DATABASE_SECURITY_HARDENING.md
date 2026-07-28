@@ -189,6 +189,8 @@ settings without printing the access token or raw hosted configuration.
 - New RPCs revoke default `PUBLIC` and `anon` execution before granting callers.
 - New views use invoker security and expose only application-safe columns.
 - Lifecycle/evidence records cannot be forged through direct table mutation.
+- Archived planning evidence cannot be permanently deleted, including through
+  a parent-record cascade, until an authorized restore.
 - A database created from all migrations and the seed passes every pgTAP file.
 - Application tests, type checking, linting, formatting, and build remain green.
 - `pnpm security:verify` passes before release; hosted Auth and database pgTAP
