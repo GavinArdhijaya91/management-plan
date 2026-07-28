@@ -36,6 +36,25 @@ modules. They must not change the meaning of the core private-business terms.
 A user may belong to multiple workspaces. Business settings, capabilities, and
 business data therefore belong to a workspace, never directly to a user.
 
+## Readability helpers
+
+Database helpers translate compact PostgreSQL syntax into names that state the
+rule being enforced. Application and migration code should use the named helper
+when the underlying expression would otherwise require a reader to decode a
+regular expression or authorization query.
+
+| Helper | Read it as | Technical meaning |
+| --- | --- | --- |
+| `private.is_valid_email_address(email)` | “Does this have a basic email address shape?” | Checks `local-part@domain.tld` without whitespace. It does not prove that the mailbox exists; Supabase Auth confirmation does that. |
+| `private.has_workspace_permission(workspace_id, permission)` | “May the current member perform this action?” | Resolves active membership, canonical workspace role, and explicit permission assignment. |
+| `private.require_workspace_owner(workspace_id)` | “Stop unless the current user owns this workspace.” | Raises an authorization error and returns the authenticated owner ID on success. |
+| `private.prevent_column_changes(...)` | “These identity columns are immutable.” | Rejects updates that alter the named tenant, creator, or record identity columns. |
+
+`uuid` is the database type for a globally unique identifier. Values such as
+`550e8400-e29b-41d4-a716-446655440000` are identifiers rather than encoded
+business data. PostgreSQL casts such as `::uuid` or `::workspace_role[]` make
+the intended type explicit; they should remain close to the database boundary.
+
 ## Business planning
 
 | Domain term | UI term | Database name | Definition |

@@ -49,12 +49,48 @@ create temporary table invitation_cases (
 
 grant select, insert, update, delete on invitation_cases to authenticated;
 
+do $$
+begin
+  if not private.is_valid_email_address('person@example.com')
+    or private.is_valid_email_address('missing-domain@example')
+    or private.is_valid_email_address('contains space@example.com')
+    or private.is_valid_email_address(null) then
+    raise exception 'Readable email validation helper returned an invalid result';
+  end if;
+end;
+$$;
+
 set local role authenticated;
 select set_config(
   'request.jwt.claims',
   '{"sub":"95000000-0000-0000-0000-000000000001","role":"authenticated","email":"inviter@siapin.test"}',
   true
 );
+
+do $$
+declare
+  invalid_email_blocked boolean := false;
+begin
+  begin
+    perform public.create_workspace_invitation(
+      '96000000-0000-0000-0000-000000000001',
+      'not-an-email',
+      (
+        select id from public.workspace_roles
+        where workspace_id = '96000000-0000-0000-0000-000000000001'
+          and code = 'member'
+      ),
+      7
+    );
+  exception
+    when invalid_parameter_value then invalid_email_blocked := true;
+  end;
+
+  if not invalid_email_blocked then
+    raise exception 'Invitation creation bypassed the named email validator';
+  end if;
+end;
+$$;
 
 insert into invitation_cases
 select 'accept', result.*
