@@ -2358,6 +2358,7 @@ export type Database = {
           expires_at: string
           id: string
           invited_by: string
+          last_resend_requested_at: string | null
           last_sent_at: string | null
           revoked_at: string | null
           role: Database["public"]["Enums"]["workspace_role"]
@@ -2379,6 +2380,7 @@ export type Database = {
           expires_at?: string
           id?: string
           invited_by: string
+          last_resend_requested_at?: string | null
           last_sent_at?: string | null
           revoked_at?: string | null
           role?: Database["public"]["Enums"]["workspace_role"]
@@ -2400,6 +2402,7 @@ export type Database = {
           expires_at?: string
           id?: string
           invited_by?: string
+          last_resend_requested_at?: string | null
           last_sent_at?: string | null
           revoked_at?: string | null
           role?: Database["public"]["Enums"]["workspace_role"]

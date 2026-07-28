@@ -142,8 +142,10 @@ provider result through service-role-only RPCs:
 - `mark_email_delivery_failed`
 
 Resending rotates the invitation token, cancels unfinished delivery records,
-and creates a new delivery. Accepting, declining, revoking, or expiring an
-invitation automatically cancels any delivery that has not completed.
+and creates a new delivery. A per-invitation 60-second cooldown rejects rapid
+resend replay before another token or delivery is created. Accepting, declining,
+revoking, or expiring an invitation automatically cancels any delivery that has
+not completed.
 
 ## Plan-to-actual links
 

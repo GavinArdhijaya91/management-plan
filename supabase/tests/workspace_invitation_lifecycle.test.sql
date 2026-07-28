@@ -499,6 +499,8 @@ from public.resend_workspace_invitation(
 );
 
 do $$
+declare
+  rapid_resend_blocked boolean := false;
 begin
   if (
     select invitation_token from resend_result
@@ -525,6 +527,28 @@ begin
       and cancelled_at is not null
   ) then
     raise exception 'Resend did not cancel the previous queued delivery';
+  end if;
+
+  if not exists (
+    select 1
+    from public.workspace_invitations
+    where id = (select invitation_id from invitation_cases where case_name = 'resend')
+      and last_resend_requested_at is not null
+  ) then
+    raise exception 'Resend did not record its abuse-control timestamp';
+  end if;
+
+  begin
+    perform public.resend_workspace_invitation(
+      (select invitation_id from invitation_cases where case_name = 'resend'),
+      14
+    );
+  exception
+    when object_not_in_prerequisite_state then rapid_resend_blocked := true;
+  end;
+
+  if not rapid_resend_blocked then
+    raise exception 'Invitation accepted a rapid resend replay';
   end if;
 end;
 $$;
