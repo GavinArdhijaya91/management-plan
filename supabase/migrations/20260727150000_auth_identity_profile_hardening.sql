@@ -1,4 +1,6 @@
 alter table public.profiles
+  drop constraint if exists profiles_full_name_check,
+  drop constraint if exists profiles_email_length_check,
   add constraint profiles_full_name_check
     check (char_length(trim(full_name)) between 2 and 100),
   add constraint profiles_email_length_check
