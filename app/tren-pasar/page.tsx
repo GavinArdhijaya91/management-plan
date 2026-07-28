@@ -69,7 +69,7 @@ export default function TrenPasarPage() {
   return (
     <main className="app-shell">
       <Header />
-      <div className="page-shell">
+      <div className="page-shell motion-page-enter">
         <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
             <p className="app-label mb-3">Simulasi keputusan</p>

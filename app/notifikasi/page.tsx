@@ -49,7 +49,7 @@ export default function NotificationsPage() {
   return (
     <main className="app-shell">
       <Header />
-      <div className="page-shell max-w-4xl">
+      <div className="page-shell motion-page-enter max-w-4xl">
         <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <p className="app-label mb-3">Pusat aktivitas</p>

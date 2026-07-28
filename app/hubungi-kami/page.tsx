@@ -57,7 +57,7 @@ export default function HubungiKamiPage() {
     <main className="app-shell">
       <Header />
 
-      <div className="mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-8">
+      <div className="motion-page-enter mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-8">
         <div className="mb-6 md:mb-8">
           <h1 className="app-heading">Hubungi kami</h1>
           <p className="mt-2 text-zinc-500">Ada pertanyaan? Tim kami siap membantu kapan saja.</p>

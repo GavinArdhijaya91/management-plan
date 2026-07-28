@@ -170,7 +170,7 @@ export function Header() {
                 <span className="absolute right-2.5 top-2.5 size-2 rounded-full border-2 border-white bg-zinc-950" />
               </button>
               {notificationOpen && (
-                <div className="absolute right-0 top-12 w-[min(20rem,calc(100vw-2rem))] rounded-2xl border border-zinc-200 bg-white p-3 shadow-xl">
+                <div className="motion-window-origin absolute right-0 top-12 w-[min(20rem,calc(100vw-2rem))] rounded-2xl border border-zinc-200 bg-white p-3 shadow-xl">
                   <p className="px-2 py-1 font-serif text-lg font-semibold">{dictionary.header.notifications}</p>
                   <Link
                     href="/notifikasi"
@@ -205,7 +205,7 @@ export function Header() {
                 <User className="size-5 text-zinc-700" />
               </button>
               {profileOpen && (
-                <div className="absolute right-0 top-12 w-56 rounded-2xl border border-zinc-200 bg-white p-2 shadow-xl">
+                <div className="motion-window-origin absolute right-0 top-12 w-56 rounded-2xl border border-zinc-200 bg-white p-2 shadow-xl">
                   <div className="border-b border-zinc-100 px-3 py-2">
                     <p className="text-sm font-semibold">Akun Siapin</p>
                     <p className="text-xs text-zinc-500">{dictionary.header.businessOwner}</p>
@@ -241,7 +241,7 @@ export function Header() {
           />
           <aside
             id="mobile-navigation"
-            className="absolute inset-y-0 left-0 flex w-[min(20rem,88vw)] flex-col bg-white p-4 shadow-2xl"
+            className="motion-window-origin-left absolute inset-y-0 left-0 flex w-[min(20rem,88vw)] flex-col bg-white p-4 shadow-2xl"
           >
             <div className="mb-5 flex min-h-14 items-center justify-between">
               <Link href="/dashboard" onClick={closeMenus} className="flex items-center gap-3 px-2">

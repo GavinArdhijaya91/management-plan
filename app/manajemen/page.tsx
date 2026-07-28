@@ -54,7 +54,7 @@ export default function ManajemenPage() {
     <main className="app-shell">
       <Header />
 
-      <div className="page-shell">
+      <div className="page-shell motion-page-enter">
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
           <div>
