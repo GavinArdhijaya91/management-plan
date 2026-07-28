@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import type { DemoTransaction } from '../../../types/business'
-import { transactionAggregate, type TransactionDraft } from './transaction-aggregate'
+import {
+  decodeStoredTransactions,
+  formatTransactionDate,
+  transactionAggregate,
+  type TransactionDraft,
+} from './transaction-aggregate'
 
 const seed: DemoTransaction[] = [
   {
@@ -96,5 +101,36 @@ describe('transactionAggregate', () => {
     expect(sorted.map((item) => item.id)).toEqual([2, 1])
     expect(page.items).toHaveLength(1)
     expect(page.pageCount).toBe(2)
+  })
+
+  it('memigrasikan transaksi localStorage dari model demo lama', () => {
+    expect(
+      decodeStoredTransactions([
+        {
+          id: 7,
+          date: '20 Jul 2026',
+          type: 'Penjualan',
+          amount: 150_000,
+          modal: 100_000,
+          profit: 50_000,
+          status: 'untung',
+        },
+      ]),
+    ).toEqual([
+      {
+        id: 7,
+        transactionDate: '2026-07-20',
+        transactionType: 'sale',
+        amount: 150_000,
+        costAmount: 100_000,
+        netResult: 50_000,
+        resultStatus: 'profit',
+      },
+    ])
+  })
+
+  it('menolak storage rusak dan tidak melempar saat format tanggal invalid', () => {
+    expect(decodeStoredTransactions([{ id: 1, transactionDate: 'invalid' }])).toBeNull()
+    expect(formatTransactionDate('invalid')).toBe('Tanggal tidak valid')
   })
 })

@@ -46,12 +46,99 @@ export const emptyTransactionDraft: TransactionDraft = {
   transactionType: 'sale',
 }
 
+const monthNumber: Record<string, string> = {
+  jan: '01',
+  feb: '02',
+  mar: '03',
+  apr: '04',
+  may: '05',
+  jun: '06',
+  jul: '07',
+  aug: '08',
+  sep: '09',
+  oct: '10',
+  nov: '11',
+  dec: '12',
+}
+
+function normalizedTransactionDate(value: unknown) {
+  if (typeof value !== 'string') return null
+
+  const isoMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+  if (isoMatch) {
+    const date = new Date(`${value}T00:00:00Z`)
+    if (
+      date.getUTCFullYear() === Number(isoMatch[1]) &&
+      date.getUTCMonth() + 1 === Number(isoMatch[2]) &&
+      date.getUTCDate() === Number(isoMatch[3])
+    ) {
+      return value
+    }
+  }
+
+  const legacyMatch = value.match(/^(\d{1,2})\s+([A-Za-z]{3})\s+(\d{4})$/)
+  if (!legacyMatch) return null
+
+  const month = monthNumber[legacyMatch[2].toLowerCase()]
+  const day = legacyMatch[1].padStart(2, '0')
+  const normalized = month ? `${legacyMatch[3]}-${month}-${day}` : null
+  return normalizedTransactionDate(normalized)
+}
+
+function finiteNumber(value: unknown) {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null
+}
+
+function decodeTransaction(value: unknown): DemoTransaction | null {
+  if (!value || typeof value !== 'object') return null
+  const record = value as Record<string, unknown>
+  const id = finiteNumber(record.id)
+  const transactionDate = normalizedTransactionDate(record.transactionDate ?? record.date)
+  const amount = finiteNumber(record.amount)
+
+  if (id === null || !transactionDate || amount === null) return null
+
+  const transactionType =
+    record.transactionType === 'sale' || record.type === 'Penjualan'
+      ? 'sale'
+      : record.transactionType === 'expense' || record.type === 'Pengeluaran'
+        ? 'expense'
+        : null
+  if (!transactionType) return null
+
+  const costAmount = transactionType === 'expense' ? 0 : finiteNumber(record.costAmount ?? record.modal)
+  const netResult = finiteNumber(record.netResult ?? record.profit)
+  if (costAmount === null || netResult === null) return null
+
+  return {
+    id,
+    transactionDate,
+    transactionType,
+    amount: Math.abs(amount),
+    costAmount: Math.abs(costAmount),
+    netResult,
+    resultStatus: netResult >= 0 ? 'profit' : 'loss',
+  }
+}
+
+export function decodeStoredTransactions(value: unknown) {
+  if (!Array.isArray(value)) return null
+
+  const decoded = value.map(decodeTransaction)
+  if (decoded.some((transaction) => transaction === null)) return null
+  return decoded as DemoTransaction[]
+}
+
 export function formatTransactionDate(transactionDate: string) {
+  const normalized = normalizedTransactionDate(transactionDate)
+  if (!normalized) return 'Tanggal tidak valid'
+
   return new Intl.DateTimeFormat('id-ID', {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
-  }).format(new Date(`${transactionDate}T00:00:00`))
+    timeZone: 'UTC',
+  }).format(new Date(`${normalized}T00:00:00Z`))
 }
 
 function transactionFromDraft(draft: TransactionDraft, id: number): DemoTransaction {
@@ -71,7 +158,8 @@ function transactionFromDraft(draft: TransactionDraft, id: number): DemoTransact
 }
 
 function dateValue(transactionDate: string) {
-  return new Date(`${transactionDate}T00:00:00`).getTime()
+  const normalized = normalizedTransactionDate(transactionDate)
+  return normalized ? new Date(`${normalized}T00:00:00Z`).getTime() : 0
 }
 
 function transactionTypeLabel(type: DemoTransaction['transactionType']) {

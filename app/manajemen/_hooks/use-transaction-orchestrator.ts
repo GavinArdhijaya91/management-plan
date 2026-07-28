@@ -2,6 +2,7 @@
 
 import { useLocalStorage } from '@/app/_lib/use-local-storage'
 import {
+  decodeStoredTransactions,
   emptyTransactionDraft,
   transactionAggregate,
   type TransactionDraft,
@@ -17,7 +18,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 const PAGE_SIZE = 20
 
 export function useTransactionOrchestrator() {
-  const [transactions, setTransactions] = useLocalStorage<DemoTransaction[]>('siapin:transactions', initialTransactions)
+  const [transactions, setTransactions] = useLocalStorage<DemoTransaction[]>(
+    'siapin:transactions',
+    initialTransactions,
+    decodeStoredTransactions,
+  )
   const [searchTerm, setSearchTermState] = useState('')
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
   const [typeFilter, setTypeFilterState] = useState<TransactionTypeFilter>('all')

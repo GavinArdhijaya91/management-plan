@@ -2,8 +2,11 @@
 
 import { DemoDataNotice } from '@/app/_components/demo-data-notice'
 import { useLocalStorage } from '@/app/_lib/use-local-storage'
-import { transactionAggregate } from '@/app/manajemen/_domain/transaction-aggregate'
-import { formatTransactionDate } from '@/app/manajemen/_domain/transaction-aggregate'
+import {
+  decodeStoredTransactions,
+  formatTransactionDate,
+  transactionAggregate,
+} from '@/app/manajemen/_domain/transaction-aggregate'
 import { Header } from '@/components/header'
 import { KPICard } from '@/components/kpi-card'
 import { SalesChart } from '@/components/sales-chart'
@@ -19,7 +22,11 @@ import { dashboardCopy } from '@/app/_i18n/pages/dashboard'
 const rupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 })
 
 export default function Dashboard() {
-  const [transactions] = useLocalStorage<DemoTransaction[]>('siapin:transactions', initialTransactions)
+  const [transactions] = useLocalStorage<DemoTransaction[]>(
+    'siapin:transactions',
+    initialTransactions,
+    decodeStoredTransactions,
+  )
   const [tasks, setTasks] = useLocalStorage<DemoBusinessTask[]>('siapin:tasks', weeklyTasks)
   const { locale } = useLanguage()
   const copy = dashboardCopy[locale]
