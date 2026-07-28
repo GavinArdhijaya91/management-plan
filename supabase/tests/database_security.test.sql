@@ -554,6 +554,8 @@ do $$
 declare
   first_generated_count integer;
   repeated_generated_count integer;
+  notification_id uuid;
+  direct_update_blocked boolean := false;
 begin
   insert into public.calendar_events (
     workspace_id,
@@ -587,6 +589,37 @@ begin
 
   if repeated_generated_count <> 0 then
     raise exception 'Reminder generation created duplicate notifications';
+  end if;
+
+  select id into notification_id
+  from public.notifications
+  where user_id = '10000000-0000-0000-0000-000000000001'
+    and event_code = 'calendar_event_upcoming'
+    and read_at is null
+  order by created_at desc
+  limit 1;
+
+  begin
+    update public.notifications
+    set read_at = now() + interval '1 day'
+    where id = notification_id;
+  exception
+    when insufficient_privilege then direct_update_blocked := true;
+  end;
+
+  if not direct_update_blocked then
+    raise exception 'Authenticated bypassed the notification-state RPC';
+  end if;
+
+  perform public.mark_notification_read(notification_id);
+
+  if not exists (
+    select 1
+    from public.notifications
+    where id = notification_id
+      and read_at is not null
+  ) then
+    raise exception 'Canonical notification read RPC did not persist state';
   end if;
 end;
 $$;

@@ -222,8 +222,25 @@ begin
     'public.notifications',
     'detail',
     'update'
+  ) or has_column_privilege(
+    'authenticated',
+    'public.notifications',
+    'read_at',
+    'update'
   ) then
     raise exception 'Authenticated can directly mutate an RPC-only lifecycle column';
+  end if;
+
+  if not has_function_privilege(
+    'authenticated',
+    'public.mark_notification_read(uuid)',
+    'execute'
+  ) or not has_function_privilege(
+    'authenticated',
+    'public.mark_all_notifications_read(uuid)',
+    'execute'
+  ) then
+    raise exception 'Authenticated lost the canonical notification-state RPC';
   end if;
 end;
 $$;
