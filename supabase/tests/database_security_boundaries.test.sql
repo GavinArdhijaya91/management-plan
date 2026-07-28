@@ -199,6 +199,14 @@ begin
     raise exception 'Authenticated received direct mutation access to evidence or infrastructure state';
   end if;
 
+  if has_table_privilege(
+    'authenticated',
+    'public.transactions',
+    'insert'
+  ) then
+    raise exception 'Authenticated can bypass idempotent transaction creation';
+  end if;
+
   if has_column_privilege(
     'authenticated',
     'public.business_plans',

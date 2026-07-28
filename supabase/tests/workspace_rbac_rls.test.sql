@@ -167,16 +167,13 @@ select set_config(
   true
 );
 
-insert into public.transactions (
-  id, workspace_id, created_by, type, amount, transaction_date, note
-)
-values (
-  '94000000-0000-0000-0000-000000000003',
+select public.create_transaction(
   '92000000-0000-0000-0000-000000000001',
-  '91000000-0000-0000-0000-000000000003',
   'expense',
   25000,
   current_date,
+  '94000000-0000-0000-0000-000000000003',
+  0,
   'Staff permitted write'
 );
 

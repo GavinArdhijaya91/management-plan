@@ -251,6 +251,9 @@ semantics:
 - `create_transaction` requires a client-generated UUID
   `request_idempotency_key`. Identical retries receive the first transaction
   ID; a different payload with the same key is rejected.
+- Authenticated clients cannot insert transaction rows directly. All creation
+  passes through `create_transaction`, preserving actor attribution, active
+  financial-account selection, and request deduplication.
 - `accept_workspace_invitation` locks the token row and returns the same
   workspace when the accepting recipient retries.
 - `transfer_workspace_ownership` locks every workspace membership. Supplying a

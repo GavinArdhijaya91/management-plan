@@ -273,20 +273,13 @@ begin
 end;
 $$;
 
-insert into public.transactions (
-  workspace_id,
-  created_by,
-  type,
-  amount,
-  transaction_date,
-  note
-)
-values (
+select public.create_transaction(
   '20000000-0000-0000-0000-000000000001',
-  '10000000-0000-0000-0000-000000000001',
   'sale',
   100000,
   current_date,
+  '2f000000-0000-0000-0000-000000000001',
+  0,
   'Audit test transaction'
 );
 
