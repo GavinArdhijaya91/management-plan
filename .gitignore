@@ -59,6 +59,7 @@ SKILL.md
 **/SKILL.md
 artifacts-builder/
 *.sh
+SKILL-research.md
 
 # Private planning, architecture, and design notes
 /docs/
