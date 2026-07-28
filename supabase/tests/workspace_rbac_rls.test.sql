@@ -186,23 +186,24 @@ select set_config(
   true
 );
 
-select public.create_transaction(
-  '92000000-0000-0000-0000-000000000001',
-  'expense',
-  25000,
-  current_date,
-  '94000000-0000-0000-0000-000000000003',
-  0,
-  'Staff permitted write'
-);
-
 do $$
 declare
   affected_rows integer;
+  created_transaction_id uuid;
 begin
+  created_transaction_id := public.create_transaction(
+    '92000000-0000-0000-0000-000000000001',
+    'expense',
+    25000,
+    current_date,
+    '94000000-0000-0000-0000-000000000003',
+    0,
+    'Staff permitted write'
+  );
+
   if not exists (
     select 1 from public.transactions
-    where id = '94000000-0000-0000-0000-000000000003'
+    where id = created_transaction_id
   ) then
     raise exception 'Staff transaction.write did not persist a visible row';
   end if;

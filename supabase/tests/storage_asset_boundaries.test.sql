@@ -158,6 +158,15 @@ begin
   from public.workspaces
   where slug = 'kedai-siapin-demo';
 
+  if exists (
+    select 1
+    from storage.objects
+    where bucket_id = 'avatars'
+      and name = 'a1000000-0000-0000-0000-000000000001/avatar.webp'
+  ) then
+    raise exception 'Manager read another identity avatar metadata';
+  end if;
+
   insert into storage.objects (bucket_id, name, owner_id)
   values (
     'workspace-logos',
