@@ -1,6 +1,8 @@
 drop policy if exists "avatars_update_own"
 on storage.objects;
 
+-- Avatar updates must preserve both authenticated ownership metadata
+-- and the identity-scoped object path.
 create policy "avatars_update_own"
 on storage.objects for update to authenticated
 using (
@@ -13,6 +15,3 @@ with check (
   and owner_id = (select auth.uid())::text
   and (storage.foldername(name))[1] = (select auth.uid())::text
 );
-
-comment on policy "avatars_update_own" on storage.objects is
-  'Avatar updates preserve both the authenticated owner metadata and identity-scoped object path.';
