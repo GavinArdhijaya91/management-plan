@@ -5,9 +5,11 @@ import { spawnSync } from 'node:child_process'
 const allowedEnvironmentFiles = new Set(['.env.example'])
 const forbiddenFileNames = [
   /(^|\/)\.env(?:\.|$)/i,
+  /(^|\/)(?:\.netrc|\.npmrc\.local|\.pgpass)$/i,
   /(^|\/)(?:id_rsa|id_ed25519)$/i,
-  /(^|\/)(?:credentials|service-account)\.json$/i,
-  /\.(?:key|p12|pfx|pem)$/i,
+  /(^|\/)(?:credentials[^/]*|service-account[^/]*)\.json$/i,
+  /\.(?:backup|db|dump|sqlite|sqlite3|sql\.gz)$/i,
+  /\.(?:jks|kdbx|key|keystore|p12|pfx|pem)$/i,
 ]
 const secretPatterns = [
   ['private key', /-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----/],
