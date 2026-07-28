@@ -32,16 +32,12 @@ select set_config(
 do $$
 declare
   primary_workspace_id uuid;
-  secondary_workspace_id uuid;
+  secondary_workspace_id uuid := 'a2000000-0000-0000-0000-000000000002';
   blocked boolean;
 begin
   select id into primary_workspace_id
   from public.workspaces
   where slug = 'kedai-siapin-demo';
-
-  select id into secondary_workspace_id
-  from public.workspaces
-  where slug = 'studio-siapin-demo';
 
   insert into storage.objects (bucket_id, name, owner_id)
   values (
