@@ -48,7 +48,7 @@ begin
     raise exception 'Business-plan lifecycle columns are not RPC-only';
   end if;
 
-  if not has_column_privilege(
+  if has_column_privilege(
     'authenticated',
     'public.notifications',
     'read_at',
@@ -59,7 +59,7 @@ begin
     'detail',
     'update'
   ) then
-    raise exception 'Notification update privileges exceeded read state';
+    raise exception 'Notification state bypassed its RPC-only boundary';
   end if;
 
   if has_table_privilege(

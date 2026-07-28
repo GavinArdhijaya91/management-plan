@@ -51,6 +51,8 @@ end;
 $$;
 
 revoke update on public.notifications from authenticated;
+drop policy if exists "notifications_update_own"
+on public.notifications;
 
 revoke all on function public.mark_notification_read(uuid)
 from public, anon, authenticated;

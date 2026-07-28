@@ -242,6 +242,16 @@ begin
   ) then
     raise exception 'Authenticated lost the canonical notification-state RPC';
   end if;
+
+  if exists (
+    select 1
+    from pg_policies
+    where schemaname = 'public'
+      and tablename = 'notifications'
+      and cmd = 'UPDATE'
+  ) then
+    raise exception 'Notifications retained a direct UPDATE policy outside the RPC boundary';
+  end if;
 end;
 $$;
 
