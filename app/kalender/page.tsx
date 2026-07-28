@@ -118,9 +118,9 @@ export default function KalenderPage() {
 
   return (
     <main className="app-shell">
-      <Header variant="monochrome" />
+      <Header />
 
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8">
+      <div className="mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-8">
         <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
             <h1 className="app-heading">Kalender &amp; pengingat</h1>

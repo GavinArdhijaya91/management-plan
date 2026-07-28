@@ -48,7 +48,7 @@ export default function NotificationsPage() {
 
   return (
     <main className="app-shell">
-      <Header variant="monochrome" />
+      <Header />
       <div className="page-shell max-w-4xl">
         <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>

@@ -68,7 +68,7 @@ export default function TrenPasarPage() {
 
   return (
     <main className="app-shell">
-      <Header variant="monochrome" />
+      <Header />
       <div className="page-shell">
         <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>

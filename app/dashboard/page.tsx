@@ -48,7 +48,7 @@ export default function Dashboard() {
 
   return (
     <main className="app-shell">
-      <Header variant="monochrome" />
+      <Header />
       <div className="page-shell">
         <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>

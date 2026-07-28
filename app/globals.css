@@ -151,7 +151,7 @@
   }
 
   .app-shell {
-    @apply min-h-screen bg-[#f7f7f5] text-zinc-950;
+    @apply min-h-screen bg-[#f7f7f5] text-zinc-950 lg:pl-72;
   }
   .app-card {
     @apply rounded-2xl border border-zinc-200/80 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.035)] transition-shadow hover:shadow-[0_8px_30px_rgba(0,0,0,0.055)];

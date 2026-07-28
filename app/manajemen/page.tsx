@@ -52,7 +52,7 @@ export default function ManajemenPage() {
 
   return (
     <main className="app-shell">
-      <Header variant="monochrome" />
+      <Header />
 
       <div className="page-shell">
         {/* Page Header */}
