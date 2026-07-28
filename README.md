@@ -2,7 +2,16 @@
 
 **Plan it first, then make it happen.**
 
-Siapin is a business management application designed to help MSME owners manage transactions, profit and loss, schedules, product trends, notifications, and workspace profiles in one place.
+Siapin is a private-first business planning workspace that connects plans,
+execution, actual results, and review. It helps owners and teams move from a
+business direction to measurable goals, coordinated initiatives, concrete
+actions, and evidence-based evaluation.
+
+The core feedback loop is:
+
+```text
+Plan -> Goal -> Initiative -> Action -> Actual result -> Review
+```
 
 ![Siapin dashboard preview](./Siapin.png)
 
