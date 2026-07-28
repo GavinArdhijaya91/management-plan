@@ -1,4 +1,4 @@
-import { readFileSync, statSync } from 'node:fs'
+import { closeSync, fstatSync, openSync, readFileSync } from 'node:fs'
 import { extname } from 'node:path'
 import { spawnSync } from 'node:child_process'
 
@@ -37,6 +37,17 @@ function trackedFiles() {
   return result.stdout.split('\0').filter(Boolean)
 }
 
+function readTrackedTextFile(fileName) {
+  const fileDescriptor = openSync(fileName, 'r')
+
+  try {
+    if (fstatSync(fileDescriptor).size > maximumScannedFileSize) return null
+    return readFileSync(fileDescriptor, 'utf8')
+  } finally {
+    closeSync(fileDescriptor)
+  }
+}
+
 const findings = []
 
 for (const fileName of trackedFiles()) {
@@ -51,9 +62,10 @@ for (const fileName of trackedFiles()) {
   }
 
   if (binaryExtensions.has(extname(normalizedName).toLowerCase())) continue
-  if (statSync(fileName).size > maximumScannedFileSize) continue
 
-  const source = readFileSync(fileName, 'utf8')
+  const source = readTrackedTextFile(fileName)
+  if (source === null) continue
+
   for (const [label, pattern] of secretPatterns) {
     if (pattern.test(source)) findings.push(`${normalizedName}: possible ${label}`)
   }
