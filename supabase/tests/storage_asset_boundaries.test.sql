@@ -52,6 +52,19 @@ begin
 
   blocked := false;
   begin
+    update storage.objects
+    set owner_id = 'a1000000-0000-0000-0000-000000000006'
+    where bucket_id = 'avatars'
+      and name = 'a1000000-0000-0000-0000-000000000001/avatar.webp';
+  exception
+    when insufficient_privilege or check_violation then blocked := true;
+  end;
+  if not blocked then
+    raise exception 'Authenticated user forged avatar object ownership during update';
+  end if;
+
+  blocked := false;
+  begin
     insert into storage.objects (bucket_id, name, owner_id)
     values (
       'avatars',

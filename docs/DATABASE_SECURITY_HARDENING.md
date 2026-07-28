@@ -143,6 +143,8 @@ settings without printing the access token or raw hosted configuration.
   are bound to the owning workspace, preventing cross-tenant asset references.
 - Avatar inserts bind both the object folder and Storage ownership metadata to
   `auth.uid()`.
+- Avatar updates preserve both identity-folder placement and `owner_id`; an
+  existing owner cannot transfer storage metadata to another user.
 - Workspace logo and branding policies preserve their distinct manager and
   owner boundaries.
 - Public delivery is intentional for display assets; anonymous upload, update,
