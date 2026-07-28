@@ -15,6 +15,11 @@ const optionalDate = z.preprocess(
   z.iso.date().optional(),
 )
 
+const transitionReason = z.preprocess(
+  (value) => (typeof value === 'string' && value.trim() ? value.trim() : undefined),
+  z.string().min(5, 'Alasan perubahan harus spesifik.').max(1000).optional(),
+)
+
 export const createPlanSchema = z
   .object({
     title: z.string().trim().min(2).max(160),
@@ -85,13 +90,46 @@ export const createActionSchema = z.object({
   dueOn: z.iso.date(),
 })
 
-export const transitionSchema = z.object({
-  recordType: z.enum(['business_plan', 'business_goal', 'business_initiative', 'action_item']),
-  recordId: databaseUuid,
-  targetStatus: z.string().min(2).max(30),
-  reason: optionalText(1000),
-  replacementTargetDate: optionalDate,
-})
+export const transitionSchema = z
+  .discriminatedUnion('recordType', [
+    z.object({
+      recordType: z.literal('business_plan'),
+      recordId: databaseUuid,
+      targetStatus: z.enum(['draft', 'active', 'completed', 'cancelled', 'archived']),
+      reason: transitionReason,
+      replacementTargetDate: optionalDate,
+    }),
+    z.object({
+      recordType: z.literal('business_goal'),
+      recordId: databaseUuid,
+      targetStatus: z.enum(['draft', 'active', 'achieved', 'missed', 'cancelled']),
+      reason: transitionReason,
+      replacementTargetDate: optionalDate,
+    }),
+    z.object({
+      recordType: z.literal('business_initiative'),
+      recordId: databaseUuid,
+      targetStatus: z.enum(['planned', 'active', 'paused', 'completed', 'cancelled']),
+      reason: transitionReason,
+      replacementTargetDate: optionalDate,
+    }),
+    z.object({
+      recordType: z.literal('action_item'),
+      recordId: databaseUuid,
+      targetStatus: z.enum(['todo', 'in_progress', 'blocked', 'completed', 'cancelled']),
+      reason: transitionReason,
+      replacementTargetDate: optionalDate,
+    }),
+  ])
+  .superRefine((input, context) => {
+    if (['blocked', 'missed', 'cancelled'].includes(input.targetStatus) && !input.reason) {
+      context.addIssue({
+        code: 'custom',
+        path: ['reason'],
+        message: 'Alasan perubahan harus spesifik.',
+      })
+    }
+  })
 
 export const archiveSchema = z.object({
   recordType: z.enum(['business_goal', 'business_initiative', 'action_item']),

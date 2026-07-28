@@ -14,12 +14,6 @@ import {
   transitionBusinessPlan,
   type PlanningMutationResult,
 } from '@/lib/planning/service'
-import type {
-  ActionItemStatus,
-  BusinessGoalStatus,
-  BusinessInitiativeStatus,
-  BusinessPlanStatus,
-} from '@/lib/supabase/domain-types'
 import {
   archiveSchema,
   createActionSchema,
@@ -160,33 +154,21 @@ export async function transitionPlanningRecordAction(formData: FormData) {
   let result: PlanningMutationResult
   switch (parsed.data.recordType) {
     case 'business_plan':
-      result = await transitionBusinessPlan(
-        parsed.data.recordId,
-        parsed.data.targetStatus as BusinessPlanStatus,
-        parsed.data.reason,
-      )
+      result = await transitionBusinessPlan(parsed.data.recordId, parsed.data.targetStatus, parsed.data.reason)
       break
     case 'business_goal':
       result = await transitionBusinessGoal(
         parsed.data.recordId,
-        parsed.data.targetStatus as BusinessGoalStatus,
+        parsed.data.targetStatus,
         parsed.data.reason,
         parsed.data.replacementTargetDate,
       )
       break
     case 'business_initiative':
-      result = await transitionBusinessInitiative(
-        parsed.data.recordId,
-        parsed.data.targetStatus as BusinessInitiativeStatus,
-        parsed.data.reason,
-      )
+      result = await transitionBusinessInitiative(parsed.data.recordId, parsed.data.targetStatus, parsed.data.reason)
       break
     case 'action_item':
-      result = await transitionActionItem(
-        parsed.data.recordId,
-        parsed.data.targetStatus as ActionItemStatus,
-        parsed.data.reason,
-      )
+      result = await transitionActionItem(parsed.data.recordId, parsed.data.targetStatus, parsed.data.reason)
       break
   }
 

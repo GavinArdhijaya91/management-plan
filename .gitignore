@@ -11,10 +11,33 @@ next-env.d.ts
 .env.*
 !.env.example
 
+# Credentials, private keys, and password vaults
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.kdbx
+credentials*.json
+service-account*.json
+.netrc
+.pgpass
+.npmrc.local
+
+# Local databases, dumps, and backups
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+*.backup
+*.sql.gz
+
 # Deployment and platform-local state
 .vercel/
 .snowflake/
 .v0-trash/
+.supabase/
 __v0_runtime_loader.js
 __v0_devtools.tsx
 __v0_jsx-dev-runtime.ts
@@ -29,6 +52,7 @@ __v0_jsx-dev-runtime.ts
 # Supabase local and linked-project state
 supabase/.temp/
 supabase/.branches/
+supabase/.cache/
 
 # Personal skills and artifact tooling
 SKILL.md
@@ -47,6 +71,7 @@ artifacts-builder/
 !/docs/DATABASE_AUDIT_2026-07-23.md
 !/docs/DATABASE_OPERATIONS.md
 !/docs/DATABASE_SECURITY_HARDENING.md
+!/docs/HOSTED_SECURITY_CONFIGURATION.md
 !/docs/ASSET_AND_SEO_GUIDE.md
 DESIGN.md
 architecture-system*.md
@@ -67,11 +92,20 @@ Thumbs.db
 Desktop.ini
 
 # Logs and temporary files
+.tmp/
+tmp/
+temp/
 *.log
 *.tmp
 *.temp
 *.bak
 *.swp
+.eslintcache
+.turbo/
+.nyc_output/
+playwright-report/
+test-results/
+blob-report/
 pnpm-debug.log*
 npm-debug.log*
 yarn-debug.log*

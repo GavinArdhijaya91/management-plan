@@ -86,6 +86,7 @@ declare
   first_transaction_id uuid;
   retried_transaction_id uuid;
   mismatch_blocked boolean := false;
+  direct_insert_blocked boolean := false;
 begin
   select id into target_workspace_id
   from public.workspaces
@@ -137,6 +138,31 @@ begin
 
   if not mismatch_blocked then
     raise exception 'Transaction idempotency key accepted a payload mismatch';
+  end if;
+
+  begin
+    insert into public.transactions (
+      workspace_id,
+      created_by,
+      type,
+      amount,
+      transaction_date,
+      note
+    )
+    values (
+      target_workspace_id,
+      '99000000-0000-0000-0000-000000000001',
+      'expense',
+      5000,
+      current_date,
+      'Direct transaction creation bypass'
+    );
+  exception
+    when insufficient_privilege then direct_insert_blocked := true;
+  end;
+
+  if not direct_insert_blocked then
+    raise exception 'Direct insert bypassed the idempotent transaction RPC';
   end if;
 end;
 $$;

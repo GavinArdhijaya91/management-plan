@@ -16,8 +16,15 @@ export default async function LoginPage({
       {params.error && <p className="mb-5 rounded-xl bg-red-50 p-3 text-sm text-red-700">{params.error}</p>}
       <form action={login} className="space-y-5">
         <input type="hidden" name="next" value={next} />
-        <AuthField label="Email" name="email" type="email" autoComplete="email" />
-        <AuthField label="Kata sandi" name="password" type="password" minLength={8} autoComplete="current-password" />
+        <AuthField label="Email" name="email" type="email" maxLength={254} autoComplete="email" />
+        <AuthField
+          label="Kata sandi"
+          name="password"
+          type="password"
+          minLength={8}
+          maxLength={72}
+          autoComplete="current-password"
+        />
         <button className="app-button min-h-11 w-full justify-center" type="submit">
           Masuk
         </button>

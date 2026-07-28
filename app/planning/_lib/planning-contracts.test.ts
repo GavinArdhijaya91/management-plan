@@ -7,7 +7,7 @@ import {
   requiresTransitionReason,
 } from './lifecycle'
 import { planningErrorMessage } from './mutation-feedback'
-import { createInitiativeSchema, createPlanSchema } from './planning-schemas'
+import { createInitiativeSchema, createPlanSchema, transitionSchema } from './planning-schemas'
 
 describe('planning lifecycle contract', () => {
   it('exposes only database-approved transition edges', () => {
@@ -52,6 +52,33 @@ describe('planning mutation validation', () => {
       title: 'Eksperimen terarah',
     })
     expect(result.success).toBe(true)
+  })
+
+  it('rejects a status belonging to another planning record type', () => {
+    const result = transitionSchema.safeParse({
+      recordType: 'business_plan',
+      recordId: 'a1910000-0000-0000-0000-000000000001',
+      targetStatus: 'in_progress',
+    })
+
+    expect(result.success).toBe(false)
+  })
+
+  it('requires a specific reason for reason-sensitive transitions', () => {
+    const missingReason = transitionSchema.safeParse({
+      recordType: 'action_item',
+      recordId: 'a1910000-0000-0000-0000-000000000001',
+      targetStatus: 'blocked',
+    })
+    const shortReason = transitionSchema.safeParse({
+      recordType: 'business_goal',
+      recordId: 'a1910000-0000-0000-0000-000000000001',
+      targetStatus: 'missed',
+      reason: 'no',
+    })
+
+    expect(missingReason.success).toBe(false)
+    expect(shortReason.success).toBe(false)
   })
 })
 

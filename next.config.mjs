@@ -3,6 +3,11 @@ import { getSecurityHeaders } from './lib/security/headers.mjs'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '64kb',
+    },
+  },
   async headers() {
     return [
       {

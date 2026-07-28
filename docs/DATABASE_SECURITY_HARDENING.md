@@ -80,6 +80,18 @@ also verifies that actor-owned columns cannot be forged during direct writes.
 
 - Supabase `getUser()` is authoritative; cookies are never treated as verified
   identity by application code.
+- Local Auth configuration explicitly enables refresh-token rotation, disables
+  anonymous sign-in, limits sign-in/sign-up and verification traffic, requires
+  email confirmation, and protects password and email changes.
+- Signup validation requires a 10–72 character password containing lowercase,
+  uppercase, numeric, and symbol characters. Login remains compatible with
+  existing accounts while the hosted password policy is rolled out.
+- Authentication input lengths are bounded in both browser forms and
+  server-side schemas. Login and signup failures do not disclose whether an
+  email address already owns an account.
+- Auth identity provisioning independently bounds untrusted user metadata,
+  creates default preferences, grants no implicit workspace membership, and
+  keeps profile identity fields synchronized with `auth.users`.
 - Confirmation callbacks use the configured canonical site origin, never a
   request `Origin` or `Host` value.
 - Post-authentication redirects accept application-page paths only. External,
@@ -91,6 +103,17 @@ also verifies that actor-owned columns cannot be forged during direct writes.
   reloaded from the database, suspended access is rejected, and logout removes
   the hint to prevent cross-account session confusion.
 
+The hosted Supabase project must mirror the repository baseline before a
+production release. Verify email confirmation, double-confirmed email changes,
+secure password changes, refresh-token rotation, Auth endpoint rate limits, and
+the strongest available password policy in the Supabase dashboard. Enable
+leaked-password protection when the selected plan supports it. CAPTCHA remains
+a separate deployment integration because it requires a provider choice and
+server-side secrets; it must not be represented as active until those keys are
+configured and the challenge token is passed to Supabase Auth.
+The read-only `pnpm security:hosted` gate verifies required Management API
+settings without printing the access token or raw hosted configuration.
+
 ## HTTP and API boundary
 
 - A global Content Security Policy limits scripts, styles, connections, images,
@@ -99,17 +122,61 @@ also verifies that actor-owned columns cannot be forged during direct writes.
 - Clickjacking, MIME sniffing, permissive referrers, browser capabilities, and
   insecure production transport are restricted through response headers.
 - API helpers default to `Cache-Control: no-store` and a stable JSON envelope.
+- Server Actions keep the framework's same-origin CSRF enforcement, define no
+  cross-origin exceptions, and cap mutation request bodies at 64 KB.
+- Planning transition input is a discriminated record/status contract. A
+  status from another planning aggregate is rejected before reaching an RPC,
+  and reason-sensitive transitions require a specific bounded explanation.
 - Public health checks expose liveness only. They do not reveal environment,
   database configuration, timestamps, dependency versions, or secrets.
+- SECURITY DEFINER reminder generation rechecks source visibility at the
+  notification boundary. Calendar titles cannot be copied into a recipient's
+  notification unless their active role has `calendar.read`.
 - SVG image responses remain attachment-only with their own restrictive
   sandbox CSP.
 
+## Storage asset boundary
+
+- User-generated assets are limited to JPEG, PNG, and WebP; SVG is never an
+  accepted upload MIME type.
+- Avatar paths are bound to the owning profile identity. Logo and banner paths
+  are bound to the owning workspace, preventing cross-tenant asset references.
+- Avatar inserts bind both the object folder and Storage ownership metadata to
+  `auth.uid()`.
+- Avatar updates preserve both identity-folder placement and `owner_id`; an
+  existing owner cannot transfer storage metadata to another user.
+- Workspace logo and branding policies preserve their distinct manager and
+  owner boundaries.
+- Public delivery is intentional for display assets; anonymous upload, update,
+  and deletion remain forbidden.
+
+## Audit evidence boundary
+
+- Audit rows are written only by database triggers and attribute browser
+  mutations to `auth.uid()`.
+- Update evidence stores changed column names, never previous or new business
+  values. A database transaction identifier supports correlation without
+  copying request headers or submitted payloads.
+- Metadata must remain a bounded JSON object. Invitation tokens, recipients,
+  provider identifiers, delivery errors, financial values, and free-form
+  business content are not audit metadata.
+- Authenticated users may read audit history only with `audit.read`; no browser
+  role may insert, update, or delete audit evidence.
+
 ## Dependency and CI supply chain
 
+- Tracked source files must pass `pnpm security:secrets`. The gate rejects
+  private-key material, known credential formats, sensitive credential files,
+  and tracked environment files other than the placeholder-only `.env.example`.
 - Production dependencies must pass `pnpm security:audit`; the CI quality job
   fails on every known production advisory, including low severity.
+- CodeQL scans JavaScript and TypeScript on pull requests, pushes to `main`,
+  and a weekly schedule using the extended security query suite.
 - GitHub Actions are pinned to reviewed full commit SHAs. Version comments keep
   Dependabot updates understandable without trusting a mutable tag at runtime.
+- Automated contracts reject mutable action references, privileged
+  `pull_request_target` workflows, broad repository write access, and OIDC
+  token issuance.
 - Dependabot monitors both pnpm dependencies and GitHub Actions every week.
 - Runtime tooling that is not imported by the application must not remain in
   `dependencies`; unused CLIs are removed rather than shipped.
@@ -127,5 +194,9 @@ also verifies that actor-owned columns cannot be forged during direct writes.
 - New RPCs revoke default `PUBLIC` and `anon` execution before granting callers.
 - New views use invoker security and expose only application-safe columns.
 - Lifecycle/evidence records cannot be forged through direct table mutation.
+- Archived planning evidence cannot be permanently deleted, including through
+  a parent-record cascade, until an authorized restore.
 - A database created from all migrations and the seed passes every pgTAP file.
 - Application tests, type checking, linting, formatting, and build remain green.
+- `pnpm security:verify` passes before release; hosted Auth and database pgTAP
+  gates run separately because they require deployment credentials and Docker.

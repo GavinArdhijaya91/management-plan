@@ -7,6 +7,7 @@ Mulai dari [FIGMA_START_HERE.md](./FIGMA_START_HERE.md) untuk dokumentasi desain
 ## Arsitektur dan database
 
 - [Database security hardening](./DATABASE_SECURITY_HARDENING.md) — threat model, trust boundary, least privilege, dan definition of done keamanan.
+- [Hosted security configuration](./HOSTED_SECURITY_CONFIGURATION.md) — verifikasi read-only Auth hosted dan deployment gate.
 
 - [Domain glossary](./DOMAIN_GLOSSARY.md) — definisi resmi istilah bisnis yang digunakan di UI, kode, API, dan database.
 - [Database conventions](./DATABASE_CONVENTIONS.md) — aturan penamaan, RLS, migration, constraint, index, dan checklist review.

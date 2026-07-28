@@ -126,6 +126,31 @@ begin
     raise exception 'Anonymous role can execute a sensitive application RPC';
   end if;
 
+  select format(
+    '%I.%I(%s)',
+    namespace.nspname,
+    procedure.proname,
+    pg_get_function_identity_arguments(procedure.oid)
+  )
+  into insecure_object
+  from pg_proc procedure
+  join pg_namespace namespace on namespace.oid = procedure.pronamespace
+  where namespace.nspname = 'public'
+    and procedure.prosecdef
+    and has_function_privilege('anon', procedure.oid, 'execute')
+    and not (
+      procedure.proname = 'get_workspace_invitation_preview'
+      and pg_get_function_identity_arguments(procedure.oid) = 'invitation_token text'
+    )
+  order by procedure.proname, procedure.oid
+  limit 1;
+
+  if insecure_object is not null then
+    raise exception
+      'Anonymous role can execute SECURITY DEFINER function %',
+      insecure_object;
+  end if;
+
   if not has_function_privilege(
     'anon',
     'public.get_workspace_invitation_preview(text)',
@@ -172,6 +197,14 @@ begin
     'insert,update,delete'
   ) then
     raise exception 'Authenticated received direct mutation access to evidence or infrastructure state';
+  end if;
+
+  if has_table_privilege(
+    'authenticated',
+    'public.transactions',
+    'insert'
+  ) then
+    raise exception 'Authenticated can bypass idempotent transaction creation';
   end if;
 
   if has_column_privilege(

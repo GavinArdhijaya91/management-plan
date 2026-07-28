@@ -292,25 +292,27 @@ pnpm start
 
 ## Project scripts
 
-| Command                | Purpose                                       |
-| ---------------------- | --------------------------------------------- |
-| `pnpm dev`             | Start the development server                  |
-| `pnpm typecheck`       | Check TypeScript types                        |
-| `pnpm lint`            | Run ESLint                                    |
-| `pnpm format`          | Format supported project files with Prettier  |
-| `pnpm format:check`    | Verify formatting without changing files      |
-| `pnpm images:optimize` | Convert public PNG/JPG/JPEG assets to WebP    |
-| `pnpm images:check`    | Verify public raster assets have WebP output  |
-| `pnpm images:og`       | Regenerate the 1200×630 social preview        |
-| `pnpm data:check`      | Validate database and presentation boundaries |
-| `pnpm test`            | Run Vitest unit tests                         |
-| `pnpm build`           | Create a production build                     |
-| `pnpm start`           | Start the production build                    |
-| `pnpm db:link`         | Link the repository to a Supabase project     |
-| `pnpm db:status`       | Compare local and remote migrations           |
-| `pnpm db:push`         | Apply pending database migrations             |
-| `pnpm db:types`        | Generate database types to standard output    |
-| `pnpm db:test`         | Run SQL contracts on local isolated Supabase  |
+| Command                 | Purpose                                         |
+| ----------------------- | ----------------------------------------------- |
+| `pnpm dev`              | Start the development server                    |
+| `pnpm typecheck`        | Check TypeScript types                          |
+| `pnpm lint`             | Run ESLint                                      |
+| `pnpm format`           | Format supported project files with Prettier    |
+| `pnpm format:check`     | Verify formatting without changing files        |
+| `pnpm images:optimize`  | Convert public PNG/JPG/JPEG assets to WebP      |
+| `pnpm images:check`     | Verify public raster assets have WebP output    |
+| `pnpm images:og`        | Regenerate the 1200×630 social preview          |
+| `pnpm data:check`       | Validate database and presentation boundaries   |
+| `pnpm test`             | Run Vitest unit tests                           |
+| `pnpm security:secrets` | Reject credentials accidentally tracked by Git  |
+| `pnpm security:verify`  | Run the local application security release gate |
+| `pnpm build`            | Create a production build                       |
+| `pnpm start`            | Start the production build                      |
+| `pnpm db:link`          | Link the repository to a Supabase project       |
+| `pnpm db:status`        | Compare local and remote migrations             |
+| `pnpm db:push`          | Apply pending database migrations               |
+| `pnpm db:types`         | Generate database types to standard output      |
+| `pnpm db:test`          | Run SQL contracts on local isolated Supabase    |
 
 ## Project structure
 
@@ -393,6 +395,14 @@ GitHub Actions runs two read-only workflows for pushes to `main` and pull reques
 - `CI` installs the frozen pnpm lockfile, checks TypeScript, runs ESLint and unit tests, and creates a production build.
 
 Deployment is intentionally excluded. Continuous delivery will be introduced only after the production environment and release policy are defined.
+
+## Security
+
+Report suspected vulnerabilities through
+[GitHub private vulnerability reporting](./SECURITY.md), not through public
+issues or discussions. Database and authorization changes must preserve the
+security contracts documented in
+[`docs/DATABASE_SECURITY_HARDENING.md`](./docs/DATABASE_SECURITY_HARDENING.md).
 
 ## Development status
 

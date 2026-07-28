@@ -267,18 +267,42 @@ select public.set_planning_record_archived(
 
 do $$
 declare
-  blocked boolean := false;
+  update_blocked boolean := false;
+  delete_blocked boolean := false;
+  cascade_blocked boolean := false;
 begin
   begin
     update public.action_items
     set title = 'Archived records must remain immutable'
     where id = 'a1910000-0000-0000-0000-000000000004';
   exception
-    when check_violation then blocked := true;
+    when check_violation then update_blocked := true;
   end;
 
-  if not blocked then
+  begin
+    delete from public.action_items
+    where id = 'a1910000-0000-0000-0000-000000000004';
+  exception
+    when check_violation then delete_blocked := true;
+  end;
+
+  begin
+    delete from public.business_plans
+    where id = 'a1910000-0000-0000-0000-000000000001';
+  exception
+    when check_violation then cascade_blocked := true;
+  end;
+
+  if not update_blocked then
     raise exception 'An archived action accepted a content update';
+  end if;
+
+  if not delete_blocked then
+    raise exception 'An archived action was permanently deleted';
+  end if;
+
+  if not cascade_blocked then
+    raise exception 'A parent cascade permanently deleted archived planning evidence';
   end if;
 end;
 $$;

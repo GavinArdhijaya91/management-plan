@@ -117,6 +117,19 @@ Collaboration mutations are exposed through atomic owner-only RPCs:
 Direct role, permission, and membership mutations have no authenticated write
 policies. This keeps ownership and lifecycle invariants inside the database.
 
+Workspace deletion is also an explicit owner-only lifecycle:
+
+- `request_workspace_deletion` requires the exact workspace name and schedules
+  deletion at least 72 hours later
+- `cancel_workspace_deletion` preserves the cancelled request and audit evidence
+- `execute_workspace_deletion` requires a second exact-name confirmation after
+  the grace period
+
+Authenticated clients cannot delete a workspace directly. The application must
+reauthenticate the owner before calling the request or execute RPC; password
+verification belongs at the Auth/application boundary and is intentionally not
+simulated from an ordinary database JWT.
+
 ## Transactional email delivery
 
 `email_deliveries` tracks invitation-email delivery without storing the raw
@@ -129,8 +142,10 @@ provider result through service-role-only RPCs:
 - `mark_email_delivery_failed`
 
 Resending rotates the invitation token, cancels unfinished delivery records,
-and creates a new delivery. Accepting, declining, revoking, or expiring an
-invitation automatically cancels any delivery that has not completed.
+and creates a new delivery. A per-invitation 60-second cooldown rejects rapid
+resend replay before another token or delivery is created. Accepting, declining,
+revoking, or expiring an invitation automatically cancels any delivery that has
+not completed.
 
 ## Plan-to-actual links
 
@@ -219,6 +234,10 @@ action deadline, calendar occurrence, review period, or achievement.
 `profile_preferences` controls action, calendar, review, and achievement
 notifications together with a configurable reminder lead time. Call
 `generate_my_workspace_reminders` when a user opens or refreshes a workspace.
+Calendar reminders are emitted only when the recipient's active workspace role
+has `calendar.read`; the SECURITY DEFINER generator cannot bypass granular
+visibility. Client-supplied reference times are limited to the current request
+window so callers cannot pre-create future reminders.
 The same private generator can later be invoked by a trusted scheduled backend
 without changing notification semantics.
 
@@ -238,6 +257,9 @@ semantics:
 - `create_transaction` requires a client-generated UUID
   `request_idempotency_key`. Identical retries receive the first transaction
   ID; a different payload with the same key is rejected.
+- Authenticated clients cannot insert transaction rows directly. All creation
+  passes through `create_transaction`, preserving actor attribution, active
+  financial-account selection, and request deduplication.
 - `accept_workspace_invitation` locks the token row and returns the same
   workspace when the accepting recipient retries.
 - `transfer_workspace_ownership` locks every workspace membership. Supplying a
@@ -371,10 +393,11 @@ every action item.
 
 The archive operation is recoverable. Restoring a goal, initiative, or action
 returns it to `draft`, `planned`, or `todo`; audit metadata records who archived
-or reopened it. Permanent deletion and finalized-evidence protection belong to
-later lifecycle stages and are intentionally not inferred by these RPCs.
+or reopened it. Archived plans, goals, initiatives, and action items cannot be
+permanently deleted until an authorized restore. The database also blocks a
+parent cascade from silently erasing archived planning evidence.
 
 `supabase/tests/planning_lifecycle.test.sql` is the executable transition
 contract. It guards activation prerequisites, transition edges, required
 reasons, unresolved-action cancellation, direct-status-write denial, and
-archive restoration.
+archive restoration and preservation.
