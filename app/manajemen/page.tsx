@@ -1,7 +1,7 @@
 'use client'
 
 import { Header } from '@/components/header'
-import { Plus, RotateCcw } from 'lucide-react'
+import { Download, Plus, RotateCcw } from 'lucide-react'
 import { Modal } from '@/app/_components/modal'
 import { TransactionSummary } from '@/app/manajemen/_components/transaction-summary'
 import { TransactionFilters } from '@/app/manajemen/_components/transaction-filters'
@@ -12,8 +12,11 @@ import { ConfirmationDialog } from '@/app/manajemen/_components/confirmation-dia
 import { TransactionToast } from '@/app/manajemen/_components/transaction-toast'
 import { TransactionPagination } from '@/app/manajemen/_components/transaction-pagination'
 import { TransactionInsights } from '@/app/manajemen/_components/transaction-insights'
+import { TransactionExportDialog } from '@/app/manajemen/_components/transaction-export-dialog'
+import { useState } from 'react'
 
 export default function ManajemenPage() {
+  const [exportOpen, setExportOpen] = useState(false)
   const {
     editingId,
     deleteId,
@@ -62,6 +65,14 @@ export default function ManajemenPage() {
             <p className="mt-2 text-zinc-500">Kelola transaksi, biaya pokok, dan hasil bersih usaha Anda.</p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
+            <button
+              type="button"
+              onClick={() => setExportOpen(true)}
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium hover:bg-zinc-50"
+            >
+              <Download className="size-4" />
+              Ekspor
+            </button>
             <button
               type="button"
               onClick={() => setResetOpen(true)}
@@ -139,6 +150,12 @@ export default function ManajemenPage() {
         confirmLabel="Reset data demo"
         onCancel={() => setResetOpen(false)}
         onConfirm={confirmReset}
+      />
+      <TransactionExportDialog
+        open={exportOpen}
+        transactions={transactions}
+        onClose={() => setExportOpen(false)}
+        onSuccess={setToastMessage}
       />
       <TransactionToast message={toastMessage} onClose={() => setToastMessage(null)} />
     </main>
