@@ -45,10 +45,18 @@ function StatusPill({ value }: { value: string }) {
   const done = ['completed', 'achieved'].includes(value)
   return (
     <span
-      className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-        warning ? 'bg-amber-100 text-amber-800' : done ? 'bg-emerald-100 text-emerald-800' : 'bg-zinc-100 text-zinc-700'
+      className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium ${
+        warning
+          ? 'border-amber-200 bg-amber-50 text-amber-800'
+          : done
+            ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
+            : 'border-zinc-200 bg-zinc-50 text-zinc-700'
       }`}
     >
+      <span
+        className={`size-1.5 rounded-full ${warning ? 'bg-amber-500' : done ? 'bg-emerald-500' : 'bg-zinc-400'}`}
+        aria-hidden="true"
+      />
       {statusLabel[value] ?? value}
     </span>
   )
@@ -153,15 +161,15 @@ export default async function PlanningPage({ searchParams }: PlanningPageProps) 
     <main className="app-shell">
       <Header />
       <div className="page-shell motion-page-enter">
-        <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div className="mb-7 flex flex-col gap-4 border-b border-zinc-200 pb-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="app-label">Workspace · {board.workspace.workspace_name}</p>
+            <p className="app-label">Workspace / {board.workspace.workspace_name}</p>
             <h1 className="app-heading mt-2">Planning bisnis</h1>
-            <p className="mt-3 max-w-2xl text-zinc-500">
+            <p className="mt-2 max-w-2xl text-sm text-zinc-500">
               Hubungkan arah bisnis menjadi target, initiative, dan tindakan yang dapat dievaluasi.
             </p>
           </div>
-          <span className="rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-600">
+          <span className="rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-xs font-medium text-zinc-600">
             {board.workspace.role_name}
           </span>
         </div>
@@ -169,12 +177,14 @@ export default async function PlanningPage({ searchParams }: PlanningPageProps) 
         <Feedback error={error} success={success} />
 
         {permission('plan.create') && (
-          <details className="app-card mb-6 p-5">
+          <details className="app-card mb-6">
             <summary className="flex cursor-pointer list-none items-center gap-2 font-medium">
-              <Plus className="size-4" />
-              Buat rencana bisnis
+              <span className="flex w-full items-center gap-2 px-4 py-3.5 text-sm">
+                <Plus className="size-4" />
+                Buat rencana bisnis
+              </span>
             </summary>
-            <form action={createPlanAction} className="mt-5 grid gap-4 md:grid-cols-2">
+            <form action={createPlanAction} className="grid gap-4 border-t border-zinc-200 p-5 md:grid-cols-2">
               <label className={`${labelClass} md:col-span-2`}>
                 Nama rencana
                 <input name="title" required minLength={2} maxLength={160} className={fieldClass} />
@@ -275,14 +285,16 @@ function PlanCard({
 }) {
   return (
     <section className="app-card overflow-hidden">
-      <div className="border-b border-zinc-200 p-5 md:p-6">
+      <div className="border-b border-zinc-200 p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="font-serif text-2xl font-semibold">{plan.title}</h2>
+              <h2 className="font-serif text-xl font-semibold">{plan.title}</h2>
               <StatusPill value={plan.status} />
               {plan.visibility === 'restricted' && (
-                <span className="rounded-full bg-violet-100 px-2.5 py-1 text-xs text-violet-800">Restricted</span>
+                <span className="rounded-md border border-violet-200 bg-violet-50 px-2 py-1 text-xs text-violet-800">
+                  Restricted
+                </span>
               )}
             </div>
             {plan.description && <p className="mt-2 max-w-3xl text-sm text-zinc-500">{plan.description}</p>}
