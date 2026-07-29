@@ -27,4 +27,8 @@ describe('workspace chat migration source contract', () => {
   it('uses the composite message identity for child records', () => {
     expect(migration).toContain('references public.chat_messages(workspace_id, conversation_id, id)')
   })
+
+  it('does not place subqueries inside PostgreSQL default expressions', () => {
+    expect(migration).not.toMatch(/default\s*\(\s*select\b/i)
+  })
 })

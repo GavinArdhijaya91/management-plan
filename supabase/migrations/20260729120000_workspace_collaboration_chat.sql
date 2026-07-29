@@ -251,7 +251,7 @@ alter table public.notifications
 
 create or replace function private.is_active_workspace_member(
   target_workspace_id uuid,
-  target_user_id uuid default (select auth.uid())
+  target_user_id uuid
 )
 returns boolean
 language sql
