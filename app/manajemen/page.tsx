@@ -22,11 +22,11 @@ export default async function ManagementPage() {
     <main className="app-shell">
       <Header />
       <div className="page-shell motion-page-enter">
-        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+        <div className="flex flex-col justify-between gap-4 border-b border-zinc-200 pb-6 md:flex-row md:items-end">
           <div>
-            <p className="app-label mb-3">Workspace · {workspace.workspace_name}</p>
+            <p className="app-label mb-2">Workspace / {workspace.workspace_name}</p>
             <h1 className="app-heading">Manajemen transaksi</h1>
-            <p className="mt-2 text-zinc-500">Data pada halaman ini berasal dari database workspace privat.</p>
+            <p className="mt-2 text-sm text-zinc-500">Ledger aktual dari database workspace privat.</p>
           </div>
           <PrivateTransactionExportButton />
         </div>
@@ -38,30 +38,38 @@ export default async function ManagementPage() {
         ) : data?.length ? (
           <div className="app-card mt-6 overflow-x-auto">
             <table className="w-full min-w-[720px] text-left text-sm">
-              <thead className="border-b border-zinc-200 bg-zinc-50 text-xs uppercase tracking-wide text-zinc-500">
+              <thead className="border-b border-zinc-200 bg-zinc-50/80 text-[0.68rem] font-semibold uppercase tracking-[0.08em] text-zinc-500">
                 <tr>
-                  <th className="px-5 py-4">Tanggal</th>
-                  <th className="px-5 py-4">Jenis</th>
-                  <th className="px-5 py-4">Nominal</th>
-                  <th className="px-5 py-4">Biaya pokok</th>
-                  <th className="px-5 py-4">Hasil bersih</th>
+                  <th className="px-4 py-3">Tanggal</th>
+                  <th className="px-4 py-3">Jenis</th>
+                  <th className="px-4 py-3 text-right">Nominal</th>
+                  <th className="px-4 py-3 text-right">Biaya pokok</th>
+                  <th className="px-4 py-3 text-right">Hasil bersih</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
                 {data.map((transaction) => {
                   return (
-                    <tr key={transaction.transaction_id}>
-                      <td className="px-5 py-4">{transaction.transaction_date}</td>
-                      <td className="px-5 py-4">
-                        {transaction.transaction_type === 'sale' ? 'Penjualan' : 'Pengeluaran'}
+                    <tr key={transaction.transaction_id} className="hover:bg-zinc-50/80">
+                      <td className="whitespace-nowrap px-4 py-3.5 text-zinc-600">{transaction.transaction_date}</td>
+                      <td className="px-4 py-3.5">
+                        <span className="inline-flex items-center gap-1.5 text-zinc-700">
+                          <span
+                            className={`size-1.5 rounded-full ${
+                              transaction.transaction_type === 'sale' ? 'bg-emerald-500' : 'bg-amber-500'
+                            }`}
+                            aria-hidden="true"
+                          />
+                          {transaction.transaction_type === 'sale' ? 'Penjualan' : 'Pengeluaran'}
+                        </span>
                       </td>
-                      <td className="app-data px-5 py-4">
+                      <td className="app-data px-4 py-3.5 text-right text-zinc-600">
                         {formatWorkspaceAmount(Number(transaction.amount), transaction.currency_code)}
                       </td>
-                      <td className="app-data px-5 py-4">
+                      <td className="app-data px-4 py-3.5 text-right text-zinc-600">
                         {formatWorkspaceAmount(Number(transaction.cost_amount), transaction.currency_code)}
                       </td>
-                      <td className="app-data px-5 py-4 font-semibold">
+                      <td className="app-data px-4 py-3.5 text-right font-semibold">
                         {formatWorkspaceAmount(Number(transaction.net_result), transaction.currency_code)}
                       </td>
                     </tr>
