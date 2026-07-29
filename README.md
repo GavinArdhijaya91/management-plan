@@ -220,6 +220,7 @@ This endpoint only reports the service status and whether the Supabase environme
 | Page                   | Local URL                                                         |
 | ---------------------- | ----------------------------------------------------------------- |
 | Landing page           | [localhost:3000](http://localhost:3000)                           |
+| Isolated demo          | [localhost:3000/demo](http://localhost:3000/demo)                 |
 | Dashboard              | [localhost:3000/dashboard](http://localhost:3000/dashboard)       |
 | Business planning      | [localhost:3000/planning](http://localhost:3000/planning)         |
 | Transaction management | [localhost:3000/manajemen](http://localhost:3000/manajemen)       |
@@ -418,6 +419,7 @@ security contracts documented in
 Authentication, cookie session refresh, private-route protection, workspace
 onboarding, active-workspace selection, and role/permission resolution are
 integrated. Planning reads live workspace data and routes lifecycle mutations
-through validated Server Actions plus canonical Supabase RPCs. The remaining
-business feature pages still use clearly marked demo/local-storage data; their
-Supabase integration remains a separate phase.
+through validated Server Actions plus canonical Supabase RPCs. Application
+routes read private workspace data from Supabase. Local example data is isolated
+under `/demo/*`, uses `siapin:demo:*` browser-storage keys, and never appears as
+workspace data after authentication.

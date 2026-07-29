@@ -113,7 +113,7 @@ integration:
 
 | Journey stage | Current state | Evidence |
 | --- | --- | --- |
-| Try the product | Partial | The landing page explains the product, while a complete isolated demo journey still needs validation. |
+| Try the product | Integrated | `/demo/*` provides an isolated, account-free journey with explicitly local example data. |
 | Sign up and authenticate | Integrated | Auth actions, callback handling, cookie session refresh, and private-route checks exist. |
 | Create or select workspace | Integrated | Workspace setup and selection use authenticated server actions and canonical workspace access. |
 | Create business plan | Integrated | `/planning` writes a draft plan to Supabase. |
@@ -126,7 +126,7 @@ integration:
 | Prepare and finalize review | Database-ready | Review lifecycle and immutable snapshots exist; the application flow is not integrated. |
 | Curate portfolio evidence | Database-ready | Private portfolio and evidence contracts exist; the application flow is not integrated. |
 | Award achievements | Database-ready | Database-owned achievement rules exist; the application display flow is not integrated. |
-| Business operations pages | Mixed | Several pages still use explicitly separated demo or local-storage models. |
+| Business operations pages | Partial | Private routes read Supabase workspace data; demo CRUD remains isolated under `/demo/*` while some private write workflows are still pending. |
 
 `Database-ready` means that schema, authorization, and contracts exist. It does
 not mean the user journey is complete.
