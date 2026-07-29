@@ -6,6 +6,8 @@ import { useLanguage } from '@/app/_i18n/language-provider'
 import { logout as logoutAction } from '@/app/auth/actions'
 import { appRoutes } from '@/data/navigation'
 import { cn } from '@/lib/utils'
+import { UserCircleIcon } from '@heroicons/react/24/outline'
+import { UserCircleIcon as UserCircleSolidIcon } from '@heroicons/react/24/solid'
 import { Bell, ChevronDown, LogOut, Menu, User, X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -33,6 +35,9 @@ export function Header({ mode = 'private' }: HeaderProps) {
   )
   const supportRoute = appRoutes.find((item) => item.href === '/hubungi-kami')
   const activeRoute = appRoutes.find((item) => isCurrentRoute(pathname, routeHref(item.href)))
+  const supportCurrent = supportRoute ? isCurrentRoute(pathname, routeHref(supportRoute.href)) : false
+  const SupportIcon = supportRoute ? (supportCurrent ? supportRoute.activeIcon : supportRoute.icon) : null
+  const profileCurrent = isCurrentRoute(pathname, routeHref('/profil'))
 
   const closeMenus = () => {
     setMobileMenuOpen(false)
@@ -49,9 +54,9 @@ export function Header({ mode = 'private' }: HeaderProps) {
     <>
       <nav aria-label={dictionary.header.mainNavigation} className="space-y-1">
         {primaryRoutes.map((item) => {
-          const Icon = item.icon
           const href = routeHref(item.href)
           const current = isCurrentRoute(pathname, href)
+          const Icon = current ? item.activeIcon : item.icon
 
           return (
             <Link
@@ -60,11 +65,14 @@ export function Header({ mode = 'private' }: HeaderProps) {
               aria-current={current ? 'page' : undefined}
               onClick={closeMenus}
               className={cn(
-                'group flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
-                current ? 'bg-zinc-950 text-white shadow-sm' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950',
+                'group relative flex min-h-10 items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors',
+                current ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950',
               )}
             >
-              <Icon className="size-5 shrink-0" aria-hidden="true" />
+              <Icon
+                className={cn('size-[1.15rem] shrink-0', current ? 'text-zinc-950' : 'text-zinc-400')}
+                aria-hidden="true"
+              />
               <span>{dictionary.nav[item.translationKey] ?? item.label}</span>
             </Link>
           )
@@ -72,34 +80,34 @@ export function Header({ mode = 'private' }: HeaderProps) {
       </nav>
 
       <div className="mt-auto border-t border-zinc-200 pt-4">
-        {supportRoute && (
+        {supportRoute && SupportIcon && (
           <Link
             href={routeHref(supportRoute.href)}
-            aria-current={isCurrentRoute(pathname, routeHref(supportRoute.href)) ? 'page' : undefined}
+            aria-current={supportCurrent ? 'page' : undefined}
             onClick={closeMenus}
             className={cn(
               'flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
-              isCurrentRoute(pathname, routeHref(supportRoute.href))
-                ? 'bg-zinc-950 text-white'
-                : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950',
+              supportCurrent ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950',
             )}
           >
-            <supportRoute.icon className="size-5" aria-hidden="true" />
+            <SupportIcon className="size-5" aria-hidden="true" />
             <span>{dictionary.nav[supportRoute.translationKey] ?? supportRoute.label}</span>
           </Link>
         )}
         <Link
           href={routeHref('/profil')}
-          aria-current={isCurrentRoute(pathname, routeHref('/profil')) ? 'page' : undefined}
+          aria-current={profileCurrent ? 'page' : undefined}
           onClick={closeMenus}
           className={cn(
             'mt-1 flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
-            isCurrentRoute(pathname, routeHref('/profil'))
-              ? 'bg-zinc-950 text-white'
-              : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950',
+            profileCurrent ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950',
           )}
         >
-          <User className="size-5" aria-hidden="true" />
+          {profileCurrent ? (
+            <UserCircleSolidIcon className="size-5" aria-hidden="true" />
+          ) : (
+            <UserCircleIcon className="size-5" aria-hidden="true" />
+          )}
           <span>{dictionary.nav.profile}</span>
         </Link>
         <button
@@ -116,9 +124,9 @@ export function Header({ mode = 'private' }: HeaderProps) {
 
   return (
     <>
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 border-r border-zinc-200 bg-white p-4 lg:flex lg:flex-col">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-zinc-200 bg-white p-3 lg:flex lg:flex-col">
         <Link href={routeHref('/dashboard')} className="flex min-h-14 items-center gap-3 px-2">
-          <span className="motion-logo flex size-9 items-center justify-center rounded-xl bg-zinc-950 font-serif text-lg font-semibold text-white">
+          <span className="motion-logo flex size-8 items-center justify-center rounded-lg bg-zinc-950 font-serif text-sm font-semibold text-white">
             S
           </span>
           <span>
@@ -129,7 +137,7 @@ export function Header({ mode = 'private' }: HeaderProps) {
 
         <Link
           href={demoMode ? '/auth/sign-up' : '/workspace/select'}
-          className="my-5 flex min-h-14 items-center justify-between rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 transition-colors hover:bg-zinc-100"
+          className="my-4 flex min-h-13 items-center justify-between rounded-lg border border-zinc-200 bg-white px-3 py-2 transition-colors hover:bg-zinc-50"
         >
           <span className="min-w-0">
             <span className="app-label block">{demoMode ? 'Mode demo' : 'Ruang kerja'}</span>
@@ -143,7 +151,7 @@ export function Header({ mode = 'private' }: HeaderProps) {
         {navigation}
       </aside>
 
-      <header className="sticky top-0 z-30 border-b border-zinc-200/80 bg-white/95 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-zinc-200 bg-white/90 backdrop-blur-xl">
         <div className="flex h-16 items-center justify-between gap-3 px-4 md:px-6">
           <div className="flex min-w-0 items-center gap-3">
             <button

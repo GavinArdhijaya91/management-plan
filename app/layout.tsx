@@ -1,29 +1,22 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Arimo, JetBrains_Mono, Poppins } from 'next/font/google'
+import { IBM_Plex_Mono, IBM_Plex_Sans } from 'next/font/google'
 import './globals.css'
 import { StructuredData } from '@/app/_components/structured-data'
 import { LanguageProvider } from '@/app/_i18n/language-provider'
 import { getSiteUrl, siteConfig } from '@/lib/site'
 
-const arimo = Arimo({
+const ibmPlexSans = IBM_Plex_Sans({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-arimo',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-ibm-plex-sans',
   display: 'swap',
 })
 
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['500', '600', '700'],
-  variable: '--font-poppins',
-  display: 'swap',
-})
-
-const jetbrainsMono = JetBrains_Mono({
+const ibmPlexMono = IBM_Plex_Mono({
   subsets: ['latin'],
   weight: ['400', '500', '600'],
-  variable: '--font-jetbrains-mono',
+  variable: '--font-ibm-plex-mono',
   display: 'swap',
 })
 
@@ -116,7 +109,7 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body
-        className={`${arimo.variable} ${poppins.variable} ${jetbrainsMono.variable} min-h-dvh bg-background text-foreground antialiased`}
+        className={`${ibmPlexSans.variable} ${ibmPlexMono.variable} min-h-dvh bg-background text-foreground antialiased`}
       >
         <LanguageProvider>{children}</LanguageProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
