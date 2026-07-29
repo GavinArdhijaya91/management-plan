@@ -243,6 +243,18 @@ begin
     raise exception 'Authenticated lost the canonical notification-state RPC';
   end if;
 
+  if not has_function_privilege(
+    'authenticated',
+    'public.prepare_transaction_export(uuid,text,date,date)',
+    'execute'
+  ) or has_function_privilege(
+    'anon',
+    'public.prepare_transaction_export(uuid,text,date,date)',
+    'execute'
+  ) then
+    raise exception 'Transaction export RPC execution boundary is invalid';
+  end if;
+
   if exists (
     select 1
     from pg_policies
