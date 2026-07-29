@@ -112,7 +112,7 @@ export function TransactionExportDialog({
 
       <div className="mt-4 rounded-xl bg-zinc-100 p-3 text-xs text-zinc-600">
         {mode === 'private'
-          ? 'Data diambil saat ekspor, dibatasi 10.000 baris, dan dicatat pada audit log.'
+          ? 'Data diambil saat ekspor. XLSX dibatasi 10.000 baris; PDF dan DOCX 2.000 baris. Aktivitas dicatat pada audit log.'
           : `${transactions.length} transaksi demo · Mata uang IDR · Tidak masuk audit workspace.`}
       </div>
       {error && (

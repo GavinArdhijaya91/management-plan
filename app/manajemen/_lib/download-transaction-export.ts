@@ -91,6 +91,10 @@ async function downloadPdf(report: TransactionExportReport, fileName: string) {
   const { jsPDF } = await import('jspdf')
   const document = new jsPDF({ unit: 'mm', format: 'a4' })
   const pageHeight = document.internal.pageSize.getHeight()
+  const pageWidth = document.internal.pageSize.getWidth()
+  const horizontalMargin = 14
+  const availableWidth = pageWidth - horizontalMargin * 2
+  const lineHeight = 4.5
   let y = 18
 
   document.setFontSize(16)
@@ -103,13 +107,17 @@ async function downloadPdf(report: TransactionExportReport, fileName: string) {
   document.setTextColor(20)
 
   const addLine = (text: string, bold = false) => {
-    if (y > pageHeight - 15) {
+    document.setFont('helvetica', bold ? 'bold' : 'normal')
+    const lines = document.splitTextToSize(text, availableWidth) as string[]
+    const blockHeight = Math.max(lines.length, 1) * lineHeight
+
+    if (y + blockHeight > pageHeight - 15) {
       document.addPage()
       y = 18
     }
-    document.setFont('helvetica', bold ? 'bold' : 'normal')
-    document.text(text, 14, y, { maxWidth: 180 })
-    y += 6
+
+    document.text(lines, horizontalMargin, y)
+    y += blockHeight + 1.5
   }
 
   report.summaries.forEach((summary) =>

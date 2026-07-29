@@ -70,6 +70,40 @@ describe('transaction export contract', () => {
     ])
   })
 
+  it('sums decimal currency values without binary floating-point residue', () => {
+    const report = createTransactionExportReport([
+      {
+        accountName: 'Cash',
+        amount: 0.1,
+        costAmount: 0,
+        currencyCode: 'USD',
+        date: '2026-07-28',
+        netResult: 0.1,
+        note: '',
+        result: 'Laba',
+        type: 'Penjualan',
+      },
+      {
+        accountName: 'Cash',
+        amount: 0.2,
+        costAmount: 0,
+        currencyCode: 'USD',
+        date: '2026-07-28',
+        netResult: 0.2,
+        note: '',
+        result: 'Laba',
+        type: 'Penjualan',
+      },
+    ])
+
+    expect(report.summaries[0]).toEqual(
+      expect.objectContaining({
+        totalSales: 0.3,
+        totalNetResult: 0.3,
+      }),
+    )
+  })
+
   it.each(['=1+1', '+SUM(A1:A2)', '-1+1', '@cmd'])('neutralizes spreadsheet formula input: %s', (value) => {
     expect(spreadsheetSafeText(value)).toBe(`'${value}`)
   })

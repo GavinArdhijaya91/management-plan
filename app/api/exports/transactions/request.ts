@@ -6,6 +6,7 @@ export const transactionExportRequestSchema = z
     periodStart: z.iso.date().nullable().optional(),
     periodEnd: z.iso.date().nullable().optional(),
   })
+  .strict()
   .refine(
     ({ periodStart, periodEnd }) => !periodStart || !periodEnd || periodStart <= periodEnd,
     'Tanggal awal tidak boleh melewati tanggal akhir.',

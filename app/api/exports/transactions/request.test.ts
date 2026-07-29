@@ -25,4 +25,13 @@ describe('transaction export request', () => {
       }).success,
     ).toBe(false)
   })
+
+  it('rejects unknown request properties', () => {
+    expect(
+      transactionExportRequestSchema.safeParse({
+        format: 'xlsx',
+        workspaceId: '20000000-0000-0000-0000-000000000001',
+      }).success,
+    ).toBe(false)
+  })
 })

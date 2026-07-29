@@ -54,12 +54,15 @@ export async function POST(request: NextRequest) {
   })
   if (error) {
     const tooLarge = error.code === '54000'
+    const rateLimited = error.code === 'P0001' && error.message === 'Transaction export rate limit exceeded'
     return apiError(
-      tooLarge ? 'EXPORT_TOO_LARGE' : 'EXPORT_PREPARATION_FAILED',
-      tooLarge
-        ? 'Ekspor sinkron dibatasi hingga 10.000 transaksi. Persempit periode laporan.'
-        : 'Data transaksi privat gagal disiapkan.',
-      tooLarge ? 413 : 500,
+      rateLimited ? 'EXPORT_RATE_LIMITED' : tooLarge ? 'EXPORT_TOO_LARGE' : 'EXPORT_PREPARATION_FAILED',
+      rateLimited
+        ? 'Terlalu banyak ekspor dalam waktu singkat. Tunggu beberapa menit sebelum mencoba kembali.'
+        : tooLarge
+          ? 'Jumlah transaksi melampaui batas format ini. Persempit periode laporan atau gunakan XLSX.'
+          : 'Data transaksi privat gagal disiapkan.',
+      rateLimited ? 429 : tooLarge ? 413 : 500,
     )
   }
 

@@ -34,13 +34,20 @@ export function spreadsheetSafeText(value: string) {
   return /^[=+\-@]/.test(value) ? `'${value}` : value
 }
 
+function sumCurrencyValues(values: number[]) {
+  const totalMinorUnits = values.reduce((sum, value) => sum + Math.round(value * 100), 0)
+  return totalMinorUnits / 100
+}
+
 function summarizeExportRows(rows: TransactionExportRow[]) {
   const currencyCodes = [...new Set(rows.map((row) => row.currencyCode))].sort()
   return currencyCodes.map((currencyCode) => {
     const currencyRows = rows.filter((row) => row.currencyCode === currencyCode)
-    const totalSales = currencyRows.filter((row) => row.type === 'Penjualan').reduce((sum, row) => sum + row.amount, 0)
-    const totalCostAmount = currencyRows.reduce((sum, row) => sum + row.costAmount, 0)
-    const totalNetResult = currencyRows.reduce((sum, row) => sum + row.netResult, 0)
+    const totalSales = sumCurrencyValues(
+      currencyRows.filter((row) => row.type === 'Penjualan').map((row) => row.amount),
+    )
+    const totalCostAmount = sumCurrencyValues(currencyRows.map((row) => row.costAmount))
+    const totalNetResult = sumCurrencyValues(currencyRows.map((row) => row.netResult))
 
     return {
       currencyCode,
