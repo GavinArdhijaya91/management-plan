@@ -14,6 +14,16 @@ where slug = 'studio-siapin-demo';
 
 do $$
 begin
+  if not exists (
+    select 1
+    from pg_catalog.pg_constraint constraint_record
+    where constraint_record.conrelid = 'public.chat_messages'::regclass
+      and constraint_record.conname = 'chat_messages_workspace_conversation_id_unique'
+      and constraint_record.contype = 'u'
+  ) then
+    raise exception 'Chat message composite identity contract is missing';
+  end if;
+
   if (
     select count(*)
     from public.chat_conversations conversation

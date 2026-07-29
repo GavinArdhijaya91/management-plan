@@ -93,7 +93,6 @@ create table public.chat_conversations (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (workspace_id, id),
-  unique (workspace_id, conversation_id, id),
   foreign key (direct_participant_low)
     references auth.users(id) on delete restrict,
   foreign key (direct_participant_high)
@@ -186,6 +185,8 @@ create table public.chat_messages (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (workspace_id, id),
+  constraint chat_messages_workspace_conversation_id_unique
+    unique (workspace_id, conversation_id, id),
   unique (sender_id, client_request_id),
   foreign key (workspace_id, conversation_id)
     references public.chat_conversations(workspace_id, id) on delete cascade,
