@@ -6,6 +6,7 @@ const privatePages = [
   'app/dashboard/page.tsx',
   'app/manajemen/page.tsx',
   'app/kalender/page.tsx',
+  'app/kolaborasi/page.tsx',
   'app/notifikasi/page.tsx',
   'app/profil/page.tsx',
   'app/tren-pasar/page.tsx',
