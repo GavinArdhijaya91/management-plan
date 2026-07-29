@@ -62,7 +62,10 @@ export default function Dashboard() {
         </div>
         <DemoDataNotice>{copy.demo}</DemoDataNotice>
 
-        <section aria-label="Ringkasan bisnis" className="my-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <section
+          aria-label="Ringkasan bisnis"
+          className="my-6 grid overflow-hidden rounded-xl border border-zinc-200 bg-white sm:grid-cols-2 lg:grid-cols-4"
+        >
           <KPICard
             title={copy.sales}
             value={rupiah.format(summary.totalSales)}
