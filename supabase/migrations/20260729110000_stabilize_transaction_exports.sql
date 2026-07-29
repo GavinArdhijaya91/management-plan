@@ -20,12 +20,12 @@ security definer
 set search_path = ''
 as $$
 declare
-  actor_id uuid := (select auth.uid());
+  request_actor_id uuid := (select auth.uid());
   exported_row_count integer;
   format_row_limit integer;
   recent_export_count integer;
 begin
-  if actor_id is null then
+  if request_actor_id is null then
     raise exception 'Authentication required' using errcode = '28000';
   end if;
 
@@ -60,7 +60,7 @@ begin
   -- requests cannot race past the audit-based rate limit.
   perform pg_catalog.pg_advisory_xact_lock(
     pg_catalog.hashtextextended(
-      actor_id::text || ':' || target_workspace_id::text || ':transaction_export',
+      request_actor_id::text || ':' || target_workspace_id::text || ':transaction_export',
       0
     )
   );
@@ -69,7 +69,7 @@ begin
   into recent_export_count
   from public.audit_logs audit_record
   where audit_record.workspace_id = target_workspace_id
-    and audit_record.actor_id = actor_id
+    and audit_record.actor_id = request_actor_id
     and audit_record.action = 'export'
     and audit_record.entity_type = 'transaction_export'
     and audit_record.created_at >= pg_catalog.now() - interval '10 minutes';
@@ -107,7 +107,7 @@ begin
 
   insert into public.audit_logs (
     workspace_id,
-    actor_id,
+    request_actor_id,
     action,
     entity_type,
     metadata

@@ -6,6 +6,14 @@ const migration = readFileSync(
   resolve(process.cwd(), 'supabase/migrations/20260729120000_workspace_collaboration_chat.sql'),
   'utf8',
 )
+const chatContractTest = readFileSync(
+  resolve(process.cwd(), 'supabase/tests/workspace_chat_contracts.test.sql'),
+  'utf8',
+)
+const transactionExportMigration = readFileSync(
+  resolve(process.cwd(), 'supabase/migrations/20260729110000_stabilize_transaction_exports.sql'),
+  'utf8',
+)
 
 function tableDefinition(tableName: string) {
   const start = migration.indexOf(`create table public.${tableName} (`)
@@ -30,5 +38,14 @@ describe('workspace chat migration source contract', () => {
 
   it('does not place subqueries inside PostgreSQL default expressions', () => {
     expect(migration).not.toMatch(/default\s*\(\s*select\b/i)
+  })
+
+  it('tests authenticated chat access through public RLS boundaries', () => {
+    expect(chatContractTest).not.toContain('private.can_access_chat_conversation')
+  })
+
+  it('does not reuse an audit column name for the export actor variable', () => {
+    expect(transactionExportMigration).toContain('audit_record.actor_id = request_actor_id')
+    expect(transactionExportMigration).not.toContain('audit_record.actor_id = actor_id')
   })
 })

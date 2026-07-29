@@ -90,8 +90,10 @@ declare
   payload_reuse_blocked boolean := false;
   cross_workspace_blocked boolean := false;
 begin
-  if not private.can_access_chat_conversation(
-    current_setting('test.private_channel_id')::uuid
+  if not exists (
+    select 1
+    from public.chat_conversations conversation
+    where conversation.id = current_setting('test.private_channel_id')::uuid
   ) then
     raise exception 'Explicit private channel member could not access the channel';
   end if;
@@ -240,8 +242,10 @@ select set_config(
 
 do $$
 begin
-  if private.can_access_chat_conversation(
-    current_setting('test.private_channel_id')::uuid
+  if exists (
+    select 1
+    from public.chat_conversations conversation
+    where conversation.id = current_setting('test.private_channel_id')::uuid
   ) then
     raise exception 'Suspended member retained chat or Realtime access';
   end if;
