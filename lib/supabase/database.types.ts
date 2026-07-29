@@ -1162,6 +1162,219 @@ export type Database = {
           },
         ]
       }
+      chat_attachments: {
+        Row: {
+          byte_size: number
+          conversation_id: string
+          created_at: string
+          id: string
+          media_type: string
+          message_id: string
+          object_path: string
+          original_file_name: string
+          uploaded_by: string
+          workspace_id: string
+        }
+        Insert: {
+          byte_size: number
+          conversation_id: string
+          created_at?: string
+          id?: string
+          media_type: string
+          message_id: string
+          object_path: string
+          original_file_name: string
+          uploaded_by: string
+          workspace_id: string
+        }
+        Update: {
+          byte_size?: number
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          media_type?: string
+          message_id?: string
+          object_path?: string
+          original_file_name?: string
+          uploaded_by?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      chat_conversation_members: {
+        Row: {
+          conversation_id: string
+          joined_at: string
+          last_delivered_at: string | null
+          last_read_at: string | null
+          notifications_muted: boolean
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          conversation_id: string
+          joined_at?: string
+          last_delivered_at?: string | null
+          last_read_at?: string | null
+          notifications_muted?: boolean
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          conversation_id?: string
+          joined_at?: string
+          last_delivered_at?: string | null
+          last_read_at?: string | null
+          notifications_muted?: boolean
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      chat_conversations: {
+        Row: {
+          archived_at: string | null
+          channel_visibility: Database["public"]["Enums"]["chat_channel_visibility"] | null
+          created_at: string
+          created_by: string
+          description: string | null
+          direct_participant_high: string | null
+          direct_participant_low: string | null
+          id: string
+          is_general: boolean
+          kind: Database["public"]["Enums"]["chat_conversation_kind"]
+          name: string | null
+          slug: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          archived_at?: string | null
+          channel_visibility?: Database["public"]["Enums"]["chat_channel_visibility"] | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          direct_participant_high?: string | null
+          direct_participant_low?: string | null
+          id?: string
+          is_general?: boolean
+          kind: Database["public"]["Enums"]["chat_conversation_kind"]
+          name?: string | null
+          slug?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          archived_at?: string | null
+          channel_visibility?: Database["public"]["Enums"]["chat_channel_visibility"] | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          direct_participant_high?: string | null
+          direct_participant_low?: string | null
+          id?: string
+          is_general?: boolean
+          kind?: Database["public"]["Enums"]["chat_conversation_kind"]
+          name?: string | null
+          slug?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      chat_message_mentions: {
+        Row: {
+          created_at: string
+          mentioned_user_id: string
+          message_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          mentioned_user_id: string
+          message_id: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          mentioned_user_id?: string
+          message_id?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      chat_message_reactions: {
+        Row: {
+          conversation_id: string
+          created_at: string
+          emoji: string
+          message_id: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string
+          emoji: string
+          message_id: string
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string
+          emoji?: string
+          message_id?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      chat_messages: {
+        Row: {
+          body: string | null
+          client_request_id: string
+          conversation_id: string
+          created_at: string
+          deleted_at: string | null
+          deleted_by: string | null
+          edited_at: string | null
+          id: string
+          reply_to_message_id: string | null
+          sender_id: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          body?: string | null
+          client_request_id: string
+          conversation_id: string
+          created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
+          edited_at?: string | null
+          id?: string
+          reply_to_message_id?: string | null
+          sender_id: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          body?: string | null
+          client_request_id?: string
+          conversation_id?: string
+          created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
+          edited_at?: string | null
+          id?: string
+          reply_to_message_id?: string | null
+          sender_id?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string
@@ -3063,6 +3276,24 @@ export type Database = {
       }
     }
     Functions: {
+      create_chat_channel: {
+        Args: {
+          channel_description?: string
+          channel_name: string
+          channel_slug: string
+          channel_visibility?: Database["public"]["Enums"]["chat_channel_visibility"]
+          target_workspace_id: string
+        }
+        Returns: string
+      }
+      delete_chat_message: {
+        Args: { target_message_id: string }
+        Returns: undefined
+      }
+      edit_chat_message: {
+        Args: { message_body: string; target_message_id: string }
+        Returns: undefined
+      }
       accept_workspace_invitation: {
         Args: { invitation_token: string }
         Returns: string
@@ -3222,6 +3453,21 @@ export type Database = {
         Args: { target_notification_id: string }
         Returns: undefined
       }
+      get_chat_unread_counts: {
+        Args: { target_workspace_id: string }
+        Returns: {
+          conversation_id: string
+          unread_count: number
+        }[]
+      }
+      mark_chat_conversation_read: {
+        Args: {
+          delivered_through: string
+          read_through: string
+          target_conversation_id: string
+        }
+        Returns: undefined
+      }
       prepare_transaction_export: {
         Args: {
           period_end?: string
@@ -3240,6 +3486,16 @@ export type Database = {
           transaction_id: string
           transaction_type: Database["public"]["Enums"]["transaction_type"]
         }[]
+      }
+      register_chat_attachment: {
+        Args: {
+          target_byte_size: number
+          target_media_type: string
+          target_message_id: string
+          target_object_path: string
+          target_original_file_name: string
+        }
+        Returns: string
       }
       execute_workspace_deletion: {
         Args: {
@@ -3291,6 +3547,32 @@ export type Database = {
           target_record_type: Database["public"]["Enums"]["planning_record_type"]
         }
         Returns: undefined
+      }
+      set_chat_conversation_membership: {
+        Args: {
+          should_join: boolean
+          target_conversation_id: string
+          target_user_id: string
+        }
+        Returns: undefined
+      }
+      send_chat_message: {
+        Args: {
+          message_body: string
+          mentioned_user_ids?: string[]
+          reply_to_id?: string
+          request_id: string
+          target_conversation_id: string
+        }
+        Returns: string
+      }
+      start_direct_chat: {
+        Args: { target_user_id: string; target_workspace_id: string }
+        Returns: string
+      }
+      toggle_chat_message_reaction: {
+        Args: { reaction_emoji: string; target_message_id: string }
+        Returns: boolean
       }
       set_workspace_member_status: {
         Args: {
@@ -3354,6 +3636,8 @@ export type Database = {
       }
     }
     Enums: {
+      chat_channel_visibility: "public" | "private"
+      chat_conversation_kind: "channel" | "direct"
       action_item_status:
         | "todo"
         | "in_progress"
@@ -3565,6 +3849,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      chat_channel_visibility: ["public", "private"],
+      chat_conversation_kind: ["channel", "direct"],
       action_item_status: [
         "todo",
         "in_progress",
