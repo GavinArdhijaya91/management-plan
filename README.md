@@ -217,18 +217,19 @@ This endpoint only reports the service status and whether the Supabase environme
 
 ## Available pages
 
-| Page                   | Local URL                                                         |
-| ---------------------- | ----------------------------------------------------------------- |
-| Landing page           | [localhost:3000](http://localhost:3000)                           |
-| Isolated demo          | [localhost:3000/demo](http://localhost:3000/demo)                 |
-| Dashboard              | [localhost:3000/dashboard](http://localhost:3000/dashboard)       |
-| Business planning      | [localhost:3000/planning](http://localhost:3000/planning)         |
-| Transaction management | [localhost:3000/manajemen](http://localhost:3000/manajemen)       |
-| Calendar               | [localhost:3000/kalender](http://localhost:3000/kalender)         |
-| Market trends          | [localhost:3000/tren-pasar](http://localhost:3000/tren-pasar)     |
-| Contact                | [localhost:3000/hubungi-kami](http://localhost:3000/hubungi-kami) |
-| Notifications          | [localhost:3000/notifikasi](http://localhost:3000/notifikasi)     |
-| Profile                | [localhost:3000/profil](http://localhost:3000/profil)             |
+| Page                    | Local URL                                                         |
+| ----------------------- | ----------------------------------------------------------------- |
+| Landing page            | [localhost:3000](http://localhost:3000)                           |
+| Isolated demo           | [localhost:3000/demo](http://localhost:3000/demo)                 |
+| Dashboard               | [localhost:3000/dashboard](http://localhost:3000/dashboard)       |
+| Business planning       | [localhost:3000/planning](http://localhost:3000/planning)         |
+| Transaction management  | [localhost:3000/manajemen](http://localhost:3000/manajemen)       |
+| Calendar                | [localhost:3000/kalender](http://localhost:3000/kalender)         |
+| Workspace collaboration | [localhost:3000/kolaborasi](http://localhost:3000/kolaborasi)     |
+| Market trends           | [localhost:3000/tren-pasar](http://localhost:3000/tren-pasar)     |
+| Contact                 | [localhost:3000/hubungi-kami](http://localhost:3000/hubungi-kami) |
+| Notifications           | [localhost:3000/notifikasi](http://localhost:3000/notifikasi)     |
+| Profile                 | [localhost:3000/profil](http://localhost:3000/profil)             |
 
 ## Language support
 
