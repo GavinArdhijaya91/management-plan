@@ -1,12 +1,21 @@
 import {
-  BarChart3,
-  CalendarDays,
-  Headphones,
-  LayoutDashboard,
-  ListChecks,
-  MessagesSquare,
-  WalletCards,
-} from 'lucide-react'
+  BanknotesIcon,
+  CalendarDaysIcon,
+  ChartBarSquareIcon,
+  ChatBubbleLeftRightIcon,
+  ClipboardDocumentCheckIcon,
+  HomeIcon,
+  LifebuoyIcon,
+} from '@heroicons/react/24/outline'
+import {
+  BanknotesIcon as BanknotesSolidIcon,
+  CalendarDaysIcon as CalendarDaysSolidIcon,
+  ChartBarSquareIcon as ChartBarSquareSolidIcon,
+  ChatBubbleLeftRightIcon as ChatBubbleLeftRightSolidIcon,
+  ClipboardDocumentCheckIcon as ClipboardDocumentCheckSolidIcon,
+  HomeIcon as HomeSolidIcon,
+  LifebuoyIcon as LifebuoySolidIcon,
+} from '@heroicons/react/24/solid'
 import type { AppRoute } from '@/types/navigation'
 
 export const appRoutes: AppRoute[] = [
@@ -15,7 +24,8 @@ export const appRoutes: AppRoute[] = [
     label: 'Dashboard',
     shortLabel: 'Beranda',
     description: 'Lihat ringkasan performa dan kondisi bisnis.',
-    icon: LayoutDashboard,
+    icon: HomeIcon,
+    activeIcon: HomeSolidIcon,
     translationKey: 'dashboard',
   },
   {
@@ -23,7 +33,8 @@ export const appRoutes: AppRoute[] = [
     label: 'Planning',
     shortLabel: 'Rencana',
     description: 'Susun target, initiative, dan tindakan bisnis.',
-    icon: ListChecks,
+    icon: ClipboardDocumentCheckIcon,
+    activeIcon: ClipboardDocumentCheckSolidIcon,
     translationKey: 'planning',
   },
   {
@@ -31,7 +42,8 @@ export const appRoutes: AppRoute[] = [
     label: 'Manajemen',
     shortLabel: 'Kelola',
     description: 'Catat modal, penjualan, dan laba atau rugi.',
-    icon: WalletCards,
+    icon: BanknotesIcon,
+    activeIcon: BanknotesSolidIcon,
     translationKey: 'management',
   },
   {
@@ -39,7 +51,8 @@ export const appRoutes: AppRoute[] = [
     label: 'Kalender',
     shortLabel: 'Jadwal',
     description: 'Rencanakan pembayaran, stok, dan agenda bisnis.',
-    icon: CalendarDays,
+    icon: CalendarDaysIcon,
+    activeIcon: CalendarDaysSolidIcon,
     translationKey: 'calendar',
   },
   {
@@ -47,7 +60,8 @@ export const appRoutes: AppRoute[] = [
     label: 'Kolaborasi',
     shortLabel: 'Chat',
     description: 'Berkomunikasi privat dengan anggota workspace.',
-    icon: MessagesSquare,
+    icon: ChatBubbleLeftRightIcon,
+    activeIcon: ChatBubbleLeftRightSolidIcon,
     translationKey: 'collaboration',
   },
   {
@@ -55,7 +69,8 @@ export const appRoutes: AppRoute[] = [
     label: 'Tren Pasar',
     shortLabel: 'Tren',
     description: 'Pelajari performa produk dan peluang pasar.',
-    icon: BarChart3,
+    icon: ChartBarSquareIcon,
+    activeIcon: ChartBarSquareSolidIcon,
     translationKey: 'market',
   },
   {
@@ -63,7 +78,8 @@ export const appRoutes: AppRoute[] = [
     label: 'Hubungi Kami',
     shortLabel: 'Bantuan',
     description: 'Temukan bantuan atau kirim pertanyaan kepada tim.',
-    icon: Headphones,
+    icon: LifebuoyIcon,
+    activeIcon: LifebuoySolidIcon,
     translationKey: 'contact',
   },
 ]
