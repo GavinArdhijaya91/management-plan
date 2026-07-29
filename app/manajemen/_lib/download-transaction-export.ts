@@ -1,20 +1,24 @@
 'use client'
 
 import {
+  createDemoTransactionExportReport,
   createTransactionExportReport,
   spreadsheetSafeText,
   transactionExportFileName,
   type TransactionExportFormat,
   type TransactionExportReport,
+  type TransactionExportRow,
 } from '@/app/manajemen/_domain/transaction-export'
 import type { DemoTransaction } from '@/types'
 import type { SheetData } from 'write-excel-file/browser'
 
-const rupiah = new Intl.NumberFormat('id-ID', {
-  style: 'currency',
-  currency: 'IDR',
-  maximumFractionDigits: 0,
-})
+function formatCurrency(value: number, currencyCode: string) {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: currencyCode,
+    maximumFractionDigits: 2,
+  }).format(value)
+}
 
 function saveBlob(blob: Blob, fileName: string) {
   const url = URL.createObjectURL(blob)
@@ -38,37 +42,48 @@ async function downloadXlsx(report: TransactionExportReport, fileName: string) {
       { value: 'Nominal', ...headerStyle },
       { value: 'Biaya pokok', ...headerStyle },
       { value: 'Hasil bersih', ...headerStyle },
+      { value: 'Mata uang', ...headerStyle },
+      { value: 'Akun', ...headerStyle },
       { value: 'Status', ...headerStyle },
+      { value: 'Catatan', ...headerStyle },
     ],
     ...report.rows.map((row) => [
       { value: spreadsheetSafeText(row.date) },
       { value: spreadsheetSafeText(row.type) },
-      { value: row.amount, format: '#,##0' },
-      { value: row.costAmount, format: '#,##0' },
-      { value: row.netResult, format: '#,##0' },
+      { value: row.amount, format: '#,##0.00' },
+      { value: row.costAmount, format: '#,##0.00' },
+      { value: row.netResult, format: '#,##0.00' },
+      { value: spreadsheetSafeText(row.currencyCode) },
+      { value: spreadsheetSafeText(row.accountName) },
       { value: spreadsheetSafeText(row.result) },
+      { value: spreadsheetSafeText(row.note) },
     ]),
     [],
-    [
-      { value: 'Total penjualan', ...headerStyle },
-      { value: report.summary.totalSales, format: '#,##0' },
-    ],
-    [
-      { value: 'Total biaya pokok', ...headerStyle },
-      { value: report.summary.totalCostAmount, format: '#,##0' },
-    ],
-    [
-      { value: 'Hasil bersih', ...headerStyle },
-      { value: report.summary.totalNetResult, format: '#,##0' },
-    ],
-    [
-      { value: 'Margin', ...headerStyle },
-      { value: report.summary.margin / 100, format: '0%' },
-    ],
+    ...report.summaries.flatMap((summary) => [
+      [
+        { value: `Ringkasan ${spreadsheetSafeText(summary.currencyCode)}`, ...headerStyle },
+        { value: `${summary.transactionCount} transaksi` },
+      ],
+      [{ value: 'Total penjualan' }, { value: summary.totalSales, format: '#,##0.00' }],
+      [{ value: 'Total biaya pokok' }, { value: summary.totalCostAmount, format: '#,##0.00' }],
+      [{ value: 'Hasil bersih' }, { value: summary.totalNetResult, format: '#,##0.00' }],
+      [{ value: 'Margin' }, { value: summary.margin / 100, format: '0%' }],
+      [],
+    ]),
   ]
 
   await writeXlsxFile(rows, {
-    columns: [{ width: 16 }, { width: 16 }, { width: 18 }, { width: 18 }, { width: 18 }, { width: 14 }],
+    columns: [
+      { width: 16 },
+      { width: 16 },
+      { width: 18 },
+      { width: 18 },
+      { width: 18 },
+      { width: 14 },
+      { width: 22 },
+      { width: 14 },
+      { width: 36 },
+    ],
   }).toFile(fileName)
 }
 
@@ -83,7 +98,7 @@ async function downloadPdf(report: TransactionExportReport, fileName: string) {
   y += 8
   document.setFontSize(9)
   document.setTextColor(90)
-  document.text(`Dibuat ${new Date(report.generatedAt).toLocaleString('id-ID')} · Mata uang IDR`, 14, y)
+  document.text(`Dibuat ${new Date(report.generatedAt).toLocaleString('id-ID')}`, 14, y)
   y += 10
   document.setTextColor(20)
 
@@ -97,14 +112,16 @@ async function downloadPdf(report: TransactionExportReport, fileName: string) {
     y += 6
   }
 
-  addLine(
-    `Ringkasan: ${report.summary.transactionCount} transaksi · Penjualan ${rupiah.format(report.summary.totalSales)} · Hasil bersih ${rupiah.format(report.summary.totalNetResult)} · Margin ${report.summary.margin}%`,
-    true,
+  report.summaries.forEach((summary) =>
+    addLine(
+      `${summary.currencyCode}: ${summary.transactionCount} transaksi · Penjualan ${formatCurrency(summary.totalSales, summary.currencyCode)} · Hasil bersih ${formatCurrency(summary.totalNetResult, summary.currencyCode)} · Margin ${summary.margin}%`,
+      true,
+    ),
   )
   y += 3
   report.rows.forEach((row, index) => {
     addLine(
-      `${index + 1}. ${row.date} · ${row.type} · ${rupiah.format(row.amount)} · Biaya ${rupiah.format(row.costAmount)} · Bersih ${rupiah.format(row.netResult)} · ${row.result}`,
+      `${index + 1}. ${row.date} · ${row.type} · ${formatCurrency(row.amount, row.currencyCode)} · Biaya ${formatCurrency(row.costAmount, row.currencyCode)} · Bersih ${formatCurrency(row.netResult, row.currencyCode)} · ${row.accountName} · ${row.result}${row.note ? ` · ${row.note}` : ''}`,
     )
   })
 
@@ -121,12 +138,13 @@ async function downloadDocx(report: TransactionExportReport, fileName: string) {
       {
         children: [
           new Paragraph({ text: report.title, heading: HeadingLevel.TITLE }),
-          new Paragraph({
-            text: `Dibuat ${new Date(report.generatedAt).toLocaleString('id-ID')} · Mata uang IDR`,
-          }),
-          new Paragraph({
-            text: `Total penjualan ${rupiah.format(report.summary.totalSales)} · Biaya pokok ${rupiah.format(report.summary.totalCostAmount)} · Hasil bersih ${rupiah.format(report.summary.totalNetResult)} · Margin ${report.summary.margin}%`,
-          }),
+          new Paragraph({ text: `Dibuat ${new Date(report.generatedAt).toLocaleString('id-ID')}` }),
+          ...report.summaries.map(
+            (summary) =>
+              new Paragraph({
+                text: `${summary.currencyCode}: ${summary.transactionCount} transaksi · Total penjualan ${formatCurrency(summary.totalSales, summary.currencyCode)} · Biaya pokok ${formatCurrency(summary.totalCostAmount, summary.currencyCode)} · Hasil bersih ${formatCurrency(summary.totalNetResult, summary.currencyCode)} · Margin ${summary.margin}%`,
+              }),
+          ),
           new Table({
             rows: [
               new TableRow({
@@ -136,7 +154,10 @@ async function downloadDocx(report: TransactionExportReport, fileName: string) {
                   cell('Nominal', true),
                   cell('Biaya pokok', true),
                   cell('Hasil bersih', true),
+                  cell('Mata uang', true),
+                  cell('Akun', true),
                   cell('Status', true),
+                  cell('Catatan', true),
                 ],
               }),
               ...report.rows.map(
@@ -145,10 +166,13 @@ async function downloadDocx(report: TransactionExportReport, fileName: string) {
                     children: [
                       cell(row.date),
                       cell(row.type),
-                      cell(rupiah.format(row.amount)),
-                      cell(rupiah.format(row.costAmount)),
-                      cell(rupiah.format(row.netResult)),
+                      cell(formatCurrency(row.amount, row.currencyCode)),
+                      cell(formatCurrency(row.costAmount, row.currencyCode)),
+                      cell(formatCurrency(row.netResult, row.currencyCode)),
+                      cell(row.currencyCode),
+                      cell(row.accountName),
                       cell(row.result),
+                      cell(row.note),
                     ],
                   }),
               ),
@@ -162,14 +186,34 @@ async function downloadDocx(report: TransactionExportReport, fileName: string) {
   saveBlob(await Packer.toBlob(document), fileName)
 }
 
+function downloadReport(report: TransactionExportReport, format: TransactionExportFormat, fileName: string) {
+  if (format === 'xlsx') return downloadXlsx(report, fileName)
+  if (format === 'pdf') return downloadPdf(report, fileName)
+  return downloadDocx(report, fileName)
+}
+
 export async function downloadTransactionExport(transactions: DemoTransaction[], format: TransactionExportFormat) {
   if (transactions.length === 0) throw new Error('Tidak ada transaksi untuk diekspor.')
 
   const generatedAt = new Date()
-  const report = createTransactionExportReport(transactions, generatedAt)
-  const fileName = transactionExportFileName(format, generatedAt)
+  return downloadReport(
+    createDemoTransactionExportReport(transactions, generatedAt),
+    format,
+    transactionExportFileName(format, generatedAt),
+  )
+}
 
-  if (format === 'xlsx') return downloadXlsx(report, fileName)
-  if (format === 'pdf') return downloadPdf(report, fileName)
-  return downloadDocx(report, fileName)
+export async function downloadPrivateTransactionExport(
+  rows: TransactionExportRow[],
+  format: TransactionExportFormat,
+  workspaceName: string,
+) {
+  if (rows.length === 0) throw new Error('Tidak ada transaksi privat untuk diekspor.')
+
+  const generatedAt = new Date()
+  return downloadReport(
+    createTransactionExportReport(rows, generatedAt, `Laporan Transaksi · ${workspaceName}`),
+    format,
+    transactionExportFileName(format, generatedAt),
+  )
 }

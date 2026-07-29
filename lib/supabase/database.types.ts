@@ -3222,6 +3222,25 @@ export type Database = {
         Args: { target_notification_id: string }
         Returns: undefined
       }
+      prepare_transaction_export: {
+        Args: {
+          period_end?: string
+          period_start?: string
+          target_format: string
+          target_workspace_id: string
+        }
+        Returns: {
+          amount: number
+          cost_amount: number
+          currency_code: string
+          financial_account_name: string
+          net_result: number
+          note: string | null
+          transaction_date: string
+          transaction_id: string
+          transaction_type: Database["public"]["Enums"]["transaction_type"]
+        }[]
+      }
       execute_workspace_deletion: {
         Args: {
           confirmation_workspace_name: string

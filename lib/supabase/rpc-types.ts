@@ -14,6 +14,7 @@ export type GenerateWorkspaceRemindersArgs = RpcArgs<'generate_my_workspace_remi
 export type GetMyWorkspaceAccessResult = RpcResult<'get_my_workspace_access'>
 export type GetWorkspaceMemberDirectoryArgs = RpcArgs<'get_workspace_member_directory'>
 export type GetWorkspaceMemberDirectoryResult = RpcResult<'get_workspace_member_directory'>
+export type PrepareTransactionExportResult = RpcResult<'prepare_transaction_export'>
 export type TransitionBusinessPlanArgs = RpcArgs<'transition_business_plan'>
 export type TransitionBusinessGoalArgs = RpcArgs<'transition_business_goal'>
 export type TransitionBusinessInitiativeArgs = RpcArgs<'transition_business_initiative'>
