@@ -12,6 +12,7 @@ import { Download } from 'lucide-react'
 import { useState } from 'react'
 
 interface TransactionExportDialogProps {
+  mode: 'private' | 'demo'
   open: boolean
   transactions: DemoTransaction[]
   onClose: () => void
@@ -24,11 +25,14 @@ const formats: Array<{ description: string; label: string; value: TransactionExp
   { value: 'docx', label: 'Word (.docx)', description: 'Untuk laporan yang masih perlu disunting.' },
 ]
 
-type ExportSource = 'private' | 'demo'
-
-export function TransactionExportDialog({ open, transactions, onClose, onSuccess }: TransactionExportDialogProps) {
+export function TransactionExportDialog({
+  mode,
+  open,
+  transactions,
+  onClose,
+  onSuccess,
+}: TransactionExportDialogProps) {
   const [format, setFormat] = useState<TransactionExportFormat>('xlsx')
-  const [source, setSource] = useState<ExportSource>('private')
   const [exporting, setExporting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -36,7 +40,7 @@ export function TransactionExportDialog({ open, transactions, onClose, onSuccess
     setExporting(true)
     setError(null)
     try {
-      if (source === 'demo') {
+      if (mode === 'demo') {
         await downloadTransactionExport(transactions, format)
       } else {
         const response = await fetch('/api/exports/transactions', {
@@ -77,42 +81,12 @@ export function TransactionExportDialog({ open, transactions, onClose, onSuccess
       open={open}
       onClose={exporting ? () => undefined : onClose}
       title="Ekspor laporan transaksi"
-      description="Pilih sumber data secara eksplisit sebelum file dibuat."
+      description={
+        mode === 'demo'
+          ? 'File hanya memuat data demo yang tersimpan di perangkat ini.'
+          : 'File memuat transaksi workspace privat sesuai permission role Anda.'
+      }
     >
-      <fieldset className="mb-5 space-y-2">
-        <legend className="app-label mb-3">Sumber data</legend>
-        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-zinc-200 p-4 hover:bg-zinc-50">
-          <input
-            type="radio"
-            name="export-source"
-            checked={source === 'private'}
-            onChange={() => setSource('private')}
-            className="mt-1 accent-zinc-950"
-          />
-          <span>
-            <strong className="block text-sm">Workspace privat</strong>
-            <span className="mt-1 block text-xs text-zinc-500">
-              Mengikuti permission role, workspace aktif, mata uang akun, dan audit log.
-            </span>
-          </span>
-        </label>
-        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-zinc-200 p-4 hover:bg-zinc-50">
-          <input
-            type="radio"
-            name="export-source"
-            checked={source === 'demo'}
-            onChange={() => setSource('demo')}
-            className="mt-1 accent-zinc-950"
-          />
-          <span>
-            <strong className="block text-sm">Data demo perangkat</strong>
-            <span className="mt-1 block text-xs text-zinc-500">
-              Mengekspor data contoh localStorage yang tampil pada halaman ini.
-            </span>
-          </span>
-        </label>
-      </fieldset>
-
       <fieldset className="space-y-2">
         <legend className="app-label mb-3">Pilih format file</legend>
         {formats.map((option) => (
@@ -137,7 +111,7 @@ export function TransactionExportDialog({ open, transactions, onClose, onSuccess
       </fieldset>
 
       <div className="mt-4 rounded-xl bg-zinc-100 p-3 text-xs text-zinc-600">
-        {source === 'private'
+        {mode === 'private'
           ? 'Data diambil saat ekspor, dibatasi 10.000 baris, dan dicatat pada audit log.'
           : `${transactions.length} transaksi demo · Mata uang IDR · Tidak masuk audit workspace.`}
       </div>
@@ -157,7 +131,7 @@ export function TransactionExportDialog({ open, transactions, onClose, onSuccess
         </button>
         <button
           type="button"
-          disabled={exporting || (source === 'demo' && transactions.length === 0)}
+          disabled={exporting || (mode === 'demo' && transactions.length === 0)}
           onClick={exportTransactions}
           className="app-button disabled:cursor-not-allowed disabled:opacity-50"
         >

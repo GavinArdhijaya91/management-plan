@@ -19,7 +19,7 @@ const PAGE_SIZE = 20
 
 export function useTransactionOrchestrator() {
   const [transactions, setTransactions] = useLocalStorage<DemoTransaction[]>(
-    'siapin:transactions',
+    'siapin:demo:transactions',
     initialTransactions,
     decodeStoredTransactions,
   )

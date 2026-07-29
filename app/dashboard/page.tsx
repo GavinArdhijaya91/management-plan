@@ -1,149 +1,116 @@
-'use client'
-
-import { DemoDataNotice } from '@/app/_components/demo-data-notice'
-import { useLocalStorage } from '@/app/_lib/use-local-storage'
-import {
-  decodeStoredTransactions,
-  formatTransactionDate,
-  transactionAggregate,
-} from '@/app/manajemen/_domain/transaction-aggregate'
 import { Header } from '@/components/header'
-import { KPICard } from '@/components/kpi-card'
-import { SalesChart } from '@/components/sales-chart'
-import { transactions as initialTransactions } from '@/data/transactions'
-import { weeklyTasks } from '@/data/dashboard'
-import type { DashboardChartDataPoint, DemoBusinessTask, DemoTransaction } from '@/types'
-import { CalendarDays, CircleDollarSign, ListChecks, TrendingUp } from 'lucide-react'
+import { createClient } from '@/lib/supabase/server'
+import { requireActiveWorkspace } from '@/lib/workspace/context'
+import { CalendarDays, ListChecks, ReceiptText, Target } from 'lucide-react'
 import Link from 'next/link'
-import { useMemo } from 'react'
-import { useLanguage } from '@/app/_i18n/language-provider'
-import { dashboardCopy } from '@/app/_i18n/pages/dashboard'
 
-const rupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 })
+function formatWorkspaceAmount(value: number, currencyCode: string | null) {
+  if (!currencyCode) return new Intl.NumberFormat('id-ID').format(value)
+  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: currencyCode }).format(value)
+}
 
-export default function Dashboard() {
-  const [transactions] = useLocalStorage<DemoTransaction[]>(
-    'siapin:transactions',
-    initialTransactions,
-    decodeStoredTransactions,
-  )
-  const [tasks, setTasks] = useLocalStorage<DemoBusinessTask[]>('siapin:tasks', weeklyTasks)
-  const { locale } = useLanguage()
-  const copy = dashboardCopy[locale]
-  const summary = useMemo(() => transactionAggregate.summarize(transactions), [transactions])
-  const chartData = useMemo<DashboardChartDataPoint[]>(
-    () =>
-      transactions
-        .slice(0, 6)
-        .reverse()
-        .map((item) => ({
-          name: formatTransactionDate(item.transactionDate).slice(0, 6),
-          salesAmount: item.transactionType === 'sale' ? item.amount : 0,
-          costAmount: item.costAmount,
-          netResult: item.netResult,
-        })),
-    [transactions],
-  )
-  const unfinished = tasks.filter((task) => !task.completed).length
+export default async function DashboardPage() {
+  const workspace = await requireActiveWorkspace('/dashboard')
+  const supabase = await createClient()
+  const [transactions, goals, actions, events, recentTransactions] = await Promise.all([
+    supabase
+      .from('transactions')
+      .select('id', { count: 'exact', head: true })
+      .eq('workspace_id', workspace.workspace_id),
+    supabase
+      .from('business_goals')
+      .select('id', { count: 'exact', head: true })
+      .eq('workspace_id', workspace.workspace_id)
+      .eq('status', 'active'),
+    supabase
+      .from('action_items')
+      .select('id', { count: 'exact', head: true })
+      .eq('workspace_id', workspace.workspace_id)
+      .in('status', ['todo', 'in_progress', 'blocked']),
+    supabase
+      .from('calendar_events')
+      .select('id', { count: 'exact', head: true })
+      .eq('workspace_id', workspace.workspace_id)
+      .gte('starts_at', new Date().toISOString()),
+    supabase
+      .from('transaction_financial_results')
+      .select('transaction_id,transaction_type,transaction_date,amount,net_result,currency_code')
+      .eq('workspace_id', workspace.workspace_id)
+      .order('transaction_date', { ascending: false })
+      .limit(5),
+  ])
+
+  const unavailable = [transactions, goals, actions, events, recentTransactions].some((result) => result.error)
+  const cards = [
+    { label: 'Transaksi tercatat', value: transactions.count ?? 0, icon: ReceiptText },
+    { label: 'Goal aktif', value: goals.count ?? 0, icon: Target },
+    { label: 'Tindakan berjalan', value: actions.count ?? 0, icon: ListChecks },
+    { label: 'Agenda mendatang', value: events.count ?? 0, icon: CalendarDays },
+  ]
 
   return (
     <main className="app-shell">
       <Header />
       <div className="page-shell motion-page-enter">
-        <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
-            <p className="app-label mb-3">{copy.eyebrow}</p>
-            <h1 className="app-heading">{copy.title}</h1>
-            <p className="mt-2 text-zinc-500">{copy.description}</p>
+            <p className="app-label mb-3">Workspace · {workspace.workspace_name}</p>
+            <h1 className="app-heading">Dashboard usaha</h1>
+            <p className="mt-2 text-zinc-500">Ringkasan ini berasal dari data privat workspace aktif.</p>
           </div>
-          <Link href="/manajemen" className="app-button">
-            {copy.manage}
+          <Link href="/planning" className="app-button">
+            Buka planning
           </Link>
         </div>
-        <DemoDataNotice>{copy.demo}</DemoDataNotice>
 
-        <section aria-label="Ringkasan bisnis" className="my-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <KPICard
-            title={copy.sales}
-            value={rupiah.format(summary.totalSales)}
-            icon={<CircleDollarSign className="size-5" />}
-          />
-          <KPICard
-            title={copy.costAmount}
-            value={rupiah.format(summary.totalCostAmount)}
-            icon={<ListChecks className="size-5" />}
-          />
-          <KPICard
-            title={copy.profit}
-            value={rupiah.format(summary.totalNetResult)}
-            icon={<TrendingUp className="size-5" />}
-          />
-          <KPICard
-            title={copy.remainingPlans}
-            value={`${unfinished} ${copy.tasks}`}
-            icon={<CalendarDays className="size-5" />}
-          />
+        {unavailable && (
+          <p role="alert" className="mt-6 rounded-xl bg-amber-50 p-4 text-sm text-amber-800">
+            Sebagian ringkasan belum dapat dimuat. Coba segarkan halaman.
+          </p>
+        )}
+
+        <section aria-label="Ringkasan workspace" className="my-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {cards.map(({ label, value, icon: Icon }) => (
+            <article key={label} className="app-card p-5">
+              <Icon className="size-5 text-zinc-500" />
+              <p className="app-data mt-5 text-3xl font-semibold">{value}</p>
+              <p className="mt-1 text-sm text-zinc-500">{label}</p>
+            </article>
+          ))}
         </section>
 
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <SalesChart data={chartData} type="bar" title={copy.chart} variant="monochrome" />
+        <section className="app-card p-5 md:p-6">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="app-label">Aktivitas aktual</p>
+              <h2 className="mt-1 font-serif text-xl font-semibold">Transaksi terbaru</h2>
+            </div>
+            <Link href="/manajemen" className="text-sm font-semibold underline">
+              Lihat semua
+            </Link>
           </div>
-          <aside className="rounded-2xl bg-zinc-950 p-6 text-white">
-            <p className="app-label !text-zinc-400">{copy.insights}</p>
-            <div className="mt-5 space-y-5">
-              {[
-                [copy.marginTitle, copy.marginDescription],
-                [copy.expenseTitle, copy.expenseDescription],
-              ].map(([title, description]) => (
-                <div key={title} className="border-b border-white/10 pb-5 last:border-0 last:pb-0">
-                  <h2 className="font-serif font-semibold">{title}</h2>
-                  <p className="mt-1 text-sm text-zinc-400">{description}</p>
+          {recentTransactions.data?.length ? (
+            <div className="mt-5 divide-y divide-zinc-100">
+              {recentTransactions.data.map((transaction) => (
+                <div
+                  key={transaction.transaction_id}
+                  className="grid gap-1 py-3 text-sm sm:grid-cols-[1fr_auto_auto] sm:items-center sm:gap-5"
+                >
+                  <span>{transaction.transaction_date}</span>
+                  <span className="text-zinc-500">
+                    {transaction.transaction_type === 'sale' ? 'Penjualan' : 'Pengeluaran'}
+                  </span>
+                  <strong className="app-data">
+                    {formatWorkspaceAmount(Number(transaction.net_result), transaction.currency_code)}
+                  </strong>
                 </div>
               ))}
             </div>
-          </aside>
-        </div>
-
-        <section className="app-card mt-6 p-5 md:p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <p className="app-label">{copy.action}</p>
-              <h2 className="mt-1 font-serif text-xl font-semibold">{copy.weekly}</h2>
+          ) : (
+            <div className="mt-5 rounded-xl bg-zinc-50 p-5 text-sm text-zinc-600">
+              Belum ada transaksi privat pada workspace ini.
             </div>
-            <span className="app-data text-sm text-zinc-500">
-              {unfinished} {copy.remaining}
-            </span>
-          </div>
-          <div className="grid gap-2 md:grid-cols-2">
-            {tasks.map((task) => (
-              <label
-                key={task.id}
-                className="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl bg-zinc-50 px-4 py-3 hover:bg-zinc-100"
-              >
-                <input
-                  type="checkbox"
-                  checked={task.completed}
-                  onChange={() =>
-                    setTasks((current) =>
-                      current.map((entry) =>
-                        entry.id === task.id ? { ...entry, completed: !entry.completed } : entry,
-                      ),
-                    )
-                  }
-                  className="size-4 accent-zinc-950"
-                />
-                <span className={task.completed ? 'text-sm text-zinc-400 line-through' : 'text-sm text-zinc-700'}>
-                  {copy.taskLabels[task.id] ?? task.title}
-                </span>
-                {task.priority === 'high' && (
-                  <span className="ml-auto rounded-full bg-zinc-950 px-2 py-1 text-[10px] font-semibold uppercase text-white">
-                    {copy.important}
-                  </span>
-                )}
-              </label>
-            ))}
-          </div>
+          )}
         </section>
       </div>
     </main>

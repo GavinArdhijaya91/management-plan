@@ -1,140 +1,74 @@
-'use client'
-
-import { AppToast } from '@/app/_components/app-toast'
-import { DemoDataNotice } from '@/app/_components/demo-data-notice'
-import { useLocalStorage } from '@/app/_lib/use-local-storage'
 import { Header } from '@/components/header'
-import { Bell, CheckCircle2, PackageSearch, Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { createClient } from '@/lib/supabase/server'
+import { requireAuthenticatedUser } from '@/lib/auth/session'
+import { requireActiveWorkspace } from '@/lib/workspace/context'
+import { Bell } from 'lucide-react'
+import Link from 'next/link'
 
-const initial = [
-  {
-    id: 1,
-    title: 'Stok perlu diperiksa',
-    detail: 'Produk A dan C mendekati batas minimum.',
-    read: false,
-    type: 'stock',
-  },
-  {
-    id: 2,
-    title: 'Target hampir tercapai',
-    detail: 'Penjualan bulan ini sudah mencapai 95% target.',
-    read: false,
-    type: 'target',
-  },
-  {
-    id: 3,
-    title: 'Agenda besok',
-    detail: 'Pembayaran Supplier A dijadwalkan pukul 10.00.',
-    read: true,
-    type: 'schedule',
-  },
-]
-
-export default function NotificationsPage() {
-  const [items, setItems] = useLocalStorage('siapin:notifications', initial)
-  const [filter, setFilter] = useState<'all' | 'unread'>('all')
-  const [toast, setToast] = useState<string | null>(null)
-  const shown = filter === 'unread' ? items.filter((item) => !item.read) : items
-  const unread = items.filter((item) => !item.read).length
-  const markAll = () => {
-    setItems((current) => current.map((item) => ({ ...item, read: true })))
-    setToast('Semua notifikasi ditandai dibaca.')
-  }
-  const reset = () => {
-    setItems(initial)
-    setToast('Notifikasi demo dikembalikan.')
-  }
+export default async function NotificationsPage() {
+  const [user, workspace] = await Promise.all([
+    requireAuthenticatedUser('/notifikasi'),
+    requireActiveWorkspace('/notifikasi'),
+  ])
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('notifications')
+    .select('id,title,detail,href,read_at,occurred_at,type')
+    .eq('workspace_id', workspace.workspace_id)
+    .eq('user_id', user.id)
+    .order('occurred_at', { ascending: false })
+    .limit(100)
 
   return (
     <main className="app-shell">
       <Header />
       <div className="page-shell motion-page-enter max-w-4xl">
-        <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
-            <p className="app-label mb-3">Pusat aktivitas</p>
-            <h1 className="app-heading">Notifikasi</h1>
-            <p className="mt-2 text-zinc-500">{unread} aktivitas belum dibaca.</p>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={reset}
-              className="min-h-11 rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium"
-            >
-              Reset Demo
-            </button>
-            <button onClick={markAll} disabled={unread === 0} className="app-button disabled:opacity-40">
-              Tandai semua dibaca
-            </button>
-          </div>
-        </div>
-        <DemoDataNotice />
-        <div className="my-5 flex gap-2" role="group" aria-label="Filter notifikasi">
-          <button
-            onClick={() => setFilter('all')}
-            className={
-              filter === 'all' ? 'app-button' : 'min-h-11 rounded-xl border border-zinc-200 bg-white px-4 text-sm'
-            }
-          >
-            Semua
-          </button>
-          <button
-            onClick={() => setFilter('unread')}
-            className={
-              filter === 'unread' ? 'app-button' : 'min-h-11 rounded-xl border border-zinc-200 bg-white px-4 text-sm'
-            }
-          >
-            Belum dibaca
-          </button>
-        </div>
-        <div className="app-card divide-y divide-zinc-100 overflow-hidden">
-          {shown.length === 0 ? (
-            <div className="p-12 text-center">
-              <Bell className="mx-auto size-8 text-zinc-300" />
-              <p className="mt-3 text-sm text-zinc-500">Tidak ada notifikasi pada filter ini.</p>
-            </div>
-          ) : (
-            shown.map((item) => (
-              <div key={item.id} className={`flex items-start gap-4 p-5 ${item.read ? 'opacity-60' : ''}`}>
-                <button
-                  onClick={() =>
-                    setItems((current) =>
-                      current.map((entry) => (entry.id === item.id ? { ...entry, read: true } : entry)),
-                    )
-                  }
-                  className="flex flex-1 items-start gap-4 text-left"
-                >
-                  <span className="grid size-10 place-items-center rounded-xl bg-zinc-100">
-                    {item.type === 'stock' ? (
-                      <PackageSearch className="size-5" />
-                    ) : item.type === 'target' ? (
-                      <CheckCircle2 className="size-5" />
-                    ) : (
-                      <Bell className="size-5" />
-                    )}
+        <p className="app-label mb-3">Workspace · {workspace.workspace_name}</p>
+        <h1 className="app-heading">Notifikasi</h1>
+        <p className="mt-2 text-zinc-500">Aktivitas privat yang ditujukan kepada akun Anda.</p>
+        {error ? (
+          <p role="alert" className="mt-6 rounded-xl bg-red-50 p-4 text-sm text-red-700">
+            Notifikasi gagal dimuat.
+          </p>
+        ) : data?.length ? (
+          <div className="mt-6 grid gap-3">
+            {data.map((notification) => {
+              const content = (
+                <>
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-zinc-100">
+                    <Bell className="size-4" />
                   </span>
-                  <span className="flex-1">
-                    <strong className="text-sm">{item.title}</strong>
-                    <span className="mt-1 block text-sm text-zinc-500">{item.detail}</span>
+                  <span className="min-w-0">
+                    <strong className="block text-sm">{notification.title}</strong>
+                    <span className="mt-1 block text-sm text-zinc-600">{notification.detail}</span>
+                    <span className="mt-2 block text-xs text-zinc-400">
+                      {new Intl.DateTimeFormat('id-ID', {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      }).format(new Date(notification.occurred_at))}
+                    </span>
                   </span>
-                  {!item.read && <span className="mt-2 size-2 rounded-full bg-zinc-950" />}
-                </button>
-                <button
-                  onClick={() => {
-                    setItems((current) => current.filter((entry) => entry.id !== item.id))
-                    setToast('Notifikasi dihapus.')
-                  }}
-                  aria-label={`Hapus ${item.title}`}
-                  className="rounded-xl p-2 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-950"
-                >
-                  <Trash2 className="size-4" />
-                </button>
-              </div>
-            ))
-          )}
-        </div>
+                </>
+              )
+              const className = `app-card flex gap-4 p-4 ${notification.read_at ? 'opacity-70' : ''}`
+              return notification.href ? (
+                <Link key={notification.id} href={notification.href} className={className}>
+                  {content}
+                </Link>
+              ) : (
+                <article key={notification.id} className={className}>
+                  {content}
+                </article>
+              )
+            })}
+          </div>
+        ) : (
+          <section className="app-card mt-6 p-8 text-center">
+            <h2 className="font-serif text-2xl font-semibold">Belum ada notifikasi</h2>
+            <p className="mt-2 text-sm text-zinc-500">Aktivitas workspace baru akan muncul di sini.</p>
+          </section>
+        )}
       </div>
-      <AppToast message={toast} onClose={() => setToast(null)} />
     </main>
   )
 }

@@ -35,6 +35,11 @@ export default async function LoginPage({
           Buat akun
         </Link>
       </p>
+      <div className="mt-6 border-t border-zinc-100 pt-6 text-center">
+        <Link href="/demo/dashboard" className="text-sm font-semibold text-zinc-950 underline">
+          Buka Demo tanpa akun
+        </Link>
+      </div>
     </AuthShell>
   )
 }

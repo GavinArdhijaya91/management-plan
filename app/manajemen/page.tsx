@@ -1,163 +1,84 @@
-'use client'
-
+import { PrivateTransactionExportButton } from '@/app/manajemen/_components/private-transaction-export-button'
 import { Header } from '@/components/header'
-import { Download, Plus, RotateCcw } from 'lucide-react'
-import { Modal } from '@/app/_components/modal'
-import { TransactionSummary } from '@/app/manajemen/_components/transaction-summary'
-import { TransactionFilters } from '@/app/manajemen/_components/transaction-filters'
-import { useTransactionOrchestrator } from '@/app/manajemen/_hooks/use-transaction-orchestrator'
-import { TransactionTable } from '@/app/manajemen/_components/transaction-table'
-import { TransactionForm } from '@/app/manajemen/_components/transaction-form'
-import { ConfirmationDialog } from '@/app/manajemen/_components/confirmation-dialog'
-import { TransactionToast } from '@/app/manajemen/_components/transaction-toast'
-import { TransactionPagination } from '@/app/manajemen/_components/transaction-pagination'
-import { TransactionInsights } from '@/app/manajemen/_components/transaction-insights'
-import { TransactionExportDialog } from '@/app/manajemen/_components/transaction-export-dialog'
-import { useState } from 'react'
+import { createClient } from '@/lib/supabase/server'
+import { requireActiveWorkspace } from '@/lib/workspace/context'
 
-export default function ManajemenPage() {
-  const [exportOpen, setExportOpen] = useState(false)
-  const {
-    editingId,
-    deleteId,
-    formInitialValues,
-    hasTransactions,
-    modalOpen,
-    page,
-    pageCount,
-    paginatedTransactions,
-    periodFilter,
-    resetOpen,
-    searchTerm,
-    sortDirection,
-    sortField,
-    toastMessage,
-    totalFilteredTransactions,
-    transactions,
-    typeFilter,
-    clearFilters,
-    closeModal,
-    confirmDelete,
-    confirmReset,
-    openCreate,
-    openEdit,
-    saveTransaction,
-    setDeleteId,
-    setPage,
-    setPeriodFilter,
-    setResetOpen,
-    setSearchTerm,
-    setSortDirection,
-    setSortField,
-    setToastMessage,
-    setTypeFilter,
-  } = useTransactionOrchestrator()
+function formatWorkspaceAmount(value: number, currencyCode: string | null) {
+  if (!currencyCode) return new Intl.NumberFormat('id-ID').format(value)
+  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: currencyCode }).format(value)
+}
+
+export default async function ManagementPage() {
+  const workspace = await requireActiveWorkspace('/manajemen')
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('transaction_financial_results')
+    .select('transaction_id,transaction_type,transaction_date,amount,cost_amount,net_result,currency_code')
+    .eq('workspace_id', workspace.workspace_id)
+    .order('transaction_date', { ascending: false })
+    .limit(100)
 
   return (
     <main className="app-shell">
       <Header />
-
       <div className="page-shell motion-page-enter">
-        {/* Page Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
+        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
-            <h1 className="app-heading">Manajemen transaksi & penjualan</h1>
-            <p className="mt-2 text-zinc-500">Kelola transaksi, biaya pokok, dan hasil bersih usaha Anda.</p>
+            <p className="app-label mb-3">Workspace · {workspace.workspace_name}</p>
+            <h1 className="app-heading">Manajemen transaksi</h1>
+            <p className="mt-2 text-zinc-500">Data pada halaman ini berasal dari database workspace privat.</p>
           </div>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <button
-              type="button"
-              onClick={() => setExportOpen(true)}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium hover:bg-zinc-50"
-            >
-              <Download className="size-4" />
-              Ekspor
-            </button>
-            <button
-              type="button"
-              onClick={() => setResetOpen(true)}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium hover:bg-zinc-50"
-            >
-              <RotateCcw className="size-4" />
-              Reset Demo
-            </button>
-            <button onClick={openCreate} className="app-button w-full md:w-auto">
-              <Plus className="size-5" />
-              Tambah Transaksi
-            </button>
-          </div>
+          <PrivateTransactionExportButton />
         </div>
 
-        <TransactionSummary transactions={transactions} />
-        <TransactionInsights transactions={transactions} />
-
-        <TransactionFilters
-          periodFilter={periodFilter}
-          searchTerm={searchTerm}
-          sortDirection={sortDirection}
-          sortField={sortField}
-          typeFilter={typeFilter}
-          onPeriodFilterChange={setPeriodFilter}
-          onSearchTermChange={setSearchTerm}
-          onSortDirectionChange={setSortDirection}
-          onSortFieldChange={setSortField}
-          onTypeFilterChange={setTypeFilter}
-        />
-
-        <TransactionTable
-          transactions={paginatedTransactions}
-          hasTransactions={hasTransactions}
-          onClearFilters={clearFilters}
-          onCreate={openCreate}
-          onDelete={setDeleteId}
-          onEdit={openEdit}
-        />
-        <TransactionPagination
-          page={page}
-          pageCount={pageCount}
-          totalItems={totalFilteredTransactions}
-          onPageChange={setPage}
-        />
+        {error ? (
+          <p role="alert" className="mt-6 rounded-xl bg-red-50 p-4 text-sm text-red-700">
+            Transaksi gagal dimuat. Periksa permission role atau coba kembali.
+          </p>
+        ) : data?.length ? (
+          <div className="app-card mt-6 overflow-x-auto">
+            <table className="w-full min-w-[720px] text-left text-sm">
+              <thead className="border-b border-zinc-200 bg-zinc-50 text-xs uppercase tracking-wide text-zinc-500">
+                <tr>
+                  <th className="px-5 py-4">Tanggal</th>
+                  <th className="px-5 py-4">Jenis</th>
+                  <th className="px-5 py-4">Nominal</th>
+                  <th className="px-5 py-4">Biaya pokok</th>
+                  <th className="px-5 py-4">Hasil bersih</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {data.map((transaction) => {
+                  return (
+                    <tr key={transaction.transaction_id}>
+                      <td className="px-5 py-4">{transaction.transaction_date}</td>
+                      <td className="px-5 py-4">
+                        {transaction.transaction_type === 'sale' ? 'Penjualan' : 'Pengeluaran'}
+                      </td>
+                      <td className="app-data px-5 py-4">
+                        {formatWorkspaceAmount(Number(transaction.amount), transaction.currency_code)}
+                      </td>
+                      <td className="app-data px-5 py-4">
+                        {formatWorkspaceAmount(Number(transaction.cost_amount), transaction.currency_code)}
+                      </td>
+                      <td className="app-data px-5 py-4 font-semibold">
+                        {formatWorkspaceAmount(Number(transaction.net_result), transaction.currency_code)}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <section className="app-card mt-6 p-8 text-center">
+            <h2 className="font-serif text-2xl font-semibold">Belum ada transaksi privat</h2>
+            <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-zinc-500">
+              Workspace ini masih kosong. Data demo hanya tersedia melalui tombol Buka Demo pada halaman utama.
+            </p>
+          </section>
+        )}
       </div>
-
-      <Modal
-        open={modalOpen}
-        onClose={closeModal}
-        title={editingId ? 'Edit transaksi' : 'Tambah transaksi'}
-        description="Data akan disimpan otomatis di perangkat ini."
-      >
-        <TransactionForm
-          key={`${editingId ?? 'new'}-${modalOpen}`}
-          initialValues={formInitialValues}
-          submitLabel={editingId === null ? 'Tambah transaksi' : 'Simpan perubahan'}
-          onCancel={closeModal}
-          onSubmit={saveTransaction}
-        />
-      </Modal>
-
-      <ConfirmationDialog
-        open={deleteId !== null}
-        title="Hapus transaksi?"
-        description="Transaksi yang dihapus tidak dapat dikembalikan, kecuali dengan mereset seluruh data demo."
-        confirmLabel="Hapus transaksi"
-        onCancel={() => setDeleteId(null)}
-        onConfirm={confirmDelete}
-      />
-      <ConfirmationDialog
-        open={resetOpen}
-        title="Kembalikan data demo?"
-        description="Semua transaksi buatan dan perubahan Anda akan diganti dengan data contoh awal."
-        confirmLabel="Reset data demo"
-        onCancel={() => setResetOpen(false)}
-        onConfirm={confirmReset}
-      />
-      <TransactionExportDialog
-        open={exportOpen}
-        transactions={transactions}
-        onClose={() => setExportOpen(false)}
-        onSuccess={setToastMessage}
-      />
-      <TransactionToast message={toastMessage} onClose={() => setToastMessage(null)} />
     </main>
   )
 }
