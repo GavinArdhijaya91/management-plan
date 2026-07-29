@@ -47,5 +47,8 @@ describe('workspace chat migration source contract', () => {
   it('does not reuse an audit column name for the export actor variable', () => {
     expect(transactionExportMigration).toContain('audit_record.actor_id = request_actor_id')
     expect(transactionExportMigration).not.toContain('audit_record.actor_id = actor_id')
+    expect(transactionExportMigration).toMatch(
+      /insert into public\.audit_logs\s*\(\s*workspace_id,\s*actor_id,[\s\S]*?values\s*\(\s*target_workspace_id,\s*request_actor_id,/i,
+    )
   })
 })

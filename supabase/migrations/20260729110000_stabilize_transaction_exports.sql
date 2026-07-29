@@ -107,14 +107,14 @@ begin
 
   insert into public.audit_logs (
     workspace_id,
-    request_actor_id,
+    actor_id,
     action,
     entity_type,
     metadata
   )
   values (
     target_workspace_id,
-    actor_id,
+    request_actor_id,
     'export',
     'transaction_export',
     jsonb_build_object(
