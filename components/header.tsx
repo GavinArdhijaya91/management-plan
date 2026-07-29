@@ -28,7 +28,9 @@ export function Header({ mode = 'private' }: HeaderProps) {
   const { dictionary } = useLanguage()
   const demoMode = mode === 'demo'
   const routeHref = (href: string) => (demoMode ? `/demo${href}` : href)
-  const primaryRoutes = appRoutes.filter((item) => item.href !== '/hubungi-kami')
+  const primaryRoutes = appRoutes.filter(
+    (item) => item.href !== '/hubungi-kami' && (!demoMode || item.href !== '/kolaborasi'),
+  )
   const supportRoute = appRoutes.find((item) => item.href === '/hubungi-kami')
   const activeRoute = appRoutes.find((item) => isCurrentRoute(pathname, routeHref(item.href)))
 

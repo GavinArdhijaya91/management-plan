@@ -6,5 +6,5 @@ export interface AppRoute {
   shortLabel: string
   description: string
   icon: LucideIcon
-  translationKey: 'dashboard' | 'planning' | 'management' | 'calendar' | 'market' | 'contact'
+  translationKey: 'dashboard' | 'planning' | 'management' | 'calendar' | 'collaboration' | 'market' | 'contact'
 }

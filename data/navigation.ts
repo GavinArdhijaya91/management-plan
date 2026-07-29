@@ -1,4 +1,12 @@
-import { BarChart3, CalendarDays, Headphones, LayoutDashboard, ListChecks, WalletCards } from 'lucide-react'
+import {
+  BarChart3,
+  CalendarDays,
+  Headphones,
+  LayoutDashboard,
+  ListChecks,
+  MessagesSquare,
+  WalletCards,
+} from 'lucide-react'
 import type { AppRoute } from '@/types/navigation'
 
 export const appRoutes: AppRoute[] = [
@@ -33,6 +41,14 @@ export const appRoutes: AppRoute[] = [
     description: 'Rencanakan pembayaran, stok, dan agenda bisnis.',
     icon: CalendarDays,
     translationKey: 'calendar',
+  },
+  {
+    href: '/kolaborasi',
+    label: 'Kolaborasi',
+    shortLabel: 'Chat',
+    description: 'Berkomunikasi privat dengan anggota workspace.',
+    icon: MessagesSquare,
+    translationKey: 'collaboration',
   },
   {
     href: '/tren-pasar',

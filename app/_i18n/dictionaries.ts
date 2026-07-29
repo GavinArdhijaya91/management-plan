@@ -26,6 +26,7 @@ const id = {
     dashboard: 'Dashboard',
     management: 'Manajemen',
     calendar: 'Kalender',
+    collaboration: 'Kolaborasi',
     market: 'Tren Pasar',
     contact: 'Hubungi Kami',
     profile: 'Profil',
@@ -56,6 +57,7 @@ export type Dictionary = {
     dashboard: string
     management: string
     calendar: string
+    collaboration: string
     market: string
     contact: string
     profile: string
@@ -87,6 +89,7 @@ const baseDictionaries: Record<Locale, Dictionary> = {
       dashboard: 'ダッシュボード',
       management: '管理',
       calendar: 'カレンダー',
+      collaboration: 'コラボレーション',
       market: '市場動向',
       contact: 'お問い合わせ',
       profile: 'プロフィール',
@@ -115,6 +118,7 @@ const baseDictionaries: Record<Locale, Dictionary> = {
       dashboard: 'Dashboard',
       management: 'Management',
       calendar: 'Calendar',
+      collaboration: 'Collaboration',
       market: 'Market Trends',
       contact: 'Contact Us',
       profile: 'Profile',
@@ -143,6 +147,7 @@ const baseDictionaries: Record<Locale, Dictionary> = {
       dashboard: 'Panel',
       management: 'Gestión',
       calendar: 'Calendario',
+      collaboration: 'Colaboración',
       market: 'Tendencias',
       contact: 'Contacto',
       profile: 'Perfil',
@@ -171,6 +176,7 @@ const baseDictionaries: Record<Locale, Dictionary> = {
       dashboard: 'Tableau de bord',
       management: 'Gestion',
       calendar: 'Calendrier',
+      collaboration: 'Collaboration',
       market: 'Tendances du marché',
       contact: 'Nous contacter',
       profile: 'Profil',
@@ -200,6 +206,7 @@ const baseDictionaries: Record<Locale, Dictionary> = {
       dashboard: 'Übersicht',
       management: 'Verwaltung',
       calendar: 'Kalender',
+      collaboration: 'Zusammenarbeit',
       market: 'Markttrends',
       contact: 'Kontakt',
       profile: 'Profil',
