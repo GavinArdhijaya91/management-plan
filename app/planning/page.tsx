@@ -1,4 +1,5 @@
-import { Archive, ChevronRight, Plus, RotateCcw, Target } from 'lucide-react'
+import Link from 'next/link'
+import { Archive, ChevronRight, ClipboardCheck, Plus, RotateCcw, Target } from 'lucide-react'
 import { Header } from '@/components/header'
 import { getPlanningBoard } from '@/lib/planning/service'
 import type {
@@ -6,6 +7,7 @@ import type {
   BusinessGoalRow,
   BusinessInitiativeRow,
   BusinessPlanRow,
+  PlanningOverdueEvaluationRow,
 } from '@/lib/supabase/domain-types'
 import {
   createActionItemAction,
@@ -58,6 +60,20 @@ function StatusPill({ value }: { value: string }) {
         aria-hidden="true"
       />
       {statusLabel[value] ?? value}
+    </span>
+  )
+}
+
+function OverduePill({ evaluation }: { evaluation?: PlanningOverdueEvaluationRow }) {
+  if (!evaluation?.is_overdue && !evaluation?.is_due_today) return null
+
+  return (
+    <span
+      className={`rounded-md border px-2 py-1 text-xs font-medium ${
+        evaluation.is_overdue ? 'border-red-200 bg-red-50 text-red-800' : 'border-amber-200 bg-amber-50 text-amber-800'
+      }`}
+    >
+      {evaluation.is_overdue ? `Overdue ${evaluation.days_overdue} hari` : 'Jatuh tempo hari ini'}
     </span>
   )
 }
@@ -169,9 +185,15 @@ export default async function PlanningPage({ searchParams }: PlanningPageProps) 
               Hubungkan arah bisnis menjadi target, initiative, dan tindakan yang dapat dievaluasi.
             </p>
           </div>
-          <span className="rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-xs font-medium text-zinc-600">
-            {board.workspace.role_name}
-          </span>
+          <div className="flex items-center gap-2">
+            <Link href="/planning/reviews" className="app-button-secondary">
+              <ClipboardCheck className="size-4" />
+              Evaluasi
+            </Link>
+            <span className="rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-xs font-medium text-zinc-600">
+              {board.workspace.role_name}
+            </span>
+          </div>
         </div>
 
         <Feedback error={error} success={success} />
@@ -235,6 +257,7 @@ export default async function PlanningPage({ searchParams }: PlanningPageProps) 
                   goals={goals}
                   initiatives={initiatives}
                   actions={board.actions}
+                  overdueEvaluations={board.overdueEvaluations}
                   members={board.members}
                   userId={board.userId}
                   canUpdatePlan={canUpdatePlan}
@@ -259,6 +282,7 @@ function PlanCard({
   goals,
   initiatives,
   actions,
+  overdueEvaluations,
   members,
   userId,
   canUpdatePlan,
@@ -273,6 +297,7 @@ function PlanCard({
   goals: BusinessGoalRow[]
   initiatives: BusinessInitiativeRow[]
   actions: ActionItemRow[]
+  overdueEvaluations: Awaited<ReturnType<typeof getPlanningBoard>>['overdueEvaluations']
   members: Awaited<ReturnType<typeof getPlanningBoard>>['members']
   userId: string
   canUpdatePlan: boolean
@@ -283,6 +308,8 @@ function PlanCard({
   canUpdateAllActions: boolean
   canUpdateOwnActions: boolean
 }) {
+  const overdueByRecordId = new Map(overdueEvaluations.map((evaluation) => [evaluation.record_id, evaluation]))
+
   return (
     <section className="app-card overflow-hidden">
       <div className="border-b border-zinc-200 p-5">
@@ -397,6 +424,7 @@ function PlanCard({
                     <ChevronRight className="size-4 text-zinc-400" />
                     <h3 className="font-medium">{goal.title}</h3>
                     <StatusPill value={goal.status} />
+                    <OverduePill evaluation={overdueByRecordId.get(goal.id)} />
                   </div>
                   {goal.target_date && <p className="mt-1 pl-6 text-xs text-zinc-500">Target {goal.target_date}</p>}
                 </div>
@@ -428,6 +456,7 @@ function PlanCard({
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="font-serif text-lg font-semibold">{initiative.title}</h3>
                       <StatusPill value={initiative.status} />
+                      <OverduePill evaluation={overdueByRecordId.get(initiative.id)} />
                     </div>
                     <p className="mt-1 text-xs text-zinc-500">
                       {goals.find((goal) => goal.id === initiative.business_goal_id)?.title ??
@@ -465,6 +494,7 @@ function PlanCard({
                             <div className="flex flex-wrap items-center gap-2">
                               <p className="text-sm font-medium">{action.title}</p>
                               <StatusPill value={action.status} />
+                              <OverduePill evaluation={overdueByRecordId.get(action.id)} />
                               <span className="text-[11px] text-zinc-400">P{action.priority}</span>
                             </div>
                             <p className="mt-1 text-xs text-zinc-500">

@@ -139,8 +139,16 @@ begin
     and procedure.prosecdef
     and has_function_privilege('anon', procedure.oid, 'execute')
     and not (
-      procedure.proname = 'get_workspace_invitation_preview'
-      and pg_get_function_identity_arguments(procedure.oid) = 'invitation_token text'
+      (
+        procedure.proname = 'get_workspace_invitation_preview'
+        and pg_get_function_identity_arguments(procedure.oid) =
+          'invitation_token text'
+      )
+      or (
+        procedure.proname = 'get_public_business_portfolio'
+        and pg_get_function_identity_arguments(procedure.oid) =
+          'requested_public_slug text'
+      )
     )
   order by procedure.proname, procedure.oid
   limit 1;
@@ -157,6 +165,14 @@ begin
     'execute'
   ) then
     raise exception 'Anonymous invitation preview capability was removed';
+  end if;
+
+  if not has_function_privilege(
+    'anon',
+    'public.get_public_business_portfolio(text)',
+    'execute'
+  ) then
+    raise exception 'Anonymous public portfolio capability was removed';
   end if;
 
   if has_function_privilege(

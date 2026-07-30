@@ -9,16 +9,23 @@ describe('isProtectedPath', () => {
     '/kolaborasi/channel',
     '/planning',
     '/planning/reviews',
+    '/portfolio',
     '/workspace',
     '/workspace/select',
   ])('protects private application path %s', (pathname) => {
     expect(isProtectedPath(pathname)).toBe(true)
   })
 
-  it.each(['/', '/auth/login', '/auth/callback', '/api/health', '/demo', '/demo/dashboard', '/planning-public'])(
-    'keeps public or prefix-lookalike path %s outside the session proxy',
-    (pathname) => {
-      expect(isProtectedPath(pathname)).toBe(false)
-    },
-  )
+  it.each([
+    '/',
+    '/auth/login',
+    '/auth/callback',
+    '/api/health',
+    '/demo',
+    '/demo/dashboard',
+    '/planning-public',
+    '/portfolio/public-example',
+  ])('keeps public or prefix-lookalike path %s outside the session proxy', (pathname) => {
+    expect(isProtectedPath(pathname)).toBe(false)
+  })
 })

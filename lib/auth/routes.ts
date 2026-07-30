@@ -9,7 +9,11 @@ const protectedPrefixes = [
   '/tren-pasar',
   '/workspace',
 ] as const
+const protectedExactPaths = ['/portfolio'] as const
 
 export function isProtectedPath(pathname: string) {
-  return protectedPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
+  return (
+    protectedExactPaths.some((path) => pathname === path) ||
+    protectedPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
+  )
 }

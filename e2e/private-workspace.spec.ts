@@ -53,5 +53,39 @@ test.describe.serial('private workspace journey', () => {
 
     await expect(page).toHaveURL(/\/planning\?success=/)
     await expect(page.getByRole('heading', { name: 'Rencana pertumbuhan E2E' })).toBeVisible()
+
+    await page.getByRole('link', { name: 'Evaluasi' }).click()
+    await expect(page).toHaveURL(/\/planning\/reviews$/)
+    await page.getByText('Buat draft evaluasi', { exact: true }).click()
+    await page.getByLabel('Rencana bisnis').selectOption({ label: 'Rencana pertumbuhan E2E' })
+    await page.getByLabel('Jenis periode').selectOption('custom')
+    await page.getByLabel('Awal periode').fill('2026-07-01')
+    await page.getByLabel('Akhir periode').fill('2026-07-29')
+    await page.getByLabel('Ringkasan').fill('Evaluasi browser memastikan workflow review bekerja secara menyeluruh.')
+    await page.getByLabel('Tindak lanjut').fill('Tambahkan target terukur pada iterasi berikutnya.')
+    await page.getByRole('button', { name: 'Simpan draft evaluasi' }).click()
+
+    await expect(page).toHaveURL(/\/planning\/reviews\?success=/)
+    await page.getByRole('button', { name: 'Perbarui evidence' }).click()
+    await expect(page).toHaveURL(
+      (url) =>
+        url.pathname === '/planning/reviews' &&
+        url.searchParams.get('success') === 'Evidence dan pemeriksaan kesiapan telah diperbarui.',
+      { timeout: 15_000 },
+    )
+    await expect(page.getByText('Rencana belum memiliki target metrik', { exact: false })).toBeVisible()
+    await page.getByLabel(/Saya memahami .* warning/).check()
+    await page.getByRole('button', { name: 'Finalisasi evaluasi' }).click()
+
+    await expect(page).toHaveURL(
+      (url) =>
+        url.pathname === '/planning/reviews' &&
+        url.searchParams.get('success') === 'Evaluasi difinalisasi dan evidence telah dikunci.',
+      { timeout: 15_000 },
+    )
+    await expect(page.getByRole('status')).toContainText('Evaluasi difinalisasi')
+    await expect(page.getByText('Finalized', { exact: true })).toBeVisible()
+    await page.goto('/notifikasi')
+    await expect(page.getByText('Evaluasi bisnis difinalisasi')).toBeVisible()
   })
 })

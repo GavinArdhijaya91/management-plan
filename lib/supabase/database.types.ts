@@ -799,10 +799,13 @@ export type Database = {
           created_at: string
           created_by: string
           id: string
+          public_slug: string | null
+          published_at: string | null
           status: Database["public"]["Enums"]["business_portfolio_status"]
           summary: string | null
           title: string
           updated_at: string
+          visibility: Database["public"]["Enums"]["business_portfolio_visibility"]
           workspace_id: string
         }
         Insert: {
@@ -810,10 +813,13 @@ export type Database = {
           created_at?: string
           created_by: string
           id?: string
+          public_slug?: string | null
+          published_at?: string | null
           status?: Database["public"]["Enums"]["business_portfolio_status"]
           summary?: string | null
           title: string
           updated_at?: string
+          visibility?: Database["public"]["Enums"]["business_portfolio_visibility"]
           workspace_id: string
         }
         Update: {
@@ -821,10 +827,13 @@ export type Database = {
           created_at?: string
           created_by?: string
           id?: string
+          public_slug?: string | null
+          published_at?: string | null
           status?: Database["public"]["Enums"]["business_portfolio_status"]
           summary?: string | null
           title?: string
           updated_at?: string
+          visibility?: Database["public"]["Enums"]["business_portfolio_visibility"]
           workspace_id?: string
         }
         Relationships: [
@@ -970,42 +979,75 @@ export type Database = {
         Row: {
           actual_value: number | null
           aggregation: Database["public"]["Enums"]["metric_aggregation"]
+          authoritative_source:
+            | Database["public"]["Enums"]["metric_actual_source"]
+            | null
           business_review_id: string
           captured_at: string
+          comparison_value: number | null
           direction: Database["public"]["Enums"]["goal_direction"]
           goal_target_id: string
           id: string
+          manual_actual_value: number | null
           metric_name: string
+          reconciliation_status:
+            | Database["public"]["Enums"]["metric_reconciliation_status"]
+            | null
+          reconciliation_variance: number | null
+          reconciliation_variance_percent: number | null
           starting_value: number | null
           target_value: number
+          transaction_actual_value: number | null
           unit_type: Database["public"]["Enums"]["metric_unit_type"]
           workspace_id: string
         }
         Insert: {
           actual_value?: number | null
           aggregation: Database["public"]["Enums"]["metric_aggregation"]
+          authoritative_source?:
+            | Database["public"]["Enums"]["metric_actual_source"]
+            | null
           business_review_id: string
           captured_at?: string
+          comparison_value?: number | null
           direction: Database["public"]["Enums"]["goal_direction"]
           goal_target_id: string
           id?: string
+          manual_actual_value?: number | null
           metric_name: string
+          reconciliation_status?:
+            | Database["public"]["Enums"]["metric_reconciliation_status"]
+            | null
+          reconciliation_variance?: number | null
+          reconciliation_variance_percent?: number | null
           starting_value?: number | null
           target_value: number
+          transaction_actual_value?: number | null
           unit_type: Database["public"]["Enums"]["metric_unit_type"]
           workspace_id: string
         }
         Update: {
           actual_value?: number | null
           aggregation?: Database["public"]["Enums"]["metric_aggregation"]
+          authoritative_source?:
+            | Database["public"]["Enums"]["metric_actual_source"]
+            | null
           business_review_id?: string
           captured_at?: string
+          comparison_value?: number | null
           direction?: Database["public"]["Enums"]["goal_direction"]
           goal_target_id?: string
           id?: string
+          manual_actual_value?: number | null
           metric_name?: string
+          reconciliation_status?:
+            | Database["public"]["Enums"]["metric_reconciliation_status"]
+            | null
+          reconciliation_variance?: number | null
+          reconciliation_variance_percent?: number | null
           starting_value?: number | null
           target_value?: number
+          transaction_actual_value?: number | null
           unit_type?: Database["public"]["Enums"]["metric_unit_type"]
           workspace_id?: string
         }
@@ -1788,12 +1830,14 @@ export type Database = {
       metric_definitions: {
         Row: {
           aggregation: Database["public"]["Enums"]["metric_aggregation"]
+          authoritative_source: Database["public"]["Enums"]["metric_actual_source"]
           code: string
           created_at: string
           created_by: string
           description: string | null
           id: string
           name: string
+          reconciliation_tolerance_percent: number
           unit_label: string | null
           unit_type: Database["public"]["Enums"]["metric_unit_type"]
           updated_at: string
@@ -1801,12 +1845,14 @@ export type Database = {
         }
         Insert: {
           aggregation?: Database["public"]["Enums"]["metric_aggregation"]
+          authoritative_source?: Database["public"]["Enums"]["metric_actual_source"]
           code: string
           created_at?: string
           created_by: string
           description?: string | null
           id?: string
           name: string
+          reconciliation_tolerance_percent?: number
           unit_label?: string | null
           unit_type: Database["public"]["Enums"]["metric_unit_type"]
           updated_at?: string
@@ -1814,12 +1860,14 @@ export type Database = {
         }
         Update: {
           aggregation?: Database["public"]["Enums"]["metric_aggregation"]
+          authoritative_source?: Database["public"]["Enums"]["metric_actual_source"]
           code?: string
           created_at?: string
           created_by?: string
           description?: string | null
           id?: string
           name?: string
+          reconciliation_tolerance_percent?: number
           unit_label?: string | null
           unit_type?: Database["public"]["Enums"]["metric_unit_type"]
           updated_at?: string
@@ -2977,6 +3025,44 @@ export type Database = {
           },
         ]
       }
+      goal_target_actual_reconciliation: {
+        Row: {
+          actual_value: number | null
+          authoritative_source:
+            | Database["public"]["Enums"]["metric_actual_source"]
+            | null
+          comparison_value: number | null
+          goal_target_id: string | null
+          manual_actual_value: number | null
+          progress_percent: number | null
+          reconciliation_status:
+            | Database["public"]["Enums"]["metric_reconciliation_status"]
+            | null
+          reconciliation_tolerance_percent: number | null
+          reconciliation_variance: number | null
+          reconciliation_variance_percent: number | null
+          target_value: number | null
+          target_variance: number | null
+          transaction_actual_value: number | null
+          workspace_id: string | null
+        }
+        Relationships: []
+      }
+      planning_overdue_evaluations: {
+        Row: {
+          business_plan_id: string | null
+          days_overdue: number | null
+          deadline: string | null
+          is_due_today: boolean | null
+          is_overdue: boolean | null
+          lifecycle_status: string | null
+          record_id: string | null
+          record_type: Database["public"]["Enums"]["planning_record_type"] | null
+          title: string | null
+          workspace_id: string | null
+        }
+        Relationships: []
+      }
       goal_target_latest_measurements: {
         Row: {
           goal_target_id: string | null
@@ -3276,6 +3362,29 @@ export type Database = {
       }
     }
     Functions: {
+      calculate_goal_target_actual_reconciliation: {
+        Args: {
+          target_goal_target_id: string
+          target_period_end?: string
+          target_period_start?: string
+        }
+        Returns: {
+          actual_value: number
+          authoritative_source: Database["public"]["Enums"]["metric_actual_source"]
+          comparison_value: number
+          goal_target_id: string
+          manual_actual_value: number
+          progress_percent: number
+          reconciliation_status: Database["public"]["Enums"]["metric_reconciliation_status"]
+          reconciliation_tolerance_percent: number
+          reconciliation_variance: number
+          reconciliation_variance_percent: number
+          target_value: number
+          target_variance: number
+          transaction_actual_value: number
+          workspace_id: string
+        }[]
+      }
       create_chat_channel: {
         Args: {
           channel_description?: string
@@ -3362,7 +3471,10 @@ export type Database = {
         Returns: undefined
       }
       finalize_business_review: {
-        Args: { target_business_review_id: string }
+        Args: {
+          acknowledge_warnings?: boolean
+          target_business_review_id: string
+        }
         Returns: undefined
       }
       generate_my_workspace_reminders: {
@@ -3453,6 +3565,33 @@ export type Database = {
         Args: { target_notification_id: string }
         Returns: undefined
       }
+      orchestrate_my_workspace_notifications: {
+        Args: {
+          reference_time?: string
+          target_workspace_id: string
+        }
+        Returns: number
+      }
+      get_business_review_readiness: {
+        Args: { target_business_review_id: string }
+        Returns: {
+          issue_code: string
+          issue_message: string
+          severity: Database["public"]["Enums"]["business_review_readiness_severity"]
+        }[]
+      }
+      get_public_business_portfolio: {
+        Args: { requested_public_slug: string }
+        Returns: {
+          achievement_badges: Json
+          portfolio_summary: string
+          portfolio_title: string
+          published_at: string
+          review_evidence: Json
+          workspace_logo_path: string
+          workspace_name: string
+        }[]
+      }
       get_chat_unread_counts: {
         Args: { target_workspace_id: string }
         Returns: {
@@ -3486,6 +3625,14 @@ export type Database = {
           transaction_id: string
           transaction_type: Database["public"]["Enums"]["transaction_type"]
         }[]
+      }
+      publish_business_portfolio: {
+        Args: {
+          requested_public_slug: string
+          should_publish: boolean
+          target_business_portfolio_id: string
+        }
+        Returns: undefined
       }
       register_chat_attachment: {
         Args: {
@@ -3674,6 +3821,7 @@ export type Database = {
         | "cancelled"
       business_plan_visibility: "workspace" | "restricted"
       business_portfolio_status: "draft" | "active" | "archived"
+      business_portfolio_visibility: "private" | "public"
       business_review_period:
         | "weekly"
         | "monthly"
@@ -3681,6 +3829,7 @@ export type Database = {
         | "annual"
         | "custom"
       business_review_status: "draft" | "finalized"
+      business_review_readiness_severity: "blocking" | "warning"
       calendar_event_type: "supplier" | "payroll" | "stock" | "other"
       contact_status: "new" | "in_progress" | "resolved" | "closed"
       email_delivery_status:
@@ -3713,6 +3862,12 @@ export type Database = {
         | "minimum"
         | "maximum"
         | "count"
+      metric_actual_source: "manual" | "transaction"
+      metric_reconciliation_status:
+        | "missing_authoritative"
+        | "missing_comparison"
+        | "reconciled"
+        | "attention"
       metric_unit_type: "number" | "currency" | "percentage"
       notification_type: "stock" | "target" | "schedule" | "system"
       planning_record_type:

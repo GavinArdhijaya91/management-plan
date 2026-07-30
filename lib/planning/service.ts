@@ -23,34 +23,43 @@ export async function getPlanningBoard() {
   ])
   const supabase = await createClient()
 
-  const [plansResult, goalsResult, initiativesResult, actionsResult, membersResult] = await Promise.all([
-    supabase
-      .from('business_plans')
-      .select('*')
-      .eq('workspace_id', workspace.workspace_id)
-      .order('updated_at', { ascending: false }),
-    supabase
-      .from('business_goals')
-      .select('*')
-      .eq('workspace_id', workspace.workspace_id)
-      .order('target_date', { ascending: true }),
-    supabase
-      .from('business_initiatives')
-      .select('*')
-      .eq('workspace_id', workspace.workspace_id)
-      .order('created_at', { ascending: true }),
-    supabase
-      .from('action_items')
-      .select('*')
-      .eq('workspace_id', workspace.workspace_id)
-      .order('due_on', { ascending: true }),
-    supabase.rpc('get_workspace_member_directory', {
-      target_workspace_id: workspace.workspace_id,
-    }),
-  ])
+  const [plansResult, goalsResult, initiativesResult, actionsResult, actualsResult, overdueResult, membersResult] =
+    await Promise.all([
+      supabase
+        .from('business_plans')
+        .select('*')
+        .eq('workspace_id', workspace.workspace_id)
+        .order('updated_at', { ascending: false }),
+      supabase
+        .from('business_goals')
+        .select('*')
+        .eq('workspace_id', workspace.workspace_id)
+        .order('target_date', { ascending: true }),
+      supabase
+        .from('business_initiatives')
+        .select('*')
+        .eq('workspace_id', workspace.workspace_id)
+        .order('created_at', { ascending: true }),
+      supabase
+        .from('action_items')
+        .select('*')
+        .eq('workspace_id', workspace.workspace_id)
+        .order('due_on', { ascending: true }),
+      supabase.from('goal_target_actual_reconciliation').select('*').eq('workspace_id', workspace.workspace_id),
+      supabase.from('planning_overdue_evaluations').select('*').eq('workspace_id', workspace.workspace_id),
+      supabase.rpc('get_workspace_member_directory', {
+        target_workspace_id: workspace.workspace_id,
+      }),
+    ])
 
   const error =
-    plansResult.error ?? goalsResult.error ?? initiativesResult.error ?? actionsResult.error ?? membersResult.error
+    plansResult.error ??
+    goalsResult.error ??
+    initiativesResult.error ??
+    actionsResult.error ??
+    actualsResult.error ??
+    overdueResult.error ??
+    membersResult.error
   if (error) throw new Error(`Unable to load Planning workspace: ${error.message}`)
 
   return {
@@ -60,6 +69,8 @@ export async function getPlanningBoard() {
     goals: goalsResult.data ?? [],
     initiatives: initiativesResult.data ?? [],
     actions: actionsResult.data ?? [],
+    targetActuals: actualsResult.data ?? [],
+    overdueEvaluations: overdueResult.data ?? [],
     members: (membersResult.data ?? []).filter((member) => member.membership_status === 'active'),
   }
 }
@@ -208,6 +219,95 @@ export async function setPlanningRecordArchived(
     target_record_type: targetRecordType,
     target_record_id: targetRecordId,
     should_archive: shouldArchive,
+  })
+  return { error }
+}
+
+export async function getBusinessReviewBoard() {
+  const [user, workspace] = await Promise.all([
+    requireAuthenticatedUser('/planning/reviews'),
+    requireActiveWorkspace('/planning/reviews'),
+  ])
+  const supabase = await createClient()
+
+  const [plansResult, reviewsResult, summariesResult, goalSnapshotsResult, actionSnapshotsResult] = await Promise.all([
+    supabase
+      .from('business_plans')
+      .select('*')
+      .eq('workspace_id', workspace.workspace_id)
+      .order('updated_at', { ascending: false }),
+    supabase
+      .from('business_reviews')
+      .select('*')
+      .eq('workspace_id', workspace.workspace_id)
+      .order('period_end', { ascending: false }),
+    supabase.from('business_review_summaries').select('*').eq('workspace_id', workspace.workspace_id),
+    supabase.from('business_review_goal_target_snapshots').select('*').eq('workspace_id', workspace.workspace_id),
+    supabase.from('business_review_action_item_snapshots').select('*').eq('workspace_id', workspace.workspace_id),
+  ])
+
+  const error =
+    plansResult.error ??
+    reviewsResult.error ??
+    summariesResult.error ??
+    goalSnapshotsResult.error ??
+    actionSnapshotsResult.error
+  if (error) throw new Error(`Unable to load business reviews: ${error.message}`)
+
+  const reviews = reviewsResult.data ?? []
+  const readinessEntries = await Promise.all(
+    reviews
+      .filter((review) => review.status === 'draft')
+      .map(async (review) => {
+        const result = await supabase.rpc('get_business_review_readiness', {
+          target_business_review_id: review.id,
+        })
+        if (result.error) throw new Error(`Unable to inspect business review readiness: ${result.error.message}`)
+        return [review.id, result.data ?? []] as const
+      }),
+  )
+
+  return {
+    userId: user.id,
+    workspace,
+    plans: plansResult.data ?? [],
+    reviews,
+    summaries: summariesResult.data ?? [],
+    goalSnapshots: goalSnapshotsResult.data ?? [],
+    actionSnapshots: actionSnapshotsResult.data ?? [],
+    readinessByReviewId: Object.fromEntries(readinessEntries),
+  }
+}
+
+export async function createBusinessReview(
+  input: Omit<TablesInsert<'business_reviews'>, 'workspace_id' | 'reviewed_by' | 'status'>,
+): Promise<PlanningMutationResult> {
+  const { user, workspace, supabase } = await planningMutationContext()
+  const { error } = await supabase.from('business_reviews').insert({
+    ...input,
+    workspace_id: workspace.workspace_id,
+    reviewed_by: user.id,
+    status: 'draft',
+  })
+  return { error }
+}
+
+export async function refreshBusinessReview(targetBusinessReviewId: string): Promise<PlanningMutationResult> {
+  const { supabase } = await planningMutationContext()
+  const { error } = await supabase.rpc('refresh_business_review_snapshots', {
+    target_business_review_id: targetBusinessReviewId,
+  })
+  return { error }
+}
+
+export async function finalizeBusinessReview(
+  targetBusinessReviewId: string,
+  acknowledgeWarnings: boolean,
+): Promise<PlanningMutationResult> {
+  const { supabase } = await planningMutationContext()
+  const { error } = await supabase.rpc('finalize_business_review', {
+    target_business_review_id: targetBusinessReviewId,
+    acknowledge_warnings: acknowledgeWarnings,
   })
   return { error }
 }

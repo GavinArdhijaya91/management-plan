@@ -88,5 +88,7 @@ describe('planning error feedback', () => {
       'minimal satu target',
     )
     expect(planningErrorMessage('Not authorized to transition this action item')).toContain('permission')
+    expect(planningErrorMessage('Business review has blocking readiness issues')).toContain('blocker')
+    expect(planningErrorMessage('Business review warnings require acknowledgement')).toContain('warning')
   })
 })
