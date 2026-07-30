@@ -1,4 +1,17 @@
 import Link from 'next/link'
+import { ExclamationCircleIcon } from '@heroicons/react/24/outline'
+
+export function AuthFeedback({ children }: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <p
+      role="alert"
+      className="mb-5 flex gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700"
+    >
+      <ExclamationCircleIcon className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+      <span>{children}</span>
+    </p>
+  )
+}
 
 export function AuthShell({
   children,
@@ -6,14 +19,20 @@ export function AuthShell({
   title,
 }: Readonly<{ children: React.ReactNode; description: string; title: string }>) {
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-[#f7f7f5] px-4 py-12">
-      <section className="w-full max-w-md rounded-3xl border border-zinc-200 bg-white p-7 shadow-sm">
-        <Link href="/" className="font-serif text-xl font-semibold">
-          Siapin
-        </Link>
-        <h1 className="mt-8 font-serif text-3xl font-semibold tracking-tight">{title}</h1>
-        <p className="mt-2 text-sm leading-6 text-zinc-600">{description}</p>
-        <div className="mt-7">{children}</div>
+    <main className="flex min-h-dvh items-center justify-center bg-[#fafafa] px-4 py-12">
+      <section className="app-card w-full max-w-md overflow-hidden">
+        <div className="border-b border-zinc-200 px-6 py-4">
+          <Link href="/" className="inline-flex items-center gap-2 font-serif font-semibold">
+            <span className="flex size-7 items-center justify-center rounded-md bg-zinc-950 text-xs text-white">S</span>
+            Siapin
+          </Link>
+        </div>
+        <div className="p-6 md:p-7">
+          <p className="app-label">Akun privat</p>
+          <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight">{title}</h1>
+          <p className="mt-2 text-sm leading-6 text-zinc-600">{description}</p>
+          <div className="mt-7">{children}</div>
+        </div>
       </section>
     </main>
   )
@@ -44,7 +63,7 @@ export function AuthField({
         type={type}
         name={name}
         autoComplete={autoComplete}
-        className="mt-2 min-h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-zinc-950"
+        className="app-input mt-2 min-h-11 w-full"
       />
     </label>
   )

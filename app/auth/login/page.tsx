@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { login } from '@/app/auth/actions'
-import { AuthField, AuthShell } from '@/app/auth/_components/auth-shell'
+import { AuthFeedback, AuthField, AuthShell } from '@/app/auth/_components/auth-shell'
 import { getSafeInternalPath } from '@/lib/auth/redirect'
 
 export default async function LoginPage({
@@ -13,7 +13,7 @@ export default async function LoginPage({
 
   return (
     <AuthShell title="Masuk ke workspace" description="Akses data usaha privat menggunakan akun Siapin kamu.">
-      {params.error && <p className="mb-5 rounded-xl bg-red-50 p-3 text-sm text-red-700">{params.error}</p>}
+      {params.error && <AuthFeedback>{params.error}</AuthFeedback>}
       <form action={login} className="space-y-5">
         <input type="hidden" name="next" value={next} />
         <AuthField label="Email" name="email" type="email" maxLength={254} autoComplete="email" />

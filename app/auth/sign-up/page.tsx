@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { signUp } from '@/app/auth/actions'
-import { AuthField, AuthShell } from '@/app/auth/_components/auth-shell'
+import { AuthFeedback, AuthField, AuthShell } from '@/app/auth/_components/auth-shell'
 
 export default async function SignUpPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const { error } = await searchParams
@@ -10,7 +10,7 @@ export default async function SignUpPage({ searchParams }: { searchParams: Promi
       title="Buat akun Siapin"
       description="Akun dibuat lebih dulu; workspace dan role baru aktif setelah proses berikutnya."
     >
-      {error && <p className="mb-5 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
+      {error && <AuthFeedback>{error}</AuthFeedback>}
       <form action={signUp} className="space-y-5">
         <AuthField label="Nama lengkap" name="fullName" minLength={2} maxLength={100} autoComplete="name" />
         <AuthField label="Email" name="email" type="email" maxLength={254} autoComplete="email" />
