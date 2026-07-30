@@ -22,6 +22,8 @@
     "images:og": "node scripts/optimize-images.mjs Siapin.png --output public/images/siapin.webp --width 1200 --height 630 --quality 84",
     "data:check": "node scripts/check-data-boundaries.mjs",
     "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "typecheck": "tsc --noEmit",
     "db:link": "supabase link",
     "db:status": "supabase migration list",
@@ -53,6 +55,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^24",
     "@types/react": "^19",
