@@ -67,7 +67,7 @@ export function Modal({ open, title, description, children, onClose }: ModalProp
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className="motion-dialog max-h-[92dvh] w-full overflow-y-auto rounded-t-3xl bg-white p-5 shadow-2xl sm:max-w-lg sm:rounded-2xl sm:p-6"
+        className="motion-dialog max-h-[92dvh] w-full overflow-y-auto rounded-t-2xl bg-white p-5 shadow-2xl sm:max-w-lg sm:rounded-xl sm:border sm:border-zinc-200 sm:p-6"
         onMouseDown={(event) => event.stopPropagation()}
       >
         <div className="mb-6 flex items-start justify-between gap-4">

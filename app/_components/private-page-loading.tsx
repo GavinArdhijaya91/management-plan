@@ -1,6 +1,9 @@
-export default function Loading() {
+import { Header } from '@/components/header'
+
+export function PrivatePageLoading() {
   return (
-    <main className="min-h-dvh bg-[#fafafa]" aria-busy="true" aria-label="Memuat halaman">
+    <main className="app-shell" aria-busy="true" aria-label="Memuat workspace">
+      <Header />
       <div className="page-shell animate-pulse">
         <div className="border-b border-zinc-200 pb-6">
           <div className="h-3 w-40 rounded bg-zinc-200" />
