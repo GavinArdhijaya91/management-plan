@@ -10,10 +10,15 @@ next-env.d.ts
 .env
 .env.*
 !.env.example
+.envrc
+.direnv/
+.dev.vars
+.dev.vars.*
 
 # Credentials, private keys, and password vaults
 *.pem
 *.key
+*.ppk
 *.p12
 *.pfx
 *.jks
@@ -21,6 +26,8 @@ next-env.d.ts
 *.kdbx
 credentials*.json
 service-account*.json
+kubeconfig
+kubeconfig.*
 .netrc
 .pgpass
 .npmrc.local
@@ -35,9 +42,13 @@ service-account*.json
 
 # Deployment and platform-local state
 .vercel/
+.wrangler/
 .snowflake/
 .v0-trash/
 .supabase/
+*.tfstate
+*.tfstate.*
+crash.log
 __v0_runtime_loader.js
 __v0_devtools.tsx
 __v0_jsx-dev-runtime.ts
@@ -102,6 +113,8 @@ temp/
 *.bak
 *.swp
 .eslintcache
+.cache/
+.pnpm-store/
 .turbo/
 .nyc_output/
 playwright-report/

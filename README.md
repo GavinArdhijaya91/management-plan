@@ -394,7 +394,7 @@ initiatives, actions, schedules, reviews, members, and external partners.
 Product UI may be translated, while code and database identifiers remain in
 consistent English.
 
-## Security
+## Security practices
 
 - Never commit `.env.local`.
 - Never use the secret key in a Client Component.
@@ -452,6 +452,12 @@ Report suspected vulnerabilities through
 issues or discussions. Database and authorization changes must preserve the
 security contracts documented in
 [`docs/DATABASE_SECURITY_HARDENING.md`](./docs/DATABASE_SECURITY_HARDENING.md).
+
+This repository currently targets portfolio and development use. Its connected
+Supabase environment must contain synthetic data only and is not a production
+service. Paid-plan safeguards may be unavailable during development; see
+[Development environment limitations](./SECURITY.md#development-environment-limitations)
+for the accepted constraints and required production-readiness gate.
 
 ## Development status
 
