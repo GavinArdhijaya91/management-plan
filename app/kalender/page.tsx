@@ -17,37 +17,49 @@ export default async function CalendarPage() {
     <main className="app-shell">
       <Header />
       <div className="page-shell motion-page-enter">
-        <p className="app-label mb-3">Workspace · {workspace.workspace_name}</p>
-        <h1 className="app-heading">Kalender &amp; pengingat</h1>
-        <p className="mt-2 text-zinc-500">Agenda privat workspace tanpa data contoh.</p>
+        <div className="border-b border-zinc-200 pb-6">
+          <p className="app-label mb-2">Workspace / {workspace.workspace_name}</p>
+          <h1 className="app-heading">Kalender &amp; pengingat</h1>
+          <p className="mt-2 text-sm text-zinc-500">Agenda privat dan tenggat yang terhubung dengan workspace.</p>
+        </div>
         {error ? (
           <p role="alert" className="mt-6 rounded-xl bg-red-50 p-4 text-sm text-red-700">
             Agenda gagal dimuat. Periksa permission kalender Anda.
           </p>
         ) : data?.length ? (
-          <div className="mt-6 grid gap-3">
+          <div className="app-card mt-6 divide-y divide-zinc-100 overflow-hidden">
             {data.map((event) => (
-              <article key={event.id} className="app-card flex gap-4 p-5">
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-zinc-100">
-                  <CalendarDays className="size-5" />
-                </span>
-                <div>
-                  <span className="app-label">{event.type}</span>
-                  <h2 className="mt-1 font-serif text-lg font-semibold">{event.title}</h2>
-                  <p className="mt-1 text-sm text-zinc-500">
-                    {new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium', timeStyle: 'short' }).format(
-                      new Date(event.starts_at),
-                    )}
-                  </p>
-                  {event.notes && <p className="mt-2 text-sm text-zinc-600">{event.notes}</p>}
+              <article
+                key={event.id}
+                className="grid gap-3 px-4 py-4 hover:bg-zinc-50 sm:grid-cols-[1fr_auto] sm:items-center"
+              >
+                <div className="flex min-w-0 gap-3">
+                  <CalendarDays className="mt-0.5 size-5 shrink-0 text-zinc-400" aria-hidden="true" />
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h2 className="truncate text-sm font-semibold">{event.title}</h2>
+                      <span className="rounded-md border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-[0.68rem] font-medium text-zinc-600">
+                        {event.type}
+                      </span>
+                    </div>
+                    {event.notes && <p className="mt-1 truncate text-sm text-zinc-500">{event.notes}</p>}
+                  </div>
                 </div>
+                <p className="app-data whitespace-nowrap text-xs text-zinc-500">
+                  {new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium', timeStyle: 'short' }).format(
+                    new Date(event.starts_at),
+                  )}
+                </p>
               </article>
             ))}
           </div>
         ) : (
-          <section className="app-card mt-6 p-8 text-center">
-            <h2 className="font-serif text-2xl font-semibold">Belum ada agenda</h2>
-            <p className="mt-2 text-sm text-zinc-500">Agenda contoh hanya tersedia pada mode demo.</p>
+          <section className="app-card mt-6 flex items-start gap-3 p-6">
+            <CalendarDays className="size-5 shrink-0 text-zinc-400" aria-hidden="true" />
+            <div>
+              <h2 className="text-sm font-semibold">Belum ada agenda</h2>
+              <p className="mt-1 text-sm text-zinc-500">Agenda workspace akan muncul ketika jadwal mulai dibuat.</p>
+            </div>
           </section>
         )}
       </div>
