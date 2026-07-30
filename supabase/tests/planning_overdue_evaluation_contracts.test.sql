@@ -81,6 +81,7 @@ begin
     raise exception 'Overdue evaluation mutated the goal lifecycle status';
   end if;
 
+  perform public.transition_action_item(action_id, 'in_progress');
   perform public.transition_action_item(action_id, 'completed');
 
   if exists (

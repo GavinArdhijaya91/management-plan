@@ -17,6 +17,33 @@ where target.workspace_id =
     current_setting('test.reconciliation_workspace_id')::uuid
   and metric.code = 'monthly_revenue';
 
+with inserted_review as (
+  insert into public.business_reviews (
+    workspace_id,
+    business_plan_id,
+    period_type,
+    period_start,
+    period_end,
+    summary,
+    reviewed_by
+  )
+  select
+    plan.workspace_id,
+    plan.id,
+    'custom',
+    current_date - 2,
+    current_date,
+    'Hybrid metric snapshot contract',
+    'a1000000-0000-0000-0000-000000000001'
+  from public.business_plans plan
+  where plan.workspace_id =
+      current_setting('test.reconciliation_workspace_id')::uuid
+    and plan.title = 'Rencana Pertumbuhan Kedai'
+  returning id
+)
+select set_config('test.reconciliation_review_id', id::text, true)
+from inserted_review;
+
 set local role authenticated;
 select set_config(
   'request.jwt.claims',
@@ -32,6 +59,8 @@ declare
   review_id uuid;
   snapshot_record record;
 begin
+  review_id := current_setting('test.reconciliation_review_id')::uuid;
+
   select target.id, metric.id
   into target_id, metric_id
   from public.goal_targets target
@@ -97,29 +126,6 @@ begin
   then
     raise exception 'Authoritative transaction evidence or divergence was incorrect';
   end if;
-
-  insert into public.business_reviews (
-    workspace_id,
-    business_plan_id,
-    period_type,
-    period_start,
-    period_end,
-    summary,
-    reviewed_by
-  )
-  select
-    plan.workspace_id,
-    plan.id,
-    'custom',
-    current_date - 2,
-    current_date,
-    'Hybrid metric snapshot contract',
-    'a1000000-0000-0000-0000-000000000001'
-  from public.business_plans plan
-  where plan.workspace_id =
-      current_setting('test.reconciliation_workspace_id')::uuid
-    and plan.title = 'Rencana Pertumbuhan Kedai'
-  returning id into review_id;
 
   perform public.refresh_business_review_snapshots(review_id);
 
