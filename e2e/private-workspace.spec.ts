@@ -67,6 +67,12 @@ test.describe.serial('private workspace journey', () => {
 
     await expect(page).toHaveURL(/\/planning\/reviews\?success=/)
     await page.getByRole('button', { name: 'Perbarui evidence' }).click()
+    await expect(page).toHaveURL(
+      (url) =>
+        url.pathname === '/planning/reviews' &&
+        url.searchParams.get('success') === 'Evidence dan pemeriksaan kesiapan telah diperbarui.',
+      { timeout: 15_000 },
+    )
     await expect(page.getByText('Rencana belum memiliki target metrik', { exact: false })).toBeVisible()
     await page.getByLabel(/Saya memahami .* warning/).check()
     await page.getByRole('button', { name: 'Finalisasi evaluasi' }).click()
