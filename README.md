@@ -255,8 +255,44 @@ pnpm typecheck
 pnpm lint
 pnpm format:check
 pnpm test
+pnpm test:e2e
 pnpm build
 ```
+
+### Browser E2E tests
+
+Playwright verifies the application through the same HTTP and browser
+boundaries used by a real user. The current journeys cover public demo access,
+authentication boundaries, first-workspace onboarding, and business-plan
+creation.
+
+Install the Chromium test browser once:
+
+```bash
+pnpm exec playwright install chromium
+```
+
+For demo-only tests, run `pnpm dev` in one terminal and this command in another:
+
+```bash
+pnpm test:e2e e2e/demo-access.spec.ts
+```
+
+Authenticated journeys require an isolated local Supabase stack. Start Docker
+Desktop and Supabase, then expose the local API URL, anonymous key, and service
+role key to the test process as:
+
+```text
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+SUPABASE_SERVICE_ROLE_KEY
+```
+
+Obtain the local values with `pnpm exec supabase status -o env`. The service
+role key is used only by the Node.js fixture to create a confirmed test
+account. Never prefix it with `NEXT_PUBLIC_`, store it in source control, or
+send it to browser code. GitHub Actions configures these ephemeral values from
+its isolated Supabase instance automatically.
 
 ## Image optimization and SEO assets
 
@@ -315,6 +351,8 @@ pnpm start
 | `pnpm images:og`        | Regenerate the 1200×630 social preview          |
 | `pnpm data:check`       | Validate database and presentation boundaries   |
 | `pnpm test`             | Run Vitest unit tests                           |
+| `pnpm test:e2e`         | Run Playwright browser journeys                 |
+| `pnpm test:e2e:ui`      | Open the interactive Playwright runner          |
 | `pnpm security:secrets` | Reject credentials accidentally tracked by Git  |
 | `pnpm security:verify`  | Run the local application security release gate |
 | `pnpm build`            | Create a production build                       |
