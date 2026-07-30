@@ -147,6 +147,28 @@ resend replay before another token or delivery is created. Accepting, declining,
 revoking, or expiring an invitation automatically cancels any delivery that has
 not completed.
 
+## Workspace collaboration chat
+
+Chat is internal to an active workspace membership:
+
+- Every workspace receives one immutable public `General` channel.
+- Public channels are readable by active members with `chat.read`.
+- Private channels and direct messages require explicit conversation membership.
+- Direct messages can only connect two active members of the same workspace.
+- Message mutations use RPC boundaries with idempotency and per-user throttling.
+- Presence and typing use private Realtime topics authorized through
+  `realtime.messages` RLS; ephemeral events are not stored as audit records.
+- Read and delivery state use per-conversation cursors instead of one receipt row
+  for every message and recipient.
+- Message deletion removes its body and writes structural audit evidence without
+  copying private message content into `audit_logs`.
+- Attachments use the private `chat-attachments` bucket, validated MIME types,
+  a 10 MB limit, identity-scoped paths, and signed download URLs.
+
+Run `workspace_chat_contracts.test.sql` through `pnpm db:test` after starting the
+local Supabase stack. Hosted projects should disable public Realtime channels so
+Broadcast and Presence always require Realtime Authorization.
+
 ## Plan-to-actual links
 
 The private-business feedback loop uses explicit relationships:

@@ -217,17 +217,19 @@ This endpoint only reports the service status and whether the Supabase environme
 
 ## Available pages
 
-| Page                   | Local URL                                                         |
-| ---------------------- | ----------------------------------------------------------------- |
-| Landing page           | [localhost:3000](http://localhost:3000)                           |
-| Dashboard              | [localhost:3000/dashboard](http://localhost:3000/dashboard)       |
-| Business planning      | [localhost:3000/planning](http://localhost:3000/planning)         |
-| Transaction management | [localhost:3000/manajemen](http://localhost:3000/manajemen)       |
-| Calendar               | [localhost:3000/kalender](http://localhost:3000/kalender)         |
-| Market trends          | [localhost:3000/tren-pasar](http://localhost:3000/tren-pasar)     |
-| Contact                | [localhost:3000/hubungi-kami](http://localhost:3000/hubungi-kami) |
-| Notifications          | [localhost:3000/notifikasi](http://localhost:3000/notifikasi)     |
-| Profile                | [localhost:3000/profil](http://localhost:3000/profil)             |
+| Page                    | Local URL                                                         |
+| ----------------------- | ----------------------------------------------------------------- |
+| Landing page            | [localhost:3000](http://localhost:3000)                           |
+| Isolated demo           | [localhost:3000/demo](http://localhost:3000/demo)                 |
+| Dashboard               | [localhost:3000/dashboard](http://localhost:3000/dashboard)       |
+| Business planning       | [localhost:3000/planning](http://localhost:3000/planning)         |
+| Transaction management  | [localhost:3000/manajemen](http://localhost:3000/manajemen)       |
+| Calendar                | [localhost:3000/kalender](http://localhost:3000/kalender)         |
+| Workspace collaboration | [localhost:3000/kolaborasi](http://localhost:3000/kolaborasi)     |
+| Market trends           | [localhost:3000/tren-pasar](http://localhost:3000/tren-pasar)     |
+| Contact                 | [localhost:3000/hubungi-kami](http://localhost:3000/hubungi-kami) |
+| Notifications           | [localhost:3000/notifikasi](http://localhost:3000/notifikasi)     |
+| Profile                 | [localhost:3000/profil](http://localhost:3000/profil)             |
 
 ## Language support
 
@@ -418,6 +420,7 @@ security contracts documented in
 Authentication, cookie session refresh, private-route protection, workspace
 onboarding, active-workspace selection, and role/permission resolution are
 integrated. Planning reads live workspace data and routes lifecycle mutations
-through validated Server Actions plus canonical Supabase RPCs. The remaining
-business feature pages still use clearly marked demo/local-storage data; their
-Supabase integration remains a separate phase.
+through validated Server Actions plus canonical Supabase RPCs. Application
+routes read private workspace data from Supabase. Local example data is isolated
+under `/demo/*`, uses `siapin:demo:*` browser-storage keys, and never appears as
+workspace data after authentication.

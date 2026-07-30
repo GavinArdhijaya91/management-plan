@@ -13,27 +13,26 @@ export function TransactionSummary({ transactions }: TransactionSummaryProps) {
   const summary = transactionAggregate.summarize(transactions)
 
   return (
-    <section aria-label="Ringkasan transaksi" className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-      <div className="app-card p-4 md:p-6">
+    <section
+      aria-label="Ringkasan transaksi"
+      className="mb-6 grid overflow-hidden rounded-xl border border-zinc-200 bg-white md:grid-cols-3"
+    >
+      <div className="border-b border-zinc-200 p-4 md:border-b-0 md:border-r md:p-5">
         <p className="app-label">Total Biaya Pokok Bulan Ini</p>
-        <p className="app-data mt-2 text-2xl font-semibold text-zinc-950 md:text-3xl">
-          {formatRupiah(summary.totalCostAmount)}
-        </p>
+        <p className="app-data mt-3 text-2xl font-semibold text-zinc-950">{formatRupiah(summary.totalCostAmount)}</p>
         <p className="mt-2 text-xs text-gray-500">Dari {summary.transactionCount} transaksi</p>
       </div>
 
-      <div className="app-card p-4 md:p-6">
+      <div className="border-b border-zinc-200 p-4 md:border-b-0 md:border-r md:p-5">
         <p className="app-label">Total Penjualan</p>
-        <p className="app-data mt-2 text-2xl font-semibold text-zinc-950 md:text-3xl">
-          {formatRupiah(summary.totalSales)}
-        </p>
+        <p className="app-data mt-3 text-2xl font-semibold text-zinc-950">{formatRupiah(summary.totalSales)}</p>
         <p className="mt-2 text-xs text-gray-500">Akumulasi penjualan</p>
       </div>
 
-      <div className="app-card bg-zinc-950 p-4 text-white md:p-6">
-        <p className="app-label text-zinc-400">Margin Keuntungan</p>
-        <p className="app-data mt-2 text-2xl font-semibold text-white md:text-3xl">{summary.margin}%</p>
-        <p className="mt-2 text-xs text-zinc-400">{formatRupiah(summary.totalNetResult)} hasil bersih</p>
+      <div className="p-4 md:p-5">
+        <p className="app-label">Margin Keuntungan</p>
+        <p className="app-data mt-3 text-2xl font-semibold text-zinc-950">{summary.margin}%</p>
+        <p className="mt-2 text-xs text-zinc-500">{formatRupiah(summary.totalNetResult)} hasil bersih</p>
       </div>
     </section>
   )

@@ -29,28 +29,28 @@ const features = [
     label: 'Keuangan',
     title: 'Pahami uang yang masuk, keluar, dan bertumbuh.',
     description: 'Catat modal, omzet, serta laba tanpa laporan yang rumit.',
-    href: '/manajemen',
+    href: '/demo/manajemen',
   },
   {
     icon: CalendarDays,
     label: 'Perencanaan',
     title: 'Jadikan agenda bisnis sebagai langkah yang terukur.',
     description: 'Satukan jadwal supplier, stok, gaji, dan evaluasi.',
-    href: '/kalender',
+    href: '/demo/kalender',
   },
   {
     icon: TrendingUp,
     label: 'Analisis',
     title: 'Temukan pola sebelum menentukan arah berikutnya.',
     description: 'Pelajari perubahan performa produk dari waktu ke waktu.',
-    href: '/tren-pasar',
+    href: '/demo/tren-pasar',
   },
   {
     icon: BarChart3,
     label: 'Ringkasan',
     title: 'Lihat kondisi usaha tanpa membuka banyak laporan.',
     description: 'Angka, perhatian, dan pekerjaan penting berada di satu tempat.',
-    href: '/dashboard',
+    href: '/demo/dashboard',
   },
 ]
 
@@ -84,7 +84,7 @@ export default function Home() {
               Bantuan
             </Link>
           </nav>
-          <Link href="/dashboard" className="app-button motion-press">
+          <Link href="/demo/dashboard" className="app-button motion-press">
             Buka demo <ArrowRight className="size-4" />
           </Link>
         </div>
@@ -108,7 +108,7 @@ export default function Home() {
               dapat belajar sekaligus menjalankan rencana nyata.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Link href="/dashboard" className="app-button motion-press px-6">
+              <Link href="/demo/dashboard" className="app-button motion-press px-6">
                 Jelajahi data demo <ArrowRight className="size-4" />
               </Link>
               <a
@@ -299,13 +299,13 @@ export default function Home() {
             <p className="mt-1 text-sm text-zinc-500">Management plan yang dapat dipahami dan dijalankan.</p>
           </div>
           <nav aria-label="Navigasi footer" className="flex flex-wrap gap-5 text-sm text-zinc-600">
-            <Link href="/dashboard" className="hover:text-zinc-950">
+            <Link href="/demo/dashboard" className="hover:text-zinc-950">
               Dashboard
             </Link>
-            <Link href="/manajemen" className="hover:text-zinc-950">
+            <Link href="/demo/manajemen" className="hover:text-zinc-950">
               Manajemen
             </Link>
-            <Link href="/kalender" className="hover:text-zinc-950">
+            <Link href="/demo/kalender" className="hover:text-zinc-950">
               Kalender
             </Link>
             <Link href="/hubungi-kami" className="hover:text-zinc-950">

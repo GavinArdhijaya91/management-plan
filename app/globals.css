@@ -4,9 +4,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: var(--font-arimo);
-  --font-serif: var(--font-poppins);
-  --font-mono: var(--font-jetbrains-mono);
+  --font-sans: var(--font-ibm-plex-sans);
+  --font-serif: var(--font-ibm-plex-sans);
+  --font-mono: var(--font-ibm-plex-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -128,7 +128,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-arimo), Arial, sans-serif;
+    font-family: var(--font-ibm-plex-sans), Arial, sans-serif;
   }
 
   button,
@@ -143,7 +143,7 @@
 
 @layer components {
   .page-shell {
-    @apply mx-auto w-full max-w-7xl px-4 py-8 md:px-6 md:py-10;
+    @apply mx-auto w-full max-w-[90rem] px-4 py-7 md:px-8 md:py-9;
   }
 
   .siapin-card {
@@ -151,25 +151,25 @@
   }
 
   .app-shell {
-    @apply min-h-screen bg-[#f7f7f5] text-zinc-950 lg:pl-72;
+    @apply min-h-screen bg-[#fafafa] text-zinc-950 lg:pl-64;
   }
   .app-card {
-    @apply rounded-2xl border border-zinc-200/80 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.035)] transition-shadow hover:shadow-[0_8px_30px_rgba(0,0,0,0.055)];
+    @apply rounded-xl border border-zinc-200 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.025)];
   }
   .app-heading {
-    @apply font-serif text-4xl font-semibold leading-[1.08] tracking-[-0.035em] text-zinc-950 md:text-5xl;
+    @apply font-serif text-3xl font-semibold leading-tight tracking-[-0.03em] text-zinc-950 md:text-4xl;
   }
   .app-data {
-    @apply font-mono tracking-[-0.035em];
+    @apply font-mono tracking-[-0.035em] tabular-nums;
   }
   .app-label {
-    @apply font-mono text-[0.7rem] font-medium uppercase tracking-[0.12em] text-zinc-500;
+    @apply text-[0.68rem] font-semibold uppercase tracking-[0.11em] text-zinc-500;
   }
   .app-input {
-    @apply rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm outline-none transition-colors placeholder:text-zinc-400 focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950;
+    @apply rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-zinc-400 focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950;
   }
   .app-button {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-zinc-950 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800;
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-zinc-950 px-3.5 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-zinc-800;
   }
 }
 

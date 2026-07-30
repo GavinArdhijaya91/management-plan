@@ -40,6 +40,7 @@ the same object.
 | Restricted planning | plan hierarchy under `business_plans` | owner-managed role/member grants | Child records inherit plan visibility; managers have no implicit bypass. |
 | Review preparation | `business_reviews` and snapshot tables | review RPCs | Finalized evidence is immutable. |
 | Transaction editing | `transactions` | permitted table writes | Amount is unsigned; type supplies financial direction. |
+| Transaction export | `prepare_transaction_export` | canonical RPC only | Requires `transaction.export`, remains workspace-scoped, separates currencies, and records audit evidence. |
 | Transaction result | `transaction_financial_results` | read-only | `net_result` is calculated consistently by the database. |
 | Account balance | `financial_account_balances` | read-only | Native currency only; this is not double-entry accounting. |
 | Category reporting | `transaction_category_actuals` | allocation table | Category allocation may be partial but cannot exceed the transaction. |
@@ -82,6 +83,7 @@ database row. Do not cast it to one.
 - Goal, initiative, and action-item archive and restore operations
 - Reminder generation and notification read actions
 - Safe workspace member directory reads
+- Workspace transaction export preparation
 
 Direct table mutation is appropriate only where an explicit RLS write policy
 exists and no lifecycle invariant spans multiple tables.

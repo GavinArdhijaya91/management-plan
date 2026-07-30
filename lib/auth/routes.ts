@@ -1,6 +1,7 @@
 const protectedPrefixes = [
   '/dashboard',
   '/kalender',
+  '/kolaborasi',
   '/manajemen',
   '/notifikasi',
   '/planning',

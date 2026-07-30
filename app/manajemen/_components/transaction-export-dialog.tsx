@@ -1,13 +1,18 @@
 'use client'
 
 import { Modal } from '@/app/_components/modal'
+import { transactionExportResponseSchema } from '@/app/api/exports/transactions/request'
 import type { TransactionExportFormat } from '@/app/manajemen/_domain/transaction-export'
-import { downloadTransactionExport } from '@/app/manajemen/_lib/download-transaction-export'
+import {
+  downloadPrivateTransactionExport,
+  downloadTransactionExport,
+} from '@/app/manajemen/_lib/download-transaction-export'
 import type { DemoTransaction } from '@/types'
 import { Download } from 'lucide-react'
 import { useState } from 'react'
 
 interface TransactionExportDialogProps {
+  mode: 'private' | 'demo'
   open: boolean
   transactions: DemoTransaction[]
   onClose: () => void
@@ -20,7 +25,13 @@ const formats: Array<{ description: string; label: string; value: TransactionExp
   { value: 'docx', label: 'Word (.docx)', description: 'Untuk laporan yang masih perlu disunting.' },
 ]
 
-export function TransactionExportDialog({ open, transactions, onClose, onSuccess }: TransactionExportDialogProps) {
+export function TransactionExportDialog({
+  mode,
+  open,
+  transactions,
+  onClose,
+  onSuccess,
+}: TransactionExportDialogProps) {
   const [format, setFormat] = useState<TransactionExportFormat>('xlsx')
   const [exporting, setExporting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -29,11 +40,37 @@ export function TransactionExportDialog({ open, transactions, onClose, onSuccess
     setExporting(true)
     setError(null)
     try {
-      await downloadTransactionExport(transactions, format)
+      if (mode === 'demo') {
+        await downloadTransactionExport(transactions, format)
+      } else {
+        const response = await fetch('/api/exports/transactions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ format }),
+        })
+        const payload: unknown = await response.json().catch(() => null)
+
+        if (!response.ok) {
+          const message =
+            payload && typeof payload === 'object' && 'error' in payload
+              ? (payload as { error?: { message?: string } }).error?.message
+              : null
+          throw new Error(message ?? 'Data privat gagal disiapkan.')
+        }
+
+        const parsed = transactionExportResponseSchema.safeParse(payload)
+        if (!parsed.success) throw new Error('Respons ekspor privat tidak valid.')
+        await downloadPrivateTransactionExport(parsed.data.data.rows, format, parsed.data.data.workspaceName)
+      }
+
       onClose()
       onSuccess(`Laporan ${format.toUpperCase()} berhasil dibuat.`)
-    } catch {
-      setError('Laporan gagal dibuat. Coba ulangi atau pilih format lain.')
+    } catch (exportError) {
+      setError(
+        exportError instanceof Error
+          ? exportError.message
+          : 'Laporan gagal dibuat. Coba ulangi atau pilih format lain.',
+      )
     } finally {
       setExporting(false)
     }
@@ -44,7 +81,11 @@ export function TransactionExportDialog({ open, transactions, onClose, onSuccess
       open={open}
       onClose={exporting ? () => undefined : onClose}
       title="Ekspor laporan transaksi"
-      description="File hanya memuat data demo yang sedang tersimpan di perangkat ini."
+      description={
+        mode === 'demo'
+          ? 'File hanya memuat data demo yang tersimpan di perangkat ini.'
+          : 'File memuat transaksi workspace privat sesuai permission role Anda.'
+      }
     >
       <fieldset className="space-y-2">
         <legend className="app-label mb-3">Pilih format file</legend>
@@ -70,7 +111,9 @@ export function TransactionExportDialog({ open, transactions, onClose, onSuccess
       </fieldset>
 
       <div className="mt-4 rounded-xl bg-zinc-100 p-3 text-xs text-zinc-600">
-        {transactions.length} transaksi · Mata uang IDR · Dibuat saat tombol ekspor ditekan
+        {mode === 'private'
+          ? 'Data diambil saat ekspor. XLSX dibatasi 10.000 baris; PDF dan DOCX 2.000 baris. Aktivitas dicatat pada audit log.'
+          : `${transactions.length} transaksi demo · Mata uang IDR · Tidak masuk audit workspace.`}
       </div>
       {error && (
         <p role="alert" className="mt-3 text-sm font-medium text-red-700">
@@ -88,7 +131,7 @@ export function TransactionExportDialog({ open, transactions, onClose, onSuccess
         </button>
         <button
           type="button"
-          disabled={exporting || transactions.length === 0}
+          disabled={exporting || (mode === 'demo' && transactions.length === 0)}
           onClick={exportTransactions}
           className="app-button disabled:cursor-not-allowed disabled:opacity-50"
         >
