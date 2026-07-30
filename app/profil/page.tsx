@@ -20,45 +20,51 @@ export default async function ProfilePage() {
     <main className="app-shell">
       <Header />
       <div className="page-shell motion-page-enter max-w-3xl">
-        <p className="app-label mb-3">Akun privat</p>
-        <h1 className="app-heading">Profil</h1>
-        <p className="mt-2 text-zinc-500">Identitas ini berasal dari akun Supabase Anda, bukan data demo perangkat.</p>
+        <div className="border-b border-zinc-200 pb-6">
+          <p className="app-label mb-2">Akun privat</p>
+          <h1 className="app-heading">Profil</h1>
+          <p className="mt-2 text-sm text-zinc-500">Identitas akun dan preferensi lintas workspace.</p>
+        </div>
 
         {profileResult.error || preferenceResult.error ? (
           <p role="alert" className="mt-6 rounded-xl bg-red-50 p-4 text-sm text-red-700">
             Sebagian profil belum dapat dimuat.
           </p>
         ) : (
-          <div className="mt-6 grid gap-5">
-            <section className="app-card p-5 md:p-6">
-              <p className="app-label">Identitas</p>
-              <dl className="mt-5 grid gap-5 sm:grid-cols-2">
+          <div className="app-card mt-6 divide-y divide-zinc-200 overflow-hidden">
+            <section>
+              <div className="border-b border-zinc-100 bg-zinc-50/70 px-5 py-3">
+                <h2 className="text-sm font-semibold">Identitas</h2>
+              </div>
+              <dl className="grid sm:grid-cols-2">
                 {[
                   ['Nama lengkap', profile?.full_name ?? 'Belum diisi'],
                   ['Display name', profile?.display_name ?? 'Belum diisi'],
                   ['Email', profile?.email ?? user.email ?? 'Belum tersedia'],
                   ['Telepon', profile?.phone ?? 'Belum diisi'],
                 ].map(([label, value]) => (
-                  <div key={label}>
+                  <div key={label} className="border-b border-zinc-100 px-5 py-4 sm:[&:nth-child(odd)]:border-r">
                     <dt className="text-xs text-zinc-500">{label}</dt>
                     <dd className="mt-1 text-sm font-semibold">{value}</dd>
                   </div>
                 ))}
               </dl>
               {profile?.bio && (
-                <p className="mt-5 border-t border-zinc-100 pt-5 text-sm text-zinc-600">{profile.bio}</p>
+                <p className="border-t border-zinc-100 px-5 py-4 text-sm text-zinc-600">{profile.bio}</p>
               )}
             </section>
-            <section className="app-card p-5 md:p-6">
-              <p className="app-label">Preferensi</p>
-              <dl className="mt-5 grid gap-5 sm:grid-cols-2">
+            <section>
+              <div className="border-b border-zinc-100 bg-zinc-50/70 px-5 py-3">
+                <h2 className="text-sm font-semibold">Preferensi</h2>
+              </div>
+              <dl className="grid sm:grid-cols-2">
                 {[
                   ['Bahasa', preferences?.locale ?? 'id'],
                   ['Zona waktu', preferences?.timezone ?? 'Asia/Jakarta'],
                   ['Format tanggal', preferences?.date_format ?? 'DD/MM/YYYY'],
                   ['Tema', preferences?.theme ?? 'system'],
                 ].map(([label, value]) => (
-                  <div key={label}>
+                  <div key={label} className="border-b border-zinc-100 px-5 py-4 sm:[&:nth-child(odd)]:border-r">
                     <dt className="text-xs text-zinc-500">{label}</dt>
                     <dd className="mt-1 text-sm font-semibold">{value}</dd>
                   </div>
