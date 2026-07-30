@@ -71,6 +71,8 @@ test.describe.serial('private workspace journey', () => {
     await page.getByLabel(/Saya memahami .* warning/).check()
     await page.getByRole('button', { name: 'Finalisasi evaluasi' }).click()
 
+    await expect(page).toHaveURL(/\/planning\/reviews\?success=/, { timeout: 15_000 })
+    await expect(page.getByRole('status')).toContainText('Evaluasi difinalisasi')
     await expect(page.getByText('Finalized', { exact: true })).toBeVisible()
     await page.goto('/notifikasi')
     await expect(page.getByText('Evaluasi bisnis difinalisasi')).toBeVisible()
