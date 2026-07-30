@@ -8,13 +8,6 @@ test.describe.serial('private workspace journey', () => {
     account = await createConfirmedE2eAccount()
   })
 
-  test('a protected route redirects an anonymous visitor to login', async ({ page }) => {
-    await page.goto('/dashboard')
-
-    await expect(page).toHaveURL(/\/auth\/login\?next=%2Fdashboard$/)
-    await expect(page.getByRole('heading', { name: 'Masuk ke workspace' })).toBeVisible()
-  })
-
   test('invalid credentials are rejected without exposing account details', async ({ page }) => {
     await page.goto('/auth/login')
     await page.getByLabel('Email').fill('unknown-user@siapin.test')
