@@ -28,7 +28,10 @@ test('the application shell uses mobile navigation at tablet width', async ({ pa
   await expect(page.locator('#mobile-navigation')).toBeVisible()
   await expectNoHorizontalOverflow(page)
 
-  await page.locator('#mobile-navigation').getByRole('button', { name: /tutup menu/i }).click()
+  await page
+    .locator('#mobile-navigation')
+    .getByRole('button', { name: /tutup menu/i })
+    .click()
   await expect(page.locator('#mobile-navigation')).toBeHidden()
 })
 
