@@ -429,8 +429,8 @@ export function CollaborationChat({
   const activeDirectory = directory.filter((member) => member.membership_status === 'active')
 
   return (
-    <div className="motion-page-enter mx-auto grid h-[calc(100dvh-4rem)] max-w-[1600px] lg:grid-cols-[18rem_minmax(0,1fr)_17rem]">
-      <aside className="hidden overflow-y-auto border-r border-zinc-200 bg-zinc-50/70 p-4 md:block">
+    <div className="motion-page-enter mx-auto grid h-[calc(100dvh-4rem)] max-w-[1600px] lg:grid-cols-[16rem_minmax(0,1fr)_15rem]">
+      <aside className="hidden overflow-y-auto border-r border-zinc-200 bg-[#fafafa] p-3 lg:block">
         <p className="app-label">Kolaborasi internal</p>
         <h1 className="mt-1 truncate font-serif text-xl font-semibold">{workspaceName}</h1>
 
@@ -451,8 +451,10 @@ export function CollaborationChat({
             <Link
               key={conversation.id}
               href={`/kolaborasi?conversation=${conversation.id}`}
-              className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm ${
-                selectedConversation?.id === conversation.id ? 'bg-zinc-950 text-white' : 'hover:bg-zinc-200'
+              className={`flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm ${
+                selectedConversation?.id === conversation.id
+                  ? 'bg-zinc-200 font-medium text-zinc-950'
+                  : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950'
               }`}
             >
               {conversation.channel_visibility === 'private' ? (
@@ -476,8 +478,10 @@ export function CollaborationChat({
             <Link
               key={conversation.id}
               href={`/kolaborasi?conversation=${conversation.id}`}
-              className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm ${
-                selectedConversation?.id === conversation.id ? 'bg-zinc-950 text-white' : 'hover:bg-zinc-200'
+              className={`flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm ${
+                selectedConversation?.id === conversation.id
+                  ? 'bg-zinc-200 font-medium text-zinc-950'
+                  : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950'
               }`}
             >
               <MessageCircle className="size-4" />
@@ -499,7 +503,7 @@ export function CollaborationChat({
               <button
                 key={member.user_id}
                 onClick={() => startDirect(member.user_id)}
-                className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm hover:bg-zinc-200"
+                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950"
               >
                 <Circle
                   className={`size-2 fill-current ${onlineUsers.includes(member.user_id) ? 'text-emerald-500' : 'text-zinc-300'}`}
@@ -528,7 +532,7 @@ export function CollaborationChat({
                 aria-label="Pilih percakapan"
                 value={selectedConversation.id}
                 onChange={(event) => router.push(`/kolaborasi?conversation=${event.target.value}`)}
-                className="ml-3 max-w-40 rounded-xl border border-zinc-200 px-2 py-2 text-xs md:hidden"
+                className="app-input ml-3 max-w-40 py-2 text-xs lg:hidden"
               >
                 {conversations.map((conversation) => (
                   <option key={conversation.id} value={conversation.id}>
@@ -567,7 +571,7 @@ export function CollaborationChat({
                   ).length
                   return (
                     <article key={message.id} className="group flex gap-3">
-                      <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-zinc-900 text-xs font-semibold text-white">
+                      <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50 text-xs font-semibold text-zinc-600">
                         {(sender?.display_name ?? '?').slice(0, 1).toUpperCase()}
                       </div>
                       <div className="min-w-0 flex-1">
@@ -592,7 +596,7 @@ export function CollaborationChat({
                               <button
                                 key={attachment.id}
                                 onClick={() => downloadAttachment(attachment)}
-                                className="mt-2 flex max-w-sm items-center gap-3 rounded-xl border border-zinc-200 p-3 text-left hover:bg-zinc-50"
+                                className="mt-2 flex max-w-sm items-center gap-3 rounded-lg border border-zinc-200 p-3 text-left hover:bg-zinc-50"
                               >
                                 <FileText className="size-5 shrink-0" />
                                 <span className="min-w-0 flex-1">
@@ -625,24 +629,30 @@ export function CollaborationChat({
                               )}
                               {canWrite && (
                                 <button
+                                  type="button"
                                   onClick={() => toggleReaction(message.id)}
                                   className="rounded-lg p-1 text-zinc-400 hover:bg-zinc-100"
+                                  aria-label="Tambahkan reaksi"
                                 >
                                   <Smile className="size-4" />
                                 </button>
                               )}
                               {own && (
                                 <button
+                                  type="button"
                                   onClick={() => editMessage(message)}
                                   className="rounded-lg p-1 text-zinc-400 hover:bg-zinc-100"
+                                  aria-label="Edit pesan"
                                 >
                                   <Pencil className="size-4" />
                                 </button>
                               )}
                               {(own || canModerate) && (
                                 <button
+                                  type="button"
                                   onClick={() => deleteMessage(message.id)}
                                   className="rounded-lg p-1 text-zinc-400 hover:bg-red-50 hover:text-red-600"
+                                  aria-label="Hapus pesan"
                                 >
                                   <Trash2 className="size-4" />
                                 </button>
@@ -678,12 +688,13 @@ export function CollaborationChat({
                 </p>
                 <form
                   onSubmit={sendMessage}
-                  className="flex items-end gap-2 rounded-2xl border border-zinc-200 bg-zinc-50 p-2"
+                  className="flex items-end gap-2 rounded-xl border border-zinc-300 bg-white p-2 shadow-sm"
                 >
                   <label className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-xl hover:bg-zinc-200">
                     <Paperclip className="size-5" />
                     <input
                       type="file"
+                      aria-label="Lampirkan file"
                       className="sr-only"
                       disabled={!canWrite}
                       onChange={(event) => setFile(event.target.files?.[0] ?? null)}
@@ -720,8 +731,10 @@ export function CollaborationChat({
                     />
                   </div>
                   <button
+                    type="submit"
+                    aria-label="Kirim pesan"
                     disabled={!canWrite || !body.trim() || sending}
-                    className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-zinc-950 text-white disabled:opacity-40"
+                    className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-zinc-950 text-white disabled:opacity-40"
                   >
                     <Send className="size-4" />
                   </button>
@@ -739,7 +752,7 @@ export function CollaborationChat({
         )}
       </section>
 
-      <aside className="hidden overflow-y-auto border-l border-zinc-200 bg-zinc-50/70 p-4 lg:block">
+      <aside className="hidden overflow-y-auto border-l border-zinc-200 bg-[#fafafa] p-3 lg:block">
         <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Anggota percakapan</p>
         <div className="mt-3 space-y-2">
           {activeDirectory.map((member) => {
@@ -751,7 +764,7 @@ export function CollaborationChat({
                   members.some((conversationMember) => conversationMember.user_id === member.user_id)
             if (!joined && !(canManage && selectedConversation?.channel_visibility === 'private')) return null
             return (
-              <div key={member.user_id} className="flex items-center gap-2 rounded-xl bg-white p-3">
+              <div key={member.user_id} className="flex items-center gap-2 border-b border-zinc-100 px-1 py-3">
                 <Circle
                   className={`size-2 fill-current ${onlineUsers.includes(member.user_id) ? 'text-emerald-500' : 'text-zinc-300'}`}
                 />
@@ -790,7 +803,7 @@ export function CollaborationChat({
               maxLength={80}
               value={channelName}
               onChange={(event) => setChannelName(event.target.value)}
-              className="mt-2 min-h-11 w-full rounded-xl border border-zinc-200 px-3"
+              className="app-input mt-2 min-h-11 w-full"
             />
           </label>
           <label className="block text-sm font-medium">
@@ -798,7 +811,7 @@ export function CollaborationChat({
             <select
               value={channelVisibility}
               onChange={(event) => setChannelVisibility(event.target.value as 'public' | 'private')}
-              className="mt-2 min-h-11 w-full rounded-xl border border-zinc-200 px-3"
+              className="app-input mt-2 min-h-11 w-full"
             >
               <option value="public">Publik dalam workspace</option>
               <option value="private">Privat untuk anggota pilihan</option>

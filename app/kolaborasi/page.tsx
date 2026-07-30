@@ -40,6 +40,10 @@ export default async function CollaborationPage({ searchParams }: CollaborationP
     }),
   ])
 
+  if (conversationResult.error || directoryResult.error || unreadResult.error) {
+    throw new Error('Workspace collaboration could not be loaded.')
+  }
+
   const conversations = (conversationResult.data ?? []) as ChatConversation[]
   const selectedConversation =
     conversations.find((conversation) => conversation.id === query.conversation) ??
@@ -59,7 +63,16 @@ export default async function CollaborationPage({ searchParams }: CollaborationP
         supabase.from('chat_message_reactions').select('*').eq('conversation_id', selectedConversation.id),
         supabase.from('chat_attachments').select('*').eq('conversation_id', selectedConversation.id),
       ])
-    : [{ data: [] }, { data: [] }, { data: [] }, { data: [] }]
+    : [
+        { data: [], error: null },
+        { data: [], error: null },
+        { data: [], error: null },
+        { data: [], error: null },
+      ]
+
+  if (messageResult.error || memberResult.error || reactionResult.error || attachmentResult.error) {
+    throw new Error('The selected conversation could not be loaded.')
+  }
 
   const messages = ([...(messageResult.data ?? [])] as ChatMessage[]).reverse()
 
