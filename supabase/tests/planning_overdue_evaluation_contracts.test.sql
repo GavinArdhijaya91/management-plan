@@ -52,6 +52,7 @@ begin
 
   update public.business_initiatives
   set
+    starts_on = current_date - 4,
     ends_on = current_date - 3
   where id = initiative_id;
   perform public.transition_business_initiative(initiative_id, 'active');

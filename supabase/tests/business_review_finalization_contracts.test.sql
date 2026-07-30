@@ -8,6 +8,64 @@ select set_config('test.review_workspace_id', id::text, true)
 from public.workspaces
 where slug = 'kedai-siapin-demo';
 
+select set_config('test.review_plan_id', plan.id::text, true)
+from public.business_plans plan
+where plan.workspace_id =
+    current_setting('test.review_workspace_id')::uuid
+  and plan.title = 'Rencana Pertumbuhan Kedai';
+
+with inserted_review as (
+  insert into public.business_reviews (
+    workspace_id,
+    business_plan_id,
+    period_type,
+    period_start,
+    period_end,
+    summary,
+    next_steps,
+    reviewed_by
+  )
+  values (
+    current_setting('test.review_workspace_id')::uuid,
+    current_setting('test.review_plan_id')::uuid,
+    'custom',
+    current_date - 2,
+    current_date,
+    'Evaluasi dengan perbedaan sumber hybrid.',
+    'Rekonsiliasi bukti dan tindak lanjuti action yang terbuka.',
+    'a1000000-0000-0000-0000-000000000001'
+  )
+  returning id
+)
+select set_config('test.warning_review_id', id::text, true)
+from inserted_review;
+
+with inserted_review as (
+  insert into public.business_reviews (
+    workspace_id,
+    business_plan_id,
+    period_type,
+    period_start,
+    period_end,
+    summary,
+    next_steps,
+    reviewed_by
+  )
+  values (
+    current_setting('test.review_workspace_id')::uuid,
+    current_setting('test.review_plan_id')::uuid,
+    'custom',
+    current_date + 1,
+    current_date + 7,
+    'Evaluasi yang periodenya belum selesai.',
+    'Tunggu periode evaluasi berakhir.',
+    'a1000000-0000-0000-0000-000000000001'
+  )
+  returning id
+)
+select set_config('test.future_review_id', id::text, true)
+from inserted_review;
+
 set local role authenticated;
 select set_config(
   'request.jwt.claims',
@@ -24,11 +82,8 @@ declare
   warning_rejected boolean := false;
   blocker_rejected boolean := false;
 begin
-  select plan.id
-  into plan_id
-  from public.business_plans plan
-  where plan.workspace_id = current_setting('test.review_workspace_id')::uuid
-    and plan.title = 'Rencana Pertumbuhan Kedai';
+  plan_id := current_setting('test.review_plan_id')::uuid;
+  review_id := current_setting('test.warning_review_id')::uuid;
 
   select target.id, metric.id
   into target_id, metric_id
@@ -65,28 +120,6 @@ begin
     'a1000000-0000-0000-0000-000000000001'
   );
 
-  insert into public.business_reviews (
-    workspace_id,
-    business_plan_id,
-    period_type,
-    period_start,
-    period_end,
-    summary,
-    next_steps,
-    reviewed_by
-  )
-  values (
-    current_setting('test.review_workspace_id')::uuid,
-    plan_id,
-    'custom',
-    current_date - 1,
-    current_date,
-    'Evaluasi dengan perbedaan sumber hybrid.',
-    'Rekonsiliasi bukti dan tindak lanjuti action yang terbuka.',
-    'a1000000-0000-0000-0000-000000000001'
-  )
-  returning id into review_id;
-
   begin
     perform public.finalize_business_review(review_id, false);
   exception
@@ -111,27 +144,7 @@ begin
 
   perform public.finalize_business_review(review_id, false);
 
-  insert into public.business_reviews (
-    workspace_id,
-    business_plan_id,
-    period_type,
-    period_start,
-    period_end,
-    summary,
-    next_steps,
-    reviewed_by
-  )
-  values (
-    current_setting('test.review_workspace_id')::uuid,
-    plan_id,
-    'custom',
-    current_date + 1,
-    current_date + 7,
-    'Evaluasi yang periodenya belum selesai.',
-    'Tunggu periode evaluasi berakhir.',
-    'a1000000-0000-0000-0000-000000000001'
-  )
-  returning id into review_id;
+  review_id := current_setting('test.future_review_id')::uuid;
 
   begin
     perform public.finalize_business_review(review_id, true);

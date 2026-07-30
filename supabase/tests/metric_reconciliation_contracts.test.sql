@@ -46,7 +46,7 @@ begin
   into result_record
   from public.calculate_goal_target_actual_reconciliation(
     target_id,
-    current_date,
+    current_date - 2,
     current_date
   );
 
@@ -86,7 +86,7 @@ begin
   into result_record
   from public.calculate_goal_target_actual_reconciliation(
     target_id,
-    current_date,
+    current_date - 2,
     current_date
   );
 
@@ -111,7 +111,7 @@ begin
     plan.workspace_id,
     plan.id,
     'custom',
-    current_date,
+    current_date - 2,
     current_date,
     'Hybrid metric snapshot contract',
     'a1000000-0000-0000-0000-000000000001'
