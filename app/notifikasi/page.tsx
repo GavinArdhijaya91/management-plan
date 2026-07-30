@@ -11,6 +11,9 @@ export default async function NotificationsPage() {
     requireActiveWorkspace('/notifikasi'),
   ])
   const supabase = await createClient()
+  const orchestration = await supabase.rpc('orchestrate_my_workspace_notifications', {
+    target_workspace_id: workspace.workspace_id,
+  })
   const { data, error } = await supabase
     .from('notifications')
     .select('id,title,detail,href,read_at,occurred_at,type')
@@ -28,7 +31,7 @@ export default async function NotificationsPage() {
           <h1 className="app-heading">Notifikasi</h1>
           <p className="mt-2 text-sm text-zinc-500">Aktivitas privat yang membutuhkan perhatian akun Anda.</p>
         </div>
-        {error ? (
+        {error || orchestration.error ? (
           <p role="alert" className="mt-6 rounded-xl bg-red-50 p-4 text-sm text-red-700">
             Notifikasi gagal dimuat.
           </p>

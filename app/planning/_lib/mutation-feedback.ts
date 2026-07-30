@@ -5,6 +5,8 @@ const planningErrorRules: Array<[RegExp, string]> = [
   [/unresolved action|active action items/i, 'Selesaikan atau batalkan tindakan aktif terlebih dahulu.'],
   [/not authorized|permission denied/i, 'Role Anda tidak memiliki permission untuk tindakan ini.'],
   [/archived planning record/i, 'Pulihkan data dari arsip sebelum mengubahnya.'],
+  [/blocking readiness issues/i, 'Selesaikan seluruh blocker evaluasi sebelum melakukan finalisasi.'],
+  [/warnings require acknowledgement/i, 'Baca dan setujui warning evaluasi sebelum melakukan finalisasi.'],
   [/duplicate key/i, 'Data serupa sudah tersedia di workspace ini.'],
 ]
 
