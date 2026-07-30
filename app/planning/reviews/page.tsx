@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { AlertTriangle, ArrowLeft, CheckCircle2, ClipboardCheck, RefreshCw } from 'lucide-react'
+import { AlertTriangle, ArrowLeft, CheckCircle2, ClipboardCheck, FolderKanban, RefreshCw } from 'lucide-react'
 import { Header } from '@/components/header'
 import { getBusinessReviewBoard } from '@/lib/planning/service'
 import {
@@ -40,9 +40,15 @@ export default async function BusinessReviewsPage({ searchParams }: ReviewPagePr
               Periksa hasil aktual, pahami warning, lalu kunci evidence ketika evaluasi siap.
             </p>
           </div>
-          <span className="rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-xs font-medium text-zinc-600">
-            {board.workspace.workspace_name}
-          </span>
+          <div className="flex items-center gap-2">
+            <Link href="/portfolio" className="app-button-secondary">
+              <FolderKanban className="size-4" />
+              Portfolio
+            </Link>
+            <span className="rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-xs font-medium text-zinc-600">
+              {board.workspace.workspace_name}
+            </span>
+          </div>
         </div>
 
         {(error || success) && (

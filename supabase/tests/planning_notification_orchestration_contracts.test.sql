@@ -20,6 +20,7 @@ declare
   action_id uuid;
   first_count integer;
   retry_count integer;
+  invalid_reference_rejected boolean := false;
 begin
   select action.id
   into action_id
@@ -57,6 +58,19 @@ begin
       and notification.href = '/planning'
   ) then
     raise exception 'Overdue action notification has incorrect evidence or destination';
+  end if;
+
+  begin
+    perform public.orchestrate_my_workspace_notifications(
+      current_setting('test.notification_workspace_id')::uuid,
+      now() + interval '1 day'
+    );
+  exception
+    when invalid_parameter_value then invalid_reference_rejected := true;
+  end;
+
+  if not invalid_reference_rejected then
+    raise exception 'Notification orchestration accepted an attacker-controlled reference time';
   end if;
 end;
 $$;
