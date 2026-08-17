@@ -6,6 +6,7 @@ import {
   ClipboardDocumentCheckIcon,
   HomeIcon,
   LifebuoyIcon,
+  GlobeAltIcon,
 } from '@heroicons/react/24/outline'
 import {
   BanknotesIcon as BanknotesSolidIcon,
@@ -15,6 +16,7 @@ import {
   ClipboardDocumentCheckIcon as ClipboardDocumentCheckSolidIcon,
   HomeIcon as HomeSolidIcon,
   LifebuoyIcon as LifebuoySolidIcon,
+  GlobeAltIcon as GlobeAltSolidIcon,
 } from '@heroicons/react/24/solid'
 import type { AppRoute } from '@/types/navigation'
 
@@ -72,6 +74,15 @@ export const appRoutes: AppRoute[] = [
     icon: ChartBarSquareIcon,
     activeIcon: ChartBarSquareSolidIcon,
     translationKey: 'market',
+  },
+  {
+    href: '/komunitas',
+    label: 'Komunitas',
+    shortLabel: 'Komunitas',
+    description: 'Temukan insight dan mitra dari sesama UMKM.',
+    icon: GlobeAltIcon,
+    activeIcon: GlobeAltSolidIcon,
+    translationKey: 'community',
   },
   {
     href: '/hubungi-kami',

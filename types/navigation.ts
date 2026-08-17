@@ -9,5 +9,6 @@ export interface AppRoute {
   description: string
   icon: NavigationIcon
   activeIcon: NavigationIcon
-  translationKey: 'dashboard' | 'planning' | 'management' | 'calendar' | 'collaboration' | 'market' | 'contact'
+  translationKey:
+    'dashboard' | 'planning' | 'management' | 'calendar' | 'collaboration' | 'community' | 'market' | 'contact'
 }
