@@ -31,8 +31,9 @@ export function Header({ mode = 'private' }: HeaderProps) {
   const demoMode = mode === 'demo'
   const routeHref = (href: string) => (demoMode ? `/demo${href}` : href)
   const primaryRoutes = appRoutes.filter(
-    (item) => item.href !== '/hubungi-kami' && (!demoMode || item.href !== '/kolaborasi'),
+    (item) => item.href !== '/hubungi-kami' && item.href !== '/komunitas' && (!demoMode || item.href !== '/kolaborasi'),
   )
+  const communityRoute = !demoMode ? appRoutes.find((item) => item.href === '/komunitas') : undefined
   const supportRoute = appRoutes.find((item) => item.href === '/hubungi-kami')
   const activeRoute = appRoutes.find((item) => isCurrentRoute(pathname, routeHref(item.href)))
   const supportCurrent = supportRoute ? isCurrentRoute(pathname, routeHref(supportRoute.href)) : false
@@ -78,6 +79,33 @@ export function Header({ mode = 'private' }: HeaderProps) {
           )
         })}
       </nav>
+
+      {communityRoute &&
+        (() => {
+          const href = routeHref(communityRoute.href)
+          const current = isCurrentRoute(pathname, href)
+          const Icon = current ? communityRoute.activeIcon : communityRoute.icon
+          return (
+            <div className="mt-4 border-t border-zinc-200 pt-4">
+              <p className="app-label mb-2 px-2.5">Komunitas</p>
+              <Link
+                href={href}
+                aria-current={current ? 'page' : undefined}
+                onClick={closeMenus}
+                className={cn(
+                  'group flex min-h-10 items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors',
+                  current ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950',
+                )}
+              >
+                <Icon
+                  className={cn('size-[1.15rem] shrink-0', current ? 'text-zinc-950' : 'text-zinc-400')}
+                  aria-hidden="true"
+                />
+                <span>{dictionary.nav.community ?? communityRoute.label}</span>
+              </Link>
+            </div>
+          )
+        })()}
 
       <div className="mt-auto border-t border-zinc-200 pt-4">
         {supportRoute && SupportIcon && (

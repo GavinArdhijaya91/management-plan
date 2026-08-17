@@ -14,6 +14,7 @@ describe('language dictionaries', () => {
       'management',
       'calendar',
       'collaboration',
+      'community',
       'market',
       'contact',
       'profile',

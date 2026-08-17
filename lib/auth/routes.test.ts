@@ -7,6 +7,8 @@ describe('isProtectedPath', () => {
     '/dashboard/settings',
     '/kolaborasi',
     '/kolaborasi/channel',
+    '/komunitas',
+    '/komunitas/post-saya',
     '/planning',
     '/planning/reviews',
     '/portfolio',
