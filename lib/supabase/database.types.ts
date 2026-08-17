@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -1241,7 +1241,22 @@ export type Database = {
           uploaded_by?: string
           workspace_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "chat_attachments_workspace_id_conversation_id_message_id_fkey"
+            columns: ["workspace_id", "conversation_id", "message_id"]
+            isOneToOne: false
+            referencedRelation: "chat_messages"
+            referencedColumns: ["workspace_id", "conversation_id", "id"]
+          },
+          {
+            foreignKeyName: "chat_attachments_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       chat_conversation_members: {
         Row: {
@@ -1271,12 +1286,43 @@ export type Database = {
           user_id?: string
           workspace_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "chat_conversation_members_workspace_id_conversation_id_fkey"
+            columns: ["workspace_id", "conversation_id"]
+            isOneToOne: false
+            referencedRelation: "chat_conversations"
+            referencedColumns: ["workspace_id", "id"]
+          },
+          {
+            foreignKeyName: "chat_conversation_members_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_conversation_members_workspace_id_user_id_fkey"
+            columns: ["workspace_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "workspace_member_access"
+            referencedColumns: ["workspace_id", "user_id"]
+          },
+          {
+            foreignKeyName: "chat_conversation_members_workspace_id_user_id_fkey"
+            columns: ["workspace_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "workspace_members"
+            referencedColumns: ["workspace_id", "user_id"]
+          },
+        ]
       }
       chat_conversations: {
         Row: {
           archived_at: string | null
-          channel_visibility: Database["public"]["Enums"]["chat_channel_visibility"] | null
+          channel_visibility:
+            | Database["public"]["Enums"]["chat_channel_visibility"]
+            | null
           created_at: string
           created_by: string
           description: string | null
@@ -1292,7 +1338,9 @@ export type Database = {
         }
         Insert: {
           archived_at?: string | null
-          channel_visibility?: Database["public"]["Enums"]["chat_channel_visibility"] | null
+          channel_visibility?:
+            | Database["public"]["Enums"]["chat_channel_visibility"]
+            | null
           created_at?: string
           created_by: string
           description?: string | null
@@ -1308,7 +1356,9 @@ export type Database = {
         }
         Update: {
           archived_at?: string | null
-          channel_visibility?: Database["public"]["Enums"]["chat_channel_visibility"] | null
+          channel_visibility?:
+            | Database["public"]["Enums"]["chat_channel_visibility"]
+            | null
           created_at?: string
           created_by?: string
           description?: string | null
@@ -1322,7 +1372,15 @@ export type Database = {
           updated_at?: string
           workspace_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "chat_conversations_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       chat_message_mentions: {
         Row: {
@@ -1343,7 +1401,36 @@ export type Database = {
           message_id?: string
           workspace_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "chat_message_mentions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_message_mentions_workspace_id_mentioned_user_id_fkey"
+            columns: ["workspace_id", "mentioned_user_id"]
+            isOneToOne: false
+            referencedRelation: "workspace_member_access"
+            referencedColumns: ["workspace_id", "user_id"]
+          },
+          {
+            foreignKeyName: "chat_message_mentions_workspace_id_mentioned_user_id_fkey"
+            columns: ["workspace_id", "mentioned_user_id"]
+            isOneToOne: false
+            referencedRelation: "workspace_members"
+            referencedColumns: ["workspace_id", "user_id"]
+          },
+          {
+            foreignKeyName: "chat_message_mentions_workspace_id_message_id_fkey"
+            columns: ["workspace_id", "message_id"]
+            isOneToOne: false
+            referencedRelation: "chat_messages"
+            referencedColumns: ["workspace_id", "id"]
+          },
+        ]
       }
       chat_message_reactions: {
         Row: {
@@ -1370,7 +1457,36 @@ export type Database = {
           user_id?: string
           workspace_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "chat_message_reactions_workspace_id_conversation_id_messag_fkey"
+            columns: ["workspace_id", "conversation_id", "message_id"]
+            isOneToOne: false
+            referencedRelation: "chat_messages"
+            referencedColumns: ["workspace_id", "conversation_id", "id"]
+          },
+          {
+            foreignKeyName: "chat_message_reactions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_message_reactions_workspace_id_user_id_fkey"
+            columns: ["workspace_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "workspace_member_access"
+            referencedColumns: ["workspace_id", "user_id"]
+          },
+          {
+            foreignKeyName: "chat_message_reactions_workspace_id_user_id_fkey"
+            columns: ["workspace_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "workspace_members"
+            referencedColumns: ["workspace_id", "user_id"]
+          },
+        ]
       }
       chat_messages: {
         Row: {
@@ -1415,7 +1531,264 @@ export type Database = {
           updated_at?: string
           workspace_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_workspace_id_conversation_id_fkey"
+            columns: ["workspace_id", "conversation_id"]
+            isOneToOne: false
+            referencedRelation: "chat_conversations"
+            referencedColumns: ["workspace_id", "id"]
+          },
+          {
+            foreignKeyName: "chat_messages_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_messages_workspace_id_reply_to_message_id_fkey"
+            columns: ["workspace_id", "reply_to_message_id"]
+            isOneToOne: false
+            referencedRelation: "chat_messages"
+            referencedColumns: ["workspace_id", "id"]
+          },
+        ]
+      }
+      collaboration_requests: {
+        Row: {
+          closes_at: string | null
+          collaboration_kind: Database["public"]["Enums"]["collaboration_request_kind"]
+          community_post_id: string
+          created_at: string
+          created_by: string
+          id: string
+          location_scope: string | null
+          partner_expectation: string
+          proposed_contribution: string
+          response_instructions: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          closes_at?: string | null
+          collaboration_kind: Database["public"]["Enums"]["collaboration_request_kind"]
+          community_post_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          location_scope?: string | null
+          partner_expectation: string
+          proposed_contribution: string
+          response_instructions?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          closes_at?: string | null
+          collaboration_kind?: Database["public"]["Enums"]["collaboration_request_kind"]
+          community_post_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          location_scope?: string | null
+          partner_expectation?: string
+          proposed_contribution?: string
+          response_instructions?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collaboration_requests_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "collaboration_requests_workspace_id_community_post_id_crea_fkey"
+            columns: ["workspace_id", "community_post_id", "created_by"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["workspace_id", "id", "created_by"]
+          },
+          {
+            foreignKeyName: "collaboration_requests_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_post_categories: {
+        Row: {
+          category_id: number
+          community_post_id: string
+          created_at: string
+          workspace_id: string
+        }
+        Insert: {
+          category_id: number
+          community_post_id: string
+          created_at?: string
+          workspace_id: string
+        }
+        Update: {
+          category_id?: number
+          community_post_id?: string
+          created_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_post_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "business_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_post_categories_workspace_id_community_post_id_fkey"
+            columns: ["workspace_id", "community_post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["workspace_id", "id"]
+          },
+          {
+            foreignKeyName: "community_post_categories_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_post_publication_events: {
+        Row: {
+          community_post_id: string
+          created_by: string
+          id: string
+          published_at: string
+          workspace_id: string
+        }
+        Insert: {
+          community_post_id: string
+          created_by: string
+          id?: string
+          published_at?: string
+          workspace_id: string
+        }
+        Update: {
+          community_post_id?: string
+          created_by?: string
+          id?: string
+          published_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_post_publication_ev_workspace_id_community_post__fkey"
+            columns: ["workspace_id", "community_post_id", "created_by"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["workspace_id", "id", "created_by"]
+          },
+          {
+            foreignKeyName: "community_post_publication_events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "community_post_publication_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_posts: {
+        Row: {
+          archive_reason: string | null
+          archived_at: string | null
+          archived_by: string | null
+          audience: string
+          author_display_name: string
+          body: string
+          created_at: string
+          created_by: string
+          id: string
+          post_kind: Database["public"]["Enums"]["community_post_kind"]
+          publication_status: Database["public"]["Enums"]["community_post_publication_status"]
+          published_at: string | null
+          title: string
+          updated_at: string
+          workspace_display_name: string
+          workspace_id: string
+        }
+        Insert: {
+          archive_reason?: string | null
+          archived_at?: string | null
+          archived_by?: string | null
+          audience?: string
+          author_display_name: string
+          body: string
+          created_at?: string
+          created_by: string
+          id?: string
+          post_kind: Database["public"]["Enums"]["community_post_kind"]
+          publication_status?: Database["public"]["Enums"]["community_post_publication_status"]
+          published_at?: string | null
+          title: string
+          updated_at?: string
+          workspace_display_name: string
+          workspace_id: string
+        }
+        Update: {
+          archive_reason?: string | null
+          archived_at?: string | null
+          archived_by?: string | null
+          audience?: string
+          author_display_name?: string
+          body?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          post_kind?: Database["public"]["Enums"]["community_post_kind"]
+          publication_status?: Database["public"]["Enums"]["community_post_publication_status"]
+          published_at?: string | null
+          title?: string
+          updated_at?: string
+          workspace_display_name?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_posts_archived_by_fkey"
+            columns: ["archived_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "community_posts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "community_posts_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       contact_messages: {
         Row: {
@@ -2606,6 +2979,44 @@ export type Database = {
           },
         ]
       }
+      workspace_deletion_requests: {
+        Row: {
+          cancelled_at: string | null
+          cancelled_by: string | null
+          id: string
+          requested_at: string
+          requested_by: string
+          scheduled_for: string
+          workspace_id: string
+        }
+        Insert: {
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          id?: string
+          requested_at?: string
+          requested_by: string
+          scheduled_for: string
+          workspace_id: string
+        }
+        Update: {
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          id?: string
+          requested_at?: string
+          requested_by?: string
+          scheduled_for?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_deletion_requests_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workspace_invitations: {
         Row: {
           accepted_at: string | null
@@ -3048,21 +3459,6 @@ export type Database = {
         }
         Relationships: []
       }
-      planning_overdue_evaluations: {
-        Row: {
-          business_plan_id: string | null
-          days_overdue: number | null
-          deadline: string | null
-          is_due_today: boolean | null
-          is_overdue: boolean | null
-          lifecycle_status: string | null
-          record_id: string | null
-          record_type: Database["public"]["Enums"]["planning_record_type"] | null
-          title: string | null
-          workspace_id: string | null
-        }
-        Relationships: []
-      }
       goal_target_latest_measurements: {
         Row: {
           goal_target_id: string | null
@@ -3139,6 +3535,23 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      planning_overdue_evaluations: {
+        Row: {
+          business_plan_id: string | null
+          days_overdue: number | null
+          deadline: string | null
+          is_due_today: boolean | null
+          is_overdue: boolean | null
+          lifecycle_status: string | null
+          record_id: string | null
+          record_type:
+            | Database["public"]["Enums"]["planning_record_type"]
+            | null
+          title: string | null
+          workspace_id: string | null
+        }
+        Relationships: []
       }
       transaction_category_actuals: {
         Row: {
@@ -3322,46 +3735,16 @@ export type Database = {
           },
         ]
       }
-      workspace_deletion_requests: {
-        Row: {
-          cancelled_at: string | null
-          cancelled_by: string | null
-          id: string
-          requested_at: string
-          requested_by: string
-          scheduled_for: string
-          workspace_id: string
-        }
-        Insert: {
-          cancelled_at?: string | null
-          cancelled_by?: string | null
-          id?: string
-          requested_at?: string
-          requested_by: string
-          scheduled_for: string
-          workspace_id: string
-        }
-        Update: {
-          cancelled_at?: string | null
-          cancelled_by?: string | null
-          id?: string
-          requested_at?: string
-          requested_by?: string
-          scheduled_for?: string
-          workspace_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "workspace_deletion_requests_workspace_id_fkey"
-            columns: ["workspace_id"]
-            isOneToOne: false
-            referencedRelation: "workspaces"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Functions: {
+      accept_workspace_invitation: {
+        Args: { invitation_token: string }
+        Returns: string
+      }
+      archive_community_post: {
+        Args: { reason: string; target_community_post_id: string }
+        Returns: undefined
+      }
       calculate_goal_target_actual_reconciliation: {
         Args: {
           target_goal_target_id: string
@@ -3385,27 +3768,9 @@ export type Database = {
           workspace_id: string
         }[]
       }
-      create_chat_channel: {
-        Args: {
-          channel_description?: string
-          channel_name: string
-          channel_slug: string
-          channel_visibility?: Database["public"]["Enums"]["chat_channel_visibility"]
-          target_workspace_id: string
-        }
-        Returns: string
-      }
-      delete_chat_message: {
-        Args: { target_message_id: string }
+      cancel_workspace_deletion: {
+        Args: { target_deletion_request_id: string }
         Returns: undefined
-      }
-      edit_chat_message: {
-        Args: { message_body: string; target_message_id: string }
-        Returns: undefined
-      }
-      accept_workspace_invitation: {
-        Args: { invitation_token: string }
-        Returns: string
       }
       change_workspace_member_role: {
         Args: {
@@ -3415,9 +3780,15 @@ export type Database = {
         }
         Returns: undefined
       }
-      cancel_workspace_deletion: {
-        Args: { target_deletion_request_id: string }
-        Returns: undefined
+      create_chat_channel: {
+        Args: {
+          channel_description?: string
+          channel_name: string
+          channel_slug: string
+          channel_visibility?: Database["public"]["Enums"]["chat_channel_visibility"]
+          target_workspace_id: string
+        }
+        Returns: string
       }
       create_transaction: {
         Args: {
@@ -3466,8 +3837,23 @@ export type Database = {
         Args: { invitation_token: string }
         Returns: string
       }
+      delete_chat_message: {
+        Args: { target_message_id: string }
+        Returns: undefined
+      }
       delete_workspace_role: {
         Args: { target_workspace_role_id: string }
+        Returns: undefined
+      }
+      edit_chat_message: {
+        Args: { message_body: string; target_message_id: string }
+        Returns: undefined
+      }
+      execute_workspace_deletion: {
+        Args: {
+          confirmation_workspace_name: string
+          target_deletion_request_id: string
+        }
         Returns: undefined
       }
       finalize_business_review: {
@@ -3480,6 +3866,21 @@ export type Database = {
       generate_my_workspace_reminders: {
         Args: { reference_time?: string; target_workspace_id: string }
         Returns: number
+      }
+      get_business_review_readiness: {
+        Args: { target_business_review_id: string }
+        Returns: {
+          issue_code: string
+          issue_message: string
+          severity: Database["public"]["Enums"]["business_review_readiness_severity"]
+        }[]
+      }
+      get_chat_unread_counts: {
+        Args: { target_workspace_id: string }
+        Returns: {
+          conversation_id: string
+          unread_count: number
+        }[]
       }
       get_my_workspace_access: {
         Args: never
@@ -3496,6 +3897,26 @@ export type Database = {
           workspace_name: string
           workspace_role_id: string
           workspace_slug: string
+        }[]
+      }
+      get_own_publish_quota: {
+        Args: { target_workspace_id: string }
+        Returns: {
+          actor_remaining: number
+          window_ends_at: string
+          workspace_remaining: number
+        }[]
+      }
+      get_public_business_portfolio: {
+        Args: { requested_public_slug: string }
+        Returns: {
+          achievement_badges: Json
+          portfolio_summary: string
+          portfolio_title: string
+          published_at: string
+          review_evidence: Json
+          workspace_logo_path: string
+          workspace_name: string
         }[]
       }
       get_system_health_snapshot: {
@@ -3545,6 +3966,14 @@ export type Database = {
         Args: { target_workspace_id?: string }
         Returns: number
       }
+      mark_chat_conversation_read: {
+        Args: {
+          delivered_through: string
+          read_through: string
+          target_conversation_id: string
+        }
+        Returns: undefined
+      }
       mark_email_delivery_failed: {
         Args: { target_delivery_id: string; target_error_code: string }
         Returns: undefined
@@ -3566,46 +3995,8 @@ export type Database = {
         Returns: undefined
       }
       orchestrate_my_workspace_notifications: {
-        Args: {
-          reference_time?: string
-          target_workspace_id: string
-        }
+        Args: { reference_time?: string; target_workspace_id: string }
         Returns: number
-      }
-      get_business_review_readiness: {
-        Args: { target_business_review_id: string }
-        Returns: {
-          issue_code: string
-          issue_message: string
-          severity: Database["public"]["Enums"]["business_review_readiness_severity"]
-        }[]
-      }
-      get_public_business_portfolio: {
-        Args: { requested_public_slug: string }
-        Returns: {
-          achievement_badges: Json
-          portfolio_summary: string
-          portfolio_title: string
-          published_at: string
-          review_evidence: Json
-          workspace_logo_path: string
-          workspace_name: string
-        }[]
-      }
-      get_chat_unread_counts: {
-        Args: { target_workspace_id: string }
-        Returns: {
-          conversation_id: string
-          unread_count: number
-        }[]
-      }
-      mark_chat_conversation_read: {
-        Args: {
-          delivered_through: string
-          read_through: string
-          target_conversation_id: string
-        }
-        Returns: undefined
       }
       prepare_transaction_export: {
         Args: {
@@ -3620,7 +4011,7 @@ export type Database = {
           currency_code: string
           financial_account_name: string
           net_result: number
-          note: string | null
+          note: string
           transaction_date: string
           transaction_id: string
           transaction_type: Database["public"]["Enums"]["transaction_type"]
@@ -3634,6 +4025,14 @@ export type Database = {
         }
         Returns: undefined
       }
+      publish_community_post: {
+        Args: { target_community_post_id: string }
+        Returns: undefined
+      }
+      refresh_business_review_snapshots: {
+        Args: { target_business_review_id: string }
+        Returns: undefined
+      }
       register_chat_attachment: {
         Args: {
           target_byte_size: number
@@ -3643,17 +4042,6 @@ export type Database = {
           target_original_file_name: string
         }
         Returns: string
-      }
-      execute_workspace_deletion: {
-        Args: {
-          confirmation_workspace_name: string
-          target_deletion_request_id: string
-        }
-        Returns: undefined
-      }
-      refresh_business_review_snapshots: {
-        Args: { target_business_review_id: string }
-        Returns: undefined
       }
       remove_workspace_member: {
         Args: { target_user_id: string; target_workspace_id: string }
@@ -3687,13 +4075,15 @@ export type Database = {
           expired_invitations: number
         }[]
       }
-      set_planning_record_archived: {
+      send_chat_message: {
         Args: {
-          should_archive: boolean
-          target_record_id: string
-          target_record_type: Database["public"]["Enums"]["planning_record_type"]
+          mentioned_user_ids?: string[]
+          message_body: string
+          reply_to_id?: string
+          request_id: string
+          target_conversation_id: string
         }
-        Returns: undefined
+        Returns: string
       }
       set_chat_conversation_membership: {
         Args: {
@@ -3703,23 +4093,13 @@ export type Database = {
         }
         Returns: undefined
       }
-      send_chat_message: {
+      set_planning_record_archived: {
         Args: {
-          message_body: string
-          mentioned_user_ids?: string[]
-          reply_to_id?: string
-          request_id: string
-          target_conversation_id: string
+          should_archive: boolean
+          target_record_id: string
+          target_record_type: Database["public"]["Enums"]["planning_record_type"]
         }
-        Returns: string
-      }
-      start_direct_chat: {
-        Args: { target_user_id: string; target_workspace_id: string }
-        Returns: string
-      }
-      toggle_chat_message_reaction: {
-        Args: { reaction_emoji: string; target_message_id: string }
-        Returns: boolean
+        Returns: undefined
       }
       set_workspace_member_status: {
         Args: {
@@ -3728,6 +4108,14 @@ export type Database = {
           target_workspace_id: string
         }
         Returns: undefined
+      }
+      start_direct_chat: {
+        Args: { target_user_id: string; target_workspace_id: string }
+        Returns: string
+      }
+      toggle_chat_message_reaction: {
+        Args: { reaction_emoji: string; target_message_id: string }
+        Returns: boolean
       }
       transfer_workspace_ownership: {
         Args: {
@@ -3783,8 +4171,6 @@ export type Database = {
       }
     }
     Enums: {
-      chat_channel_visibility: "public" | "private"
-      chat_conversation_kind: "channel" | "direct"
       action_item_status:
         | "todo"
         | "in_progress"
@@ -3828,9 +4214,20 @@ export type Database = {
         | "quarterly"
         | "annual"
         | "custom"
-      business_review_status: "draft" | "finalized"
       business_review_readiness_severity: "blocking" | "warning"
+      business_review_status: "draft" | "finalized"
       calendar_event_type: "supplier" | "payroll" | "stock" | "other"
+      chat_channel_visibility: "public" | "private"
+      chat_conversation_kind: "channel" | "direct"
+      collaboration_request_kind:
+        | "marketing"
+        | "distribution"
+        | "supplier"
+        | "event"
+        | "production"
+        | "other"
+      community_post_kind: "insight" | "collaboration_request"
+      community_post_publication_status: "draft" | "published" | "archived"
       contact_status: "new" | "in_progress" | "resolved" | "closed"
       email_delivery_status:
         | "queued"
@@ -3855,6 +4252,7 @@ export type Database = {
         | "expired"
         | "declined"
       membership_status: "active" | "suspended"
+      metric_actual_source: "manual" | "transaction"
       metric_aggregation:
         | "sum"
         | "average"
@@ -3862,7 +4260,6 @@ export type Database = {
         | "minimum"
         | "maximum"
         | "count"
-      metric_actual_source: "manual" | "transaction"
       metric_reconciliation_status:
         | "missing_authoritative"
         | "missing_comparison"
@@ -4004,8 +4401,6 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      chat_channel_visibility: ["public", "private"],
-      chat_conversation_kind: ["channel", "direct"],
       action_item_status: [
         "todo",
         "in_progress",
@@ -4047,6 +4442,7 @@ export const Constants = {
       ],
       business_plan_visibility: ["workspace", "restricted"],
       business_portfolio_status: ["draft", "active", "archived"],
+      business_portfolio_visibility: ["private", "public"],
       business_review_period: [
         "weekly",
         "monthly",
@@ -4054,8 +4450,21 @@ export const Constants = {
         "annual",
         "custom",
       ],
+      business_review_readiness_severity: ["blocking", "warning"],
       business_review_status: ["draft", "finalized"],
       calendar_event_type: ["supplier", "payroll", "stock", "other"],
+      chat_channel_visibility: ["public", "private"],
+      chat_conversation_kind: ["channel", "direct"],
+      collaboration_request_kind: [
+        "marketing",
+        "distribution",
+        "supplier",
+        "event",
+        "production",
+        "other",
+      ],
+      community_post_kind: ["insight", "collaboration_request"],
+      community_post_publication_status: ["draft", "published", "archived"],
       contact_status: ["new", "in_progress", "resolved", "closed"],
       email_delivery_status: [
         "queued",
@@ -4083,6 +4492,7 @@ export const Constants = {
         "declined",
       ],
       membership_status: ["active", "suspended"],
+      metric_actual_source: ["manual", "transaction"],
       metric_aggregation: [
         "sum",
         "average",
@@ -4090,6 +4500,12 @@ export const Constants = {
         "minimum",
         "maximum",
         "count",
+      ],
+      metric_reconciliation_status: [
+        "missing_authoritative",
+        "missing_comparison",
+        "reconciled",
+        "attention",
       ],
       metric_unit_type: ["number", "currency", "percentage"],
       notification_type: ["stock", "target", "schedule", "system"],
