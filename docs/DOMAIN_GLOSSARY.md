@@ -91,6 +91,21 @@ record returns it to its initial state.
 - An **initiative** is a strategy or program; an **action item** is executable work.
 - An **action item** describes what must happen; a **calendar event** describes when something happens.
 - A **business review** is business content; an **audit log** is an immutable technical record.
+- A **community post** is explicitly published for cross-workspace discovery; a
+  **business review** is a private workspace assessment of results, lessons,
+  and next decisions. A community post must never copy, summarize, or derive
+  content automatically from a business review or its snapshots.
+- A **collaboration request** invites another UMKM to explore an external
+  business relationship; a **workspace invitation** asks a person to become an
+  internal workspace member. A collaboration request grants no workspace role,
+  permission, membership, or access to private records.
+- A **community post category** classifies community content for discovery; a
+  **workspace business category** classifies a workspace's business sector.
+  Both use `business_categories`, but neither relationship implies the other.
+- A **community post publication event** is internal rate-limit evidence; an
+  **audit log** is protected technical evidence of changes to workspace-owned
+  entities. Publication events contain no post content and are not a browser
+  read model or a substitute for audit history.
 
 ## Business operations
 
@@ -117,6 +132,41 @@ internal access, invite them as a workspace member.
 base roles. `workspace_role_id` plus `workspace_role_permissions` is the
 authoritative access model.
 
+## Community and discovery
+
+| Domain term | UI term | Database name | Definition |
+| --- | --- | --- | --- |
+| Community post | Post komunitas | `community_posts` | Content that a user explicitly authors and individually publishes on behalf of a workspace for authenticated cross-workspace discovery. It is never generated, copied, summarized, or derived automatically from private workspace records. |
+| Community post category | Kategori post | `community_post_categories` | An optional explicit relationship between one community post and an existing `business_categories` entry, used for discovery and filtering without creating a separate community taxonomy. A post may have zero or more categories; no maximum is part of the initial contract. |
+| Collaboration request | Ajakan kolaborasi | `collaboration_requests` | A community-post extension through which one UMKM explicitly invites another UMKM to explore an external business relationship. It grants no workspace membership, role, permission, or access to private records. |
+| Community post publication event | Catatan publikasi komunitas | `community_post_publication_events` | Internal, content-free evidence of a successful publication, used only to enforce per-actor and per-workspace rate limits. Browser roles cannot read or write these events. |
+| Community-post archive actor | Diarsipkan oleh | `community_posts.archived_by` | The profile that archived a published community post, whether its active author or an authorized workspace moderator. It is lifecycle evidence written only by `archive_community_post`, remains null before archive, and is immutable after the post becomes archived. It grants no additional read or mutation authority. |
+| Community-post creation permission | Izin membuat post komunitas | `permission_definitions.code = 'community_post.create'` | Allows an active workspace member to create and edit only their own community-post drafts on behalf of that workspace. It does not allow publication or moderation. |
+| Community-post publication permission | Izin menerbitkan post komunitas | `permission_definitions.code = 'community_post.publish'` | Allows an active workspace member to publish only their own valid draft through the controlled publication lifecycle. This permission is independent of `community_post.create`: publishing does not require the actor to retain creation permission, and publication permission alone grants no ability to create or edit a draft. It does not permit direct lifecycle-column updates or publication that bypasses rate limits. |
+| Community-post moderation permission | Izin moderasi post komunitas | `permission_definitions.code = 'community_post.moderate'` | Allows an active workspace member to archive another author's post and to read archived posts in that same workspace. This read-only visibility adds no right to edit content, republish posts, or hard-delete records; only owners receive it by default, and delegation requires an explicit custom-role permission assignment. |
+
+Community participation is opt-in per post, not per profile or workspace. A
+workspace membership, category assignment, plan visibility grant, or other
+private-business setting never publishes data to the community. Displayed
+author and workspace names are explicit per-post snapshots that must match the
+actor's current profile and workspace identity when the post is published.
+
+Publication lifecycle fields, including `publication_status`, `published_at`,
+`archived_at`, `archived_by`, and `archive_reason`, can change only through
+dedicated RPCs. The archive RPC derives `archived_by` from `auth.uid()` rather
+than accepting an actor identifier from the client. Published content and
+archive evidence are immutable, and a published post may be archived but not
+hard-deleted through the browser. Publication events are inaccessible to
+`anon` and `authenticated`; any own-quota UI must use a bounded aggregate RPC
+instead of reading events.
+
+`community_post_publication_events` deliberately retains a restrictive foreign
+key to its post so publication evidence cannot disappear and restore rate-limit
+capacity. This `ON DELETE RESTRICT` decision must be reviewed before adding
+account deletion or right-to-erasure workflows, because retained publication
+evidence may otherwise block deletion and require an approved anonymization or
+retention design.
+
 ## Reference and system data
 
 | Domain term | Database name | Definition |
@@ -138,7 +188,8 @@ authorization rules are approved:
 - Workspace capabilities and capability setup
 - Import/export plans, shipments, costs, and documents
 - Presence status
-- Community posts and collaboration requests
+- Community comments, reactions, reports, targeted requests, revisions, and
+  post-supersession relationships
 
 Do not create generic placeholders for these concepts. In particular, avoid
 tables named `modules`, `items`, `details`, `activity`, `data`, or `records`.
@@ -186,6 +237,12 @@ Business operations
 ├── transaction_initiative_allocations
 ├── transaction_goal_target_contributions
 └── metric_measurement_transactions
+
+Community and discovery (approved names; schema pending)
+├── community_posts
+├── community_post_categories
+├── collaboration_requests
+└── community_post_publication_events
 
 Reference data
 ├── countries
