@@ -49,6 +49,24 @@ values
   ('c2000000-0000-0000-0000-000000000002', 'c1000000-0000-0000-0000-000000000008', 'owner', 'active'),
   ('c2000000-0000-0000-0000-000000000002', 'c1000000-0000-0000-0000-000000000001', 'manager', 'active');
 
+-- Keep the fixture explicit about the authoritative role relationship. The
+-- compatibility `role` column is not the permission source.
+update public.workspace_members member
+set workspace_role_id = role_record.id
+from public.workspace_roles role_record
+where role_record.workspace_id = member.workspace_id
+  and role_record.is_system
+  and role_record.base_role = member.role
+  and member.user_id in (
+    'c1000000-0000-0000-0000-000000000001',
+    'c1000000-0000-0000-0000-000000000002',
+    'c1000000-0000-0000-0000-000000000003',
+    'c1000000-0000-0000-0000-000000000004',
+    'c1000000-0000-0000-0000-000000000005',
+    'c1000000-0000-0000-0000-000000000006',
+    'c1000000-0000-0000-0000-000000000008'
+  );
+
 do $$
 declare
   manager_permission_count integer;
@@ -213,6 +231,28 @@ select set_config(
   '{"sub":"c1000000-0000-0000-0000-000000000002","role":"authenticated","email":"community-manager-a@siapin.test"}',
   true
 );
+
+do $$
+begin
+  if (select auth.uid()) is distinct from
+      'c1000000-0000-0000-0000-000000000002'::uuid then
+    raise exception 'Manager JWT actor was not installed for community tests';
+  end if;
+
+  if not private.is_workspace_member(
+    'c2000000-0000-0000-0000-000000000001'
+  ) then
+    raise exception 'Manager fixture is not an active workspace member';
+  end if;
+
+  if not private.has_workspace_permission(
+    'c2000000-0000-0000-0000-000000000001',
+    'community_post.create'
+  ) then
+    raise exception 'Manager fixture did not receive community_post.create';
+  end if;
+end;
+$$;
 
 do $$
 declare
