@@ -239,17 +239,15 @@ begin
     raise exception 'Manager JWT actor was not installed for community tests';
   end if;
 
-  if not private.is_workspace_member(
-    'c2000000-0000-0000-0000-000000000001'
+  if not exists (
+    select 1
+    from public.get_my_workspace_access() access
+    where access.workspace_id =
+        'c2000000-0000-0000-0000-000000000001'::uuid
+      and access.membership_status = 'active'
+      and 'community_post.create' = any(access.permission_codes)
   ) then
-    raise exception 'Manager fixture is not an active workspace member';
-  end if;
-
-  if not private.has_workspace_permission(
-    'c2000000-0000-0000-0000-000000000001',
-    'community_post.create'
-  ) then
-    raise exception 'Manager fixture did not receive community_post.create';
+    raise exception 'Manager public access context is missing active community_post.create';
   end if;
 end;
 $$;
