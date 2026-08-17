@@ -5,5 +5,7 @@ allowBuilds:
   unrs-resolver: true
 
 overrides:
-  postcss@8.4.31: 8.5.19
+  dompurify@<3.4.13: 3.4.13
+  nanoid@<3.3.18: 3.3.18
+  postcss@<8.5.23: 8.5.23
   sharp@<0.35.0: 0.35.3
