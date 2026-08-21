@@ -84,15 +84,13 @@ export default async function MyCommunityPostsPage({
               </Link>
             ))}
           {canModerate && (
-            <>
-              <Link
-                href="/komunitas/post-saya?view=workspace-archive"
-                aria-current={workspaceArchive ? 'page' : undefined}
-                className={`inline-flex min-h-10 items-center rounded-full border px-3.5 text-sm font-medium ${workspaceArchive ? 'border-amber-700 bg-amber-700 text-white' : 'border-amber-200 bg-amber-50 text-amber-800'}`}
-              >
-                Arsip Workspace
-              </Link>
-            </>
+            <Link
+              href="/komunitas/post-saya?view=workspace-archive"
+              aria-current={workspaceArchive ? 'page' : undefined}
+              className={`inline-flex min-h-10 items-center rounded-full border px-3.5 text-sm font-medium ${workspaceArchive ? 'border-amber-700 bg-amber-700 text-white' : 'border-amber-200 bg-amber-50 text-amber-800'}`}
+            >
+              Arsip Workspace
+            </Link>
           )}
         </div>
         {error ? (
