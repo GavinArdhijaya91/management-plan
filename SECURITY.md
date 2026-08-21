@@ -82,6 +82,35 @@ Repository documentation must never include live project URLs, access tokens,
 secret keys, database passwords, internal email addresses, or real customer
 data.
 
+## Reviewed Supabase Security Advisor findings
+
+Supabase reports executable `SECURITY DEFINER` functions because these
+functions run with the function owner's privileges. In Siapin, such functions
+are intentional RPC boundaries only when direct table writes would bypass
+authorization, lifecycle, audit, idempotency, or concurrency invariants. An
+Advisor warning is therefore a mandatory review signal, not an instruction to
+bulk-convert functions to `SECURITY INVOKER` or revoke application access.
+
+The database security boundary contract maintains an exact, signature-aware
+allowlist of public `SECURITY DEFINER` functions executable by `authenticated`.
+It also permits only these anonymous capabilities:
+
+- `get_public_business_portfolio(text)` for explicitly published portfolio
+  reads;
+- `get_workspace_invitation_preview(text)` for a token-scoped, minimal
+  invitation preview.
+
+Any added function, overload, argument-type change, or role grant must update
+the allowlist in `supabase/tests/database_security_boundaries.test.sql`. Such a
+change requires review of caller authentication, workspace and permission
+checks, empty `search_path`, schema-qualified object references, minimum role
+grants, returned data, and negative cross-workspace tests. Service operations
+must remain inaccessible to `anon` and `authenticated`.
+
+The hosted Auth warning for leaked-password protection is accepted only while
+the active development plan does not provide that feature. Enable it before a
+public production deployment whenever the selected Supabase plan supports it.
+
 ## Credential exposure
 
 If a real credential is exposed, revoke or rotate it immediately before
