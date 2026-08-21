@@ -6,7 +6,12 @@ import { requireActiveWorkspace } from '@/lib/workspace/context'
 import { CommunityCategoryFilter } from './_components/community-category-filter'
 import { CommunityEmptyState } from './_components/community-empty-state'
 import { CommunityPostCard } from './_components/community-post-card'
-import { COMMUNITY_PAGE_SIZE, listCommunityCategories, listCommunityFeed } from './_domain/community-query'
+import {
+  COMMUNITY_MAX_RESULTS,
+  COMMUNITY_PAGE_SIZE,
+  listCommunityCategories,
+  listCommunityFeed,
+} from './_domain/community-query'
 
 export default async function CommunityPage({
   searchParams,
@@ -18,7 +23,7 @@ export default async function CommunityPage({
   const categoryId = /^\d+$/.test(params.kategori ?? '') ? Number(params.kategori) : null
   const requestedLimit = Number(params.limit ?? COMMUNITY_PAGE_SIZE)
   const limit = Math.min(
-    100,
+    COMMUNITY_MAX_RESULTS,
     Math.max(COMMUNITY_PAGE_SIZE, Math.ceil(requestedLimit / COMMUNITY_PAGE_SIZE) * COMMUNITY_PAGE_SIZE),
   )
   const supabase = await createClient()

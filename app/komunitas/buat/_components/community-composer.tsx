@@ -35,6 +35,7 @@ export function CommunityComposer({ categories, permissions, officialIdentity, s
       responseInstructions: sourcePost?.collaboration?.response_instructions ?? '',
       locationScope: sourcePost?.collaboration?.location_scope ?? '',
       closesAt: sourcePost?.collaboration?.closes_at?.slice(0, 16) ?? '',
+      website: '',
     }),
     [editingDraft, officialIdentity, sourcePost],
   )
@@ -119,6 +120,10 @@ export function CommunityComposer({ categories, permissions, officialIdentity, s
     <>
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
         <form className="app-card p-5 sm:p-7" onSubmit={(event) => event.preventDefault()}>
+          <label className="sr-only" aria-hidden="true">
+            Website
+            <input {...register('website')} tabIndex={-1} autoComplete="off" />
+          </label>
           <fieldset disabled={!permissions.canCreate || pending} className="space-y-6 disabled:opacity-70">
             <div>
               <legend className="text-sm font-semibold">Jenis post</legend>
@@ -353,7 +358,10 @@ export function CommunityComposer({ categories, permissions, officialIdentity, s
             onChange={(event) => setAccepted(event.target.checked)}
             className="mt-0.5 size-4"
           />
-          <span>Saya mengerti post ini tidak dapat diedit setelah diterbitkan.</span>
+          <span>
+            Saya mengerti post ini tidak dapat diedit setelah diterbitkan dan memastikan kontennya tidak mengandung
+            pornografi, perjudian, ujaran kebencian, penipuan, atau data pribadi sensitif.
+          </span>
         </label>
         <div className="mt-5 flex justify-end gap-2">
           <button

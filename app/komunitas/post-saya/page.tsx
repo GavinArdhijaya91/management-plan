@@ -6,7 +6,12 @@ import { createClient } from '@/lib/supabase/server'
 import { hasWorkspacePermission, requireActiveWorkspace } from '@/lib/workspace/context'
 import { CommunityEmptyState } from '../_components/community-empty-state'
 import { CommunityPostCard } from '../_components/community-post-card'
-import { COMMUNITY_PAGE_SIZE, listOwnCommunityPosts, listWorkspaceArchive } from '../_domain/community-query'
+import {
+  COMMUNITY_MAX_RESULTS,
+  COMMUNITY_PAGE_SIZE,
+  listOwnCommunityPosts,
+  listWorkspaceArchive,
+} from '../_domain/community-query'
 
 const statuses = [
   ['all', 'Semua'],
@@ -28,7 +33,10 @@ export default async function MyCommunityPostsPage({
   const canModerate = hasWorkspacePermission(workspace, 'community_post.moderate')
   const workspaceArchive = params.view === 'workspace-archive' && canModerate
   const status = statuses.some(([value]) => value === params.status) ? (params.status ?? 'all') : 'all'
-  const limit = Math.min(100, Math.max(COMMUNITY_PAGE_SIZE, Number(params.limit) || COMMUNITY_PAGE_SIZE))
+  const limit = Math.min(
+    COMMUNITY_MAX_RESULTS,
+    Math.max(COMMUNITY_PAGE_SIZE, Number(params.limit) || COMMUNITY_PAGE_SIZE),
+  )
   const supabase = await createClient()
   let result = { posts: [] as Awaited<ReturnType<typeof listOwnCommunityPosts>>['posts'], hasMore: false }
   let error = false
@@ -76,13 +84,15 @@ export default async function MyCommunityPostsPage({
               </Link>
             ))}
           {canModerate && (
-            <Link
-              href="/komunitas/post-saya?view=workspace-archive"
-              aria-current={workspaceArchive ? 'page' : undefined}
-              className={`inline-flex min-h-10 items-center rounded-full border px-3.5 text-sm font-medium ${workspaceArchive ? 'border-amber-700 bg-amber-700 text-white' : 'border-amber-200 bg-amber-50 text-amber-800'}`}
-            >
-              Arsip Workspace
-            </Link>
+            <>
+              <Link
+                href="/komunitas/post-saya?view=workspace-archive"
+                aria-current={workspaceArchive ? 'page' : undefined}
+                className={`inline-flex min-h-10 items-center rounded-full border px-3.5 text-sm font-medium ${workspaceArchive ? 'border-amber-700 bg-amber-700 text-white' : 'border-amber-200 bg-amber-50 text-amber-800'}`}
+              >
+                Arsip Workspace
+              </Link>
+            </>
           )}
         </div>
         {error ? (
