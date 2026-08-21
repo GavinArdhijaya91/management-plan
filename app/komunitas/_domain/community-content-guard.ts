@@ -25,6 +25,7 @@ export function normalizeCommunityText(value: string) {
     .trim()
 }
 
+
 export function inspectCommunityContent(values: string[]) {
   const content = values.filter(Boolean).join('\n')
   const blocked = blockedContentPatterns.find(({ pattern }) => pattern.test(content))
