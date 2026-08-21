@@ -13,11 +13,11 @@ declare
     'archive_community_post(target_community_post_id uuid, reason text)',
     'cancel_workspace_deletion(target_deletion_request_id uuid)',
     'change_workspace_member_role(target_workspace_id uuid, target_user_id uuid, target_workspace_role_id uuid)',
-    'create_chat_channel(target_workspace_id uuid, channel_name text, channel_slug text, channel_visibility public.chat_channel_visibility, channel_description text)',
-    'create_transaction(target_workspace_id uuid, transaction_type public.transaction_type, transaction_amount numeric, transaction_date date, request_idempotency_key uuid, transaction_cost_amount numeric, transaction_note text, target_financial_account_id uuid)',
+    'create_chat_channel(target_workspace_id uuid, channel_name text, channel_slug text, channel_visibility chat_channel_visibility, channel_description text)',
+    'create_transaction(target_workspace_id uuid, transaction_type transaction_type, transaction_amount numeric, transaction_date date, request_idempotency_key uuid, transaction_cost_amount numeric, transaction_note text, target_financial_account_id uuid)',
     'create_workspace(workspace_name text, workspace_slug text)',
     'create_workspace_invitation(target_workspace_id uuid, invited_email text, target_workspace_role_id uuid, valid_for_days integer)',
-    'create_workspace_role(target_workspace_id uuid, role_name text, role_code text, role_description text, role_hierarchy_rank smallint, role_base_role public.workspace_role, permission_codes text[])',
+    'create_workspace_role(target_workspace_id uuid, role_name text, role_code text, role_description text, role_hierarchy_rank smallint, role_base_role workspace_role, permission_codes text[])',
     'decline_workspace_invitation(invitation_token text)',
     'delete_chat_message(target_message_id uuid)',
     'delete_workspace_role(target_workspace_role_id uuid)',
@@ -47,15 +47,15 @@ declare
     'revoke_workspace_invitation(invitation_id uuid)',
     'send_chat_message(target_conversation_id uuid, message_body text, request_id uuid, reply_to_id uuid, mentioned_user_ids uuid[])',
     'set_chat_conversation_membership(target_conversation_id uuid, target_user_id uuid, should_join boolean)',
-    'set_planning_record_archived(target_record_type public.planning_record_type, target_record_id uuid, should_archive boolean)',
-    'set_workspace_member_status(target_workspace_id uuid, target_user_id uuid, target_status public.membership_status)',
+    'set_planning_record_archived(target_record_type planning_record_type, target_record_id uuid, should_archive boolean)',
+    'set_workspace_member_status(target_workspace_id uuid, target_user_id uuid, target_status membership_status)',
     'start_direct_chat(target_workspace_id uuid, target_user_id uuid)',
     'toggle_chat_message_reaction(target_message_id uuid, reaction_emoji text)',
     'transfer_workspace_ownership(target_workspace_id uuid, next_owner_user_id uuid, previous_owner_workspace_role_id uuid, request_idempotency_key uuid)',
-    'transition_action_item(target_action_item_id uuid, target_status public.action_item_status, transition_reason text)',
-    'transition_business_goal(target_business_goal_id uuid, target_status public.business_goal_status, transition_reason text, replacement_target_date date)',
-    'transition_business_initiative(target_business_initiative_id uuid, target_status public.business_initiative_status, transition_reason text)',
-    'transition_business_plan(target_business_plan_id uuid, target_status public.business_plan_status, transition_reason text)',
+    'transition_action_item(target_action_item_id uuid, target_status action_item_status, transition_reason text)',
+    'transition_business_goal(target_business_goal_id uuid, target_status business_goal_status, transition_reason text, replacement_target_date date)',
+    'transition_business_initiative(target_business_initiative_id uuid, target_status business_initiative_status, transition_reason text)',
+    'transition_business_plan(target_business_plan_id uuid, target_status business_plan_status, transition_reason text)',
     'update_workspace_role(target_workspace_role_id uuid, role_name text, role_description text, role_hierarchy_rank smallint, permission_codes text[])'
   ];
 begin
@@ -231,7 +231,15 @@ begin
       format(
         '%I(%s)',
         procedure.proname,
-        pg_get_function_identity_arguments(procedure.oid)
+        -- PostgreSQL omits a type's schema when it is visible in the
+        -- session search_path. Normalize public types so CI and linked
+        -- Advisor sessions compare the same identity signature.
+        regexp_replace(
+          pg_get_function_identity_arguments(procedure.oid),
+          'public\.',
+          '',
+          'g'
+        )
       )
       order by procedure.proname, pg_get_function_identity_arguments(procedure.oid)
     ),
