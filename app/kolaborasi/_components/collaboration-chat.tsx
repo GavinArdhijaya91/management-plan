@@ -10,6 +10,7 @@ import type {
   ChatMessage,
   ChatReaction,
 } from '@/app/kolaborasi/_lib/chat-types'
+import { hasExpectedFileSignature, sanitizeAttachmentName } from '@/app/kolaborasi/_lib/chat-file-security'
 import { createClient } from '@/lib/supabase/client'
 import {
   Circle,
@@ -123,9 +124,27 @@ export function CollaborationChat({
   const [channelName, setChannelName] = useState('')
   const [channelVisibility, setChannelVisibility] = useState<'public' | 'private'>('public')
   const bottomRef = useRef<HTMLDivElement | null>(null)
+  const lastTypingBroadcastAt = useRef(0)
+  const typingTimeouts = useRef(new Map<string, number>())
+
+  const directoryByUserId = useMemo(() => new Map(directory.map((member) => [member.user_id, member])), [directory])
+  const messagesById = useMemo(() => new Map(messages.map((message) => [message.id, message])), [messages])
+  const reactionsByMessageId = useMemo(() => {
+    const grouped = new Map<string, ChatReaction[]>()
+    for (const reaction of reactions)
+      grouped.set(reaction.message_id, [...(grouped.get(reaction.message_id) ?? []), reaction])
+    return grouped
+  }, [reactions])
+  const attachmentsByMessageId = useMemo(() => {
+    const grouped = new Map<string, ChatAttachment[]>()
+    for (const attachment of attachments)
+      grouped.set(attachment.message_id, [...(grouped.get(attachment.message_id) ?? []), attachment])
+    return grouped
+  }, [attachments])
 
   useEffect(() => {
     if (!selectedConversation) return
+    const activeTypingTimeouts = typingTimeouts.current
 
     const topic = `chat:${selectedConversation.id}`
     void supabase.realtime.setAuth()
@@ -222,9 +241,13 @@ export function CollaborationChat({
         const userId = typeof payload?.userId === 'string' ? payload.userId : null
         if (!userId || userId === currentUserId) return
         setTypingUsers((current) => [...new Set([...current, userId])])
-        window.setTimeout(() => {
+        const previousTimeout = activeTypingTimeouts.get(userId)
+        if (previousTimeout) window.clearTimeout(previousTimeout)
+        const timeout = window.setTimeout(() => {
           setTypingUsers((current) => current.filter((candidate) => candidate !== userId))
+          activeTypingTimeouts.delete(userId)
         }, 2500)
+        activeTypingTimeouts.set(userId, timeout)
       })
       .subscribe()
 
@@ -254,6 +277,8 @@ export function CollaborationChat({
       })
 
     return () => {
+      for (const timeout of activeTypingTimeouts.values()) window.clearTimeout(timeout)
+      activeTypingTimeouts.clear()
       void supabase.removeChannel(channel)
       void supabase.removeChannel(workspacePresence)
     }
@@ -272,6 +297,9 @@ export function CollaborationChat({
 
   const broadcastTyping = () => {
     if (!selectedConversation) return
+    const now = Date.now()
+    if (now - lastTypingBroadcastAt.current < 1000) return
+    lastTypingBroadcastAt.current = now
     const channel = supabase
       .getChannels()
       .find((candidate) => candidate.topic.endsWith(`chat:${selectedConversation.id}`))
@@ -284,6 +312,9 @@ export function CollaborationChat({
       throw new Error('Lampiran tidak didukung atau melebihi 10 MB.')
     }
     if (!selectedConversation) throw new Error('Percakapan tidak tersedia.')
+    const header = new Uint8Array(await selectedFile.slice(0, 12).arrayBuffer())
+    if (!hasExpectedFileSignature(selectedFile.type, header))
+      throw new Error('Isi lampiran tidak cocok dengan tipe file yang dipilih.')
 
     const extension = attachmentExtensions[selectedFile.type] ?? 'file'
     const objectPath = `${workspaceId}/${selectedConversation.id}/${currentUserId}/${crypto.randomUUID()}.${extension}`
@@ -296,7 +327,7 @@ export function CollaborationChat({
     const { data: attachmentId, error: registrationError } = await supabase.rpc('register_chat_attachment', {
       target_message_id: messageId,
       target_object_path: objectPath,
-      target_original_file_name: selectedFile.name.replaceAll('/', '-').replaceAll('\\', '-'),
+      target_original_file_name: sanitizeAttachmentName(selectedFile.name),
       target_media_type: selectedFile.type,
       target_byte_size: selectedFile.size,
     })
@@ -552,11 +583,13 @@ export function CollaborationChat({
                   </div>
                 )}
                 {messages.map((message) => {
-                  const sender = directory.find((member) => member.user_id === message.sender_id)
+                  const sender = directoryByUserId.get(message.sender_id)
                   const own = message.sender_id === currentUserId
-                  const messageReactions = reactions.filter((reaction) => reaction.message_id === message.id)
-                  const messageAttachments = attachments.filter((attachment) => attachment.message_id === message.id)
-                  const repliedMessage = messages.find((candidate) => candidate.id === message.reply_to_message_id)
+                  const messageReactions = reactionsByMessageId.get(message.id) ?? []
+                  const messageAttachments = attachmentsByMessageId.get(message.id) ?? []
+                  const repliedMessage = message.reply_to_message_id
+                    ? messagesById.get(message.reply_to_message_id)
+                    : undefined
                   const readCount = members.filter(
                     (member) =>
                       member.user_id !== message.sender_id &&
@@ -694,6 +727,7 @@ export function CollaborationChat({
                     <Paperclip className="size-5" />
                     <input
                       type="file"
+                      accept={Array.from(allowedAttachmentTypes).join(',')}
                       aria-label="Lampirkan file"
                       className="sr-only"
                       disabled={!canWrite}

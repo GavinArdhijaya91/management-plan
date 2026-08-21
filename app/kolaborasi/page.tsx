@@ -51,20 +51,27 @@ export default async function CollaborationPage({ searchParams }: CollaborationP
     conversations[0] ??
     null
 
-  const [messageResult, memberResult, reactionResult, attachmentResult] = selectedConversation
+  const messageResult = selectedConversation
+    ? await supabase
+        .from('chat_messages')
+        .select('*')
+        .eq('conversation_id', selectedConversation.id)
+        .order('created_at', { ascending: false })
+        .limit(50)
+    : { data: [], error: null }
+
+  const messageIds = (messageResult.data ?? []).map((message) => message.id)
+  const [memberResult, reactionResult, attachmentResult] = selectedConversation
     ? await Promise.all([
-        supabase
-          .from('chat_messages')
-          .select('*')
-          .eq('conversation_id', selectedConversation.id)
-          .order('created_at', { ascending: false })
-          .limit(50),
         supabase.from('chat_conversation_members').select('*').eq('conversation_id', selectedConversation.id),
-        supabase.from('chat_message_reactions').select('*').eq('conversation_id', selectedConversation.id),
-        supabase.from('chat_attachments').select('*').eq('conversation_id', selectedConversation.id),
+        messageIds.length
+          ? supabase.from('chat_message_reactions').select('*').in('message_id', messageIds)
+          : Promise.resolve({ data: [], error: null }),
+        messageIds.length
+          ? supabase.from('chat_attachments').select('*').in('message_id', messageIds)
+          : Promise.resolve({ data: [], error: null }),
       ])
     : [
-        { data: [], error: null },
         { data: [], error: null },
         { data: [], error: null },
         { data: [], error: null },
