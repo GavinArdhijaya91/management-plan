@@ -32,3 +32,14 @@ export function hasPublicSupabaseEnvironment() {
     process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim(),
   )
 }
+
+export function getSupabaseServiceEnvironment() {
+  const { url } = getPublicSupabaseEnvironment()
+  const secretKey = process.env.SUPABASE_SECRET_KEY?.trim()
+
+  if (!secretKey || !secretKey.startsWith('sb_secret_')) {
+    throw new Error('SUPABASE_SECRET_KEY is missing or invalid.')
+  }
+
+  return { secretKey, url }
+}
