@@ -126,14 +126,14 @@ export function ProfileEditor({ profile, showActivityStatus }: ProfileEditorProp
                 selalu terlihat offline.
               </span>
             </span>
-            <span className="relative mt-1 inline-flex shrink-0">
+            <span className="relative mt-1 inline-flex h-6 w-11 shrink-0">
               <input
                 name="showActivityStatus"
                 type="checkbox"
                 defaultChecked={showActivityStatus}
-                className="peer sr-only"
+                className="peer absolute inset-0 z-10 m-0 cursor-pointer opacity-0"
               />
-              <span className="h-6 w-11 rounded-full bg-zinc-300 transition-colors peer-checked:bg-zinc-950 peer-focus-visible:ring-2 peer-focus-visible:ring-zinc-950 peer-focus-visible:ring-offset-2" />
+              <span className="h-full w-full rounded-full bg-zinc-300 transition-colors peer-checked:bg-zinc-950 peer-focus-visible:ring-2 peer-focus-visible:ring-zinc-950 peer-focus-visible:ring-offset-2" />
               <span className="pointer-events-none absolute left-1 top-1 size-4 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-5" />
             </span>
           </label>
