@@ -21,3 +21,17 @@ test('review route remains protected and preserves the intended return path', as
   await page.goto('/planning/reviews')
   await expect(page).toHaveURL(/\/auth\/login\?next=%2Fplanning%2Freviews$/)
 })
+
+test('demo command palette supports keyboard-first navigation', async ({ page }) => {
+  await page.goto('/demo/dashboard')
+
+  await page.keyboard.press('Control+k')
+  await expect(page.getByRole('dialog', { name: 'Pindah cepat' })).toBeVisible()
+
+  const search = page.getByRole('textbox', { name: 'Cari halaman' })
+  await expect(search).toBeFocused()
+  await search.fill('manajemen')
+  await page.keyboard.press('Enter')
+
+  await expect(page).toHaveURL(/\/demo\/manajemen$/)
+})

@@ -1,6 +1,7 @@
 'use client'
 
 import { ConfirmationDialog } from '@/app/manajemen/_components/confirmation-dialog'
+import { CommandPalette } from '@/app/_components/command-palette'
 import { LanguageSelector } from '@/app/_components/language-selector'
 import { MotionLogo } from '@/app/_components/motion-logo'
 import { useLanguage } from '@/app/_i18n/language-provider'
@@ -9,10 +10,10 @@ import { appRoutes } from '@/data/navigation'
 import { cn } from '@/lib/utils'
 import { UserCircleIcon } from '@heroicons/react/24/outline'
 import { UserCircleIcon as UserCircleSolidIcon } from '@heroicons/react/24/solid'
-import { Bell, ChevronDown, LogOut, Menu, User, X } from 'lucide-react'
+import { Bell, ChevronDown, LogOut, Menu, Search, User, X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 function isCurrentRoute(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`)
@@ -27,6 +28,7 @@ export function Header({ mode = 'private' }: HeaderProps) {
   const [notificationOpen, setNotificationOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [logoutOpen, setLogoutOpen] = useState(false)
+  const [commandOpen, setCommandOpen] = useState(false)
   const pathname = usePathname()
   const { dictionary } = useLanguage()
   const demoMode = mode === 'demo'
@@ -40,6 +42,17 @@ export function Header({ mode = 'private' }: HeaderProps) {
   const supportCurrent = supportRoute ? isCurrentRoute(pathname, routeHref(supportRoute.href)) : false
   const SupportIcon = supportRoute ? (supportCurrent ? supportRoute.activeIcon : supportRoute.icon) : null
   const profileCurrent = isCurrentRoute(pathname, routeHref('/profil'))
+
+  useEffect(() => {
+    const handleShortcut = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLocaleLowerCase() === 'k') {
+        event.preventDefault()
+        setCommandOpen((open) => !open)
+      }
+    }
+    window.addEventListener('keydown', handleShortcut)
+    return () => window.removeEventListener('keydown', handleShortcut)
+  }, [])
 
   const closeMenus = () => {
     setMobileMenuOpen(false)
@@ -200,6 +213,19 @@ export function Header({ mode = 'private' }: HeaderProps) {
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2">
+            <button
+              type="button"
+              onClick={() => setCommandOpen(true)}
+              aria-label="Buka pencarian cepat"
+              aria-keyshortcuts="Control+K Meta+K"
+              className="flex min-h-11 items-center gap-2 rounded-xl px-3 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-950"
+            >
+              <Search className="size-5" aria-hidden="true" />
+              <span className="hidden text-sm font-medium xl:inline">Cari</span>
+              <kbd className="hidden rounded-md border border-zinc-200 bg-white px-1.5 py-0.5 font-mono text-[10px] text-zinc-400 xl:inline">
+                Ctrl K
+              </kbd>
+            </button>
             <LanguageSelector />
             <div className="relative">
               <button
@@ -324,6 +350,7 @@ export function Header({ mode = 'private' }: HeaderProps) {
         onCancel={() => setLogoutOpen(false)}
         onConfirm={() => (demoMode ? window.location.assign('/') : logoutAction())}
       />
+      <CommandPalette mode={mode} open={commandOpen} onClose={() => setCommandOpen(false)} />
     </>
   )
 }
