@@ -37,4 +37,3 @@ Update this ledger at each public milestone. A concern moves to complete only
 when its linked artifact and verification gate exist in the current repository;
 intent or a database-only implementation is not sufficient evidence of a
 complete user journey.
-

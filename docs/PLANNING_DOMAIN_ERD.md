@@ -88,4 +88,3 @@ teams record necessary operational work without inventing a false outcome.
 
 Database-ready does not mean journey-ready. The current application coverage
 and next vertical slice are tracked in [PRODUCT_DIRECTION.md](./PRODUCT_DIRECTION.md).
-

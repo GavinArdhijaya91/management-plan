@@ -69,4 +69,3 @@ least:
 
 User research must be consent-based and must not copy private workspace content
 into public analytics or issue reports.
-
