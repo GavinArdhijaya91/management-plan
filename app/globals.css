@@ -172,6 +172,9 @@
   .app-button {
     @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-zinc-950 bg-zinc-950 px-3.5 py-2 text-sm font-medium text-white transition-[background-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:bg-zinc-800 hover:shadow-[0_8px_20px_rgba(24,24,27,0.16)] active:translate-y-px active:scale-[0.97] active:shadow-none;
   }
+  .app-button-secondary {
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-[#fcfcfb] px-3.5 py-2 text-sm font-medium text-zinc-800 transition-[background-color,border-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:border-zinc-950 hover:bg-white hover:text-zinc-950 hover:shadow-[0_8px_20px_rgba(24,24,27,0.08)] active:translate-y-px active:scale-[0.97] active:shadow-none;
+  }
 }
 
 @keyframes logo-arrive {
