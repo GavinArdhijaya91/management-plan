@@ -41,7 +41,5 @@ test('demo command palette supports keyboard-first navigation', async ({ page })
   const search = page.getByRole('textbox', { name: 'Cari halaman' })
   await expect(search).toBeFocused()
   await search.fill('manajemen')
-  await page.keyboard.press('Enter')
-
-  await expect(page).toHaveURL(/\/demo\/manajemen$/)
+  await Promise.all([page.waitForURL(/\/demo\/manajemen$/, { timeout: 15_000 }), page.keyboard.press('Enter')])
 })

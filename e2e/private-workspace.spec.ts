@@ -45,7 +45,7 @@ test.describe.serial('private workspace journey', () => {
     await page.goto('/profil')
     await page.getByLabel('Display name').fill('Owner Presence E2E')
     await page.getByLabel('Headline').fill('Pemilik usaha pengujian')
-    await page.getByLabel('Status').fill('Memastikan kolaborasi berjalan')
+    await page.getByRole('textbox', { name: 'Status', exact: true }).fill('Memastikan kolaborasi berjalan')
     await page.getByLabel('Tampilkan status aktivitas').uncheck()
     await page.getByRole('button', { name: 'Simpan profil' }).click()
     await expect(page).toHaveURL(/\/profil\?success=/)
