@@ -2,6 +2,7 @@
 
 import { ConfirmationDialog } from '@/app/manajemen/_components/confirmation-dialog'
 import { LanguageSelector } from '@/app/_components/language-selector'
+import { MotionLogo } from '@/app/_components/motion-logo'
 import { useLanguage } from '@/app/_i18n/language-provider'
 import { logout as logoutAction } from '@/app/auth/actions'
 import { appRoutes } from '@/data/navigation'
@@ -67,11 +68,11 @@ export function Header({ mode = 'private' }: HeaderProps) {
               onClick={closeMenus}
               className={cn(
                 'group relative flex min-h-10 items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors',
-                current ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950',
+                current ? 'bg-zinc-950 text-white' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950',
               )}
             >
               <Icon
-                className={cn('size-[1.15rem] shrink-0', current ? 'text-zinc-950' : 'text-zinc-400')}
+                className={cn('size-[1.15rem] shrink-0', current ? 'text-white' : 'text-zinc-400')}
                 aria-hidden="true"
               />
               <span>{dictionary.nav[item.translationKey] ?? item.label}</span>
@@ -94,11 +95,11 @@ export function Header({ mode = 'private' }: HeaderProps) {
                 onClick={closeMenus}
                 className={cn(
                   'group flex min-h-10 items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors',
-                  current ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950',
+                  current ? 'bg-zinc-950 text-white' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950',
                 )}
               >
                 <Icon
-                  className={cn('size-[1.15rem] shrink-0', current ? 'text-zinc-950' : 'text-zinc-400')}
+                  className={cn('size-[1.15rem] shrink-0', current ? 'text-white' : 'text-zinc-400')}
                   aria-hidden="true"
                 />
                 <span>{dictionary.nav.community ?? communityRoute.label}</span>
@@ -152,20 +153,18 @@ export function Header({ mode = 'private' }: HeaderProps) {
 
   return (
     <>
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-zinc-200 bg-white p-3 lg:flex lg:flex-col">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-zinc-200 bg-[#fcfcfb] p-3 lg:flex lg:flex-col">
         <Link href={routeHref('/dashboard')} className="flex min-h-14 items-center gap-3 px-2">
-          <span className="motion-logo flex size-8 items-center justify-center rounded-lg bg-zinc-950 font-serif text-sm font-semibold text-white">
-            S
-          </span>
+          <MotionLogo />
           <span>
-            <strong className="block font-serif text-lg leading-tight">Siapin</strong>
-            <span className="text-xs text-zinc-500">Business management plan</span>
+            <strong className="block text-lg font-semibold leading-tight tracking-tight">Siapin</strong>
+            <span className="text-xs text-zinc-500">Manajemen bisnis</span>
           </span>
         </Link>
 
         <Link
           href={demoMode ? '/auth/sign-up' : '/workspace/select'}
-          className="my-4 flex min-h-13 items-center justify-between rounded-lg border border-zinc-200 bg-white px-3 py-2 transition-colors hover:bg-zinc-50"
+          className="my-4 flex min-h-13 items-center justify-between rounded-lg border border-zinc-200 bg-[#f7f7f5] px-3 py-2 transition-colors hover:border-zinc-400"
         >
           <span className="min-w-0">
             <span className="app-label block">{demoMode ? 'Mode demo' : 'Ruang kerja'}</span>
@@ -179,7 +178,7 @@ export function Header({ mode = 'private' }: HeaderProps) {
         {navigation}
       </aside>
 
-      <header className="sticky top-0 z-30 border-b border-zinc-200 bg-white/90 backdrop-blur-xl">
+      <header className="sticky top-0 z-30 border-b border-zinc-200 bg-[#fcfcfb]/95 backdrop-blur-xl">
         <div className="flex h-16 items-center justify-between gap-3 px-4 md:px-6">
           <div className="flex min-w-0 items-center gap-3">
             <button
@@ -194,7 +193,7 @@ export function Header({ mode = 'private' }: HeaderProps) {
             </button>
             <div className="min-w-0">
               <p className="app-label hidden sm:block">{demoMode ? 'Demo · data lokal' : 'Workspace'}</p>
-              <p className="truncate font-serif text-base font-semibold">
+              <p className="truncate text-base font-semibold tracking-tight">
                 {activeRoute ? (dictionary.nav[activeRoute.translationKey] ?? activeRoute.label) : 'Siapin'}
               </p>
             </div>
@@ -219,8 +218,8 @@ export function Header({ mode = 'private' }: HeaderProps) {
                 )}
               </button>
               {notificationOpen && (
-                <div className="motion-window-origin absolute right-0 top-12 w-[min(20rem,calc(100vw-2rem))] rounded-2xl border border-zinc-200 bg-white p-3 shadow-xl">
-                  <p className="px-2 py-1 font-serif text-lg font-semibold">{dictionary.header.notifications}</p>
+                <div className="motion-window-origin absolute right-0 top-12 w-[min(20rem,calc(100vw-2rem))] rounded-lg border border-zinc-200 bg-[#fcfcfb] p-3 shadow-[0_18px_48px_rgba(24,24,27,0.12)]">
+                  <p className="px-2 py-1 text-lg font-semibold">{dictionary.header.notifications}</p>
                   {demoMode && (
                     <Link
                       href={routeHref('/notifikasi')}
@@ -256,7 +255,7 @@ export function Header({ mode = 'private' }: HeaderProps) {
                 <User className="size-5 text-zinc-700" />
               </button>
               {profileOpen && (
-                <div className="motion-window-origin absolute right-0 top-12 w-56 rounded-2xl border border-zinc-200 bg-white p-2 shadow-xl">
+                <div className="motion-window-origin absolute right-0 top-12 w-56 rounded-lg border border-zinc-200 bg-[#fcfcfb] p-2 shadow-[0_18px_48px_rgba(24,24,27,0.12)]">
                   <div className="border-b border-zinc-100 px-3 py-2">
                     <p className="text-sm font-semibold">Akun Siapin</p>
                     <p className="text-xs text-zinc-500">{dictionary.header.businessOwner}</p>
@@ -296,10 +295,8 @@ export function Header({ mode = 'private' }: HeaderProps) {
           >
             <div className="mb-5 flex min-h-14 items-center justify-between">
               <Link href={routeHref('/dashboard')} onClick={closeMenus} className="flex items-center gap-3 px-2">
-                <span className="flex size-9 items-center justify-center rounded-xl bg-zinc-950 font-serif text-lg font-semibold text-white">
-                  S
-                </span>
-                <strong className="font-serif text-lg">Siapin</strong>
+                <MotionLogo />
+                <strong className="text-lg font-semibold tracking-tight">Siapin</strong>
               </Link>
               <button
                 type="button"
