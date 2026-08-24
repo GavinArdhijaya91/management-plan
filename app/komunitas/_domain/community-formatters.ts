@@ -29,3 +29,4 @@ export function formatRelativeTime(value: string | null) {
 export function initialFromName(name: string) {
   return name.trim().charAt(0).toLocaleUpperCase('id-ID') || 'U'
 }
+
