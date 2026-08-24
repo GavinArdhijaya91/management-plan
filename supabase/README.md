@@ -158,6 +158,9 @@ Chat is internal to an active workspace membership:
 - Message mutations use RPC boundaries with idempotency and per-user throttling.
 - Presence and typing use private Realtime topics authorized through
   `realtime.messages` RLS; ephemeral events are not stored as audit records.
+- `profile_preferences.show_activity_status` decides whether a client publishes
+  Presence. Online/offline itself is never persisted and hidden users appear
+  offline to workspace peers.
 - Read and delivery state use per-conversation cursors instead of one receipt row
   for every message and recipient.
 - Message deletion removes its body and writes structural audit evidence without

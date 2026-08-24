@@ -2886,6 +2886,7 @@ export type Database = {
           marketing_notifications: boolean
           reminder_lead_hours: number
           review_notifications: boolean
+          show_activity_status: boolean
           theme: Database["public"]["Enums"]["profile_theme"]
           timezone: string
           updated_at: string
@@ -2902,6 +2903,7 @@ export type Database = {
           marketing_notifications?: boolean
           reminder_lead_hours?: number
           review_notifications?: boolean
+          show_activity_status?: boolean
           theme?: Database["public"]["Enums"]["profile_theme"]
           timezone?: string
           updated_at?: string
@@ -2918,6 +2920,7 @@ export type Database = {
           marketing_notifications?: boolean
           reminder_lead_hours?: number
           review_notifications?: boolean
+          show_activity_status?: boolean
           theme?: Database["public"]["Enums"]["profile_theme"]
           timezone?: string
           updated_at?: string
@@ -2943,7 +2946,10 @@ export type Database = {
           email: string
           email_notifications: boolean
           full_name: string
+          headline: string | null
           phone: string | null
+          profile_banner_path: string | null
+          status_text: string | null
           updated_at: string
           user_id: string
           weekly_summary: boolean
@@ -2957,7 +2963,10 @@ export type Database = {
           email: string
           email_notifications?: boolean
           full_name: string
+          headline?: string | null
           phone?: string | null
+          profile_banner_path?: string | null
+          status_text?: string | null
           updated_at?: string
           user_id: string
           weekly_summary?: boolean
@@ -2971,7 +2980,10 @@ export type Database = {
           email?: string
           email_notifications?: boolean
           full_name?: string
+          headline?: string | null
           phone?: string | null
+          profile_banner_path?: string | null
+          status_text?: string | null
           updated_at?: string
           user_id?: string
           weekly_summary?: boolean
@@ -4366,16 +4378,19 @@ export type Database = {
       get_workspace_member_directory: {
         Args: { target_workspace_id: string }
         Returns: {
-          avatar_path: string
+          avatar_path: string | null
           base_role: Database["public"]["Enums"]["workspace_role"]
           display_name: string
+          headline: string | null
           hierarchy_rank: number
           is_owner_role: boolean
-          job_title: string
+          job_title: string | null
           joined_at: string
           membership_status: Database["public"]["Enums"]["membership_status"]
           role_code: string
           role_name: string
+          show_activity_status: boolean
+          status_text: string | null
           user_id: string
           workspace_role_id: string
         }[]
@@ -4574,6 +4589,18 @@ export type Database = {
           target_business_plan_id: string
           target_status: Database["public"]["Enums"]["business_plan_status"]
           transition_reason?: string
+        }
+        Returns: undefined
+      }
+      update_my_personal_profile: {
+        Args: {
+          requested_avatar_path: string | null
+          requested_bio: string | null
+          requested_display_name: string
+          requested_headline: string | null
+          requested_profile_banner_path: string | null
+          requested_show_activity_status: boolean
+          requested_status_text: string | null
         }
         Returns: undefined
       }

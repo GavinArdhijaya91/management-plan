@@ -35,7 +35,6 @@ these fields.
 ## Deliberately unsupported
 
 - Public portfolio or community discovery
-- Presence/online status
 - Import/export trade workflows
 - Receivable/payable accounting
 - Foreign-exchange conversion

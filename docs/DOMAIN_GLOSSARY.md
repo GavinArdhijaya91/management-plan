@@ -25,6 +25,7 @@ modules. They must not change the meaning of the core private-business terms.
 | --- | --- | --- | --- |
 | Profile | Profil pribadi | `profiles` | The identity of one authenticated person. |
 | Profile preference | Preferensi | `profile_preferences` | Personal display and notification choices that do not belong to a business. |
+| Profile activity visibility | Visibilitas aktivitas | `profile_preferences.show_activity_status` | Whether the client publishes ephemeral Realtime Presence to workspace peers; it never stores an online/offline claim. |
 | Workspace | Ruang usaha | `workspaces` | The private boundary containing one business's data and settings. |
 | Workspace member | Anggota | `workspace_members` | An internal person who has access to a workspace. |
 | Workspace invitation | Undangan | `workspace_invitations` | A time-limited request to become a workspace member. |
@@ -193,7 +194,6 @@ authorization rules are approved:
 
 - Workspace capabilities and capability setup
 - Import/export plans, shipments, costs, and documents
-- Presence status
 - Community comments, reactions, reports, targeted requests, revisions, and
   post-supersession relationships
 

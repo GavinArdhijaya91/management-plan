@@ -31,10 +31,10 @@ the same object.
 
 | Application concern | Read from | Write through | Important distinction |
 | --- | --- | --- | --- |
-| Current user identity | `profiles` | own-row update | `display_name` is preferred display identity; `full_name` is the account name. |
-| Personal settings | `profile_preferences` | own-row update | Preferences belong to a user, never a workspace. |
+| Current user identity | `profiles` | `update_my_personal_profile` | `display_name` is preferred display identity; `full_name` is the account name. Avatar, banner, headline, status text, and bio travel with the person across workspaces. |
+| Personal settings | `profile_preferences` | `update_my_personal_profile` | Preferences belong to a user, never a workspace. `show_activity_status` controls Realtime Presence publication and is not a stored online flag. |
 | Workspace settings | `workspaces` | permitted update | One private business boundary. |
-| Member and role display | `get_workspace_member_directory` | membership RPCs | Safe identity fields only; do not infer access from `base_role`. |
+| Member and role display | `get_workspace_member_directory` | membership RPCs | Safe identity and activity-display fields only; do not infer access from `base_role`. |
 | Invitation management | `workspace_invitation_access` | invitation RPCs | Invitation role activation is `workspace_role_id`. |
 | Plans and execution | canonical planning tables | lifecycle RPCs plus permitted content writes | Goal is an outcome; initiative is a strategy; action item is work. |
 | Restricted planning | plan hierarchy under `business_plans` | owner-managed role/member grants | Child records inherit plan visibility; managers have no implicit bypass. |
@@ -89,6 +89,7 @@ database row. Do not cast it to one.
 - Reminder generation and notification read actions
 - Safe workspace member directory reads
 - Workspace transaction export preparation
+- Atomic personal-profile and activity-visibility updates
 
 Direct table mutation is appropriate only where an explicit RLS write policy
 exists and no lifecycle invariant spans multiple tables.
