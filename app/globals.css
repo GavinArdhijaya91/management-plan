@@ -170,7 +170,7 @@
     @apply rounded-lg border border-zinc-300 bg-[#fcfcfb] px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-zinc-400 hover:border-zinc-400 focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950;
   }
   .app-button {
-    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-zinc-950 bg-zinc-950 px-3.5 py-2 text-sm font-medium text-white transition-[background-color,transform] hover:bg-zinc-800 active:translate-y-px;
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-zinc-950 bg-zinc-950 px-3.5 py-2 text-sm font-medium text-white transition-[background-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:bg-zinc-800 hover:shadow-[0_8px_20px_rgba(24,24,27,0.16)] active:translate-y-px active:scale-[0.97] active:shadow-none;
   }
 }
 
@@ -202,16 +202,6 @@
   }
 }
 
-@keyframes landing-scroll-reveal {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 @keyframes dialog-arrive {
   from {
     opacity: 0;
@@ -293,13 +283,17 @@ a:active .motion-logo {
   animation: landing-chart-grow 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-@supports (animation-timeline: view()) {
-  .landing-reveal {
-    animation: landing-scroll-reveal 1ms linear both;
-    animation-delay: var(--reveal-delay, 0ms);
-    animation-timeline: view();
-    animation-range: entry 0% entry 28%;
-  }
+.landing-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 640ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms),
+    transform 640ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
+}
+
+.landing-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 .motion-dialog {
   animation: dialog-arrive 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -329,8 +323,14 @@ a:active .motion-logo {
     border-color 160ms ease,
     box-shadow 160ms ease;
 }
+.motion-press:hover {
+  transform: translateY(-2px) scale(1.015);
+  box-shadow: 0 10px 24px rgba(24, 24, 27, 0.12);
+}
 .motion-press:active {
-  transform: scale(0.98);
+  transform: translateY(1px) scale(0.965);
+  box-shadow: none;
+  transition-duration: 90ms;
 }
 
 @media (prefers-reduced-motion: reduce) {
