@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto'
 import { z } from 'zod'
+import { fetchBpsJson } from './bps-fetch'
 
 const BPS_API_ORIGIN = 'https://webapi.bps.go.id'
 const supportedModels = ['pressrelease', 'publication'] as const
@@ -122,13 +123,7 @@ export async function fetchBpsDocuments(binding: BpsBinding, apiKey: string, max
   let totalPages = 1
 
   do {
-    const response = await fetch(buildBpsRequestUrl(binding, apiKey, page), {
-      headers: { Accept: 'application/json', 'User-Agent': 'Siapin factual-market-ingestion/1.0' },
-      signal: AbortSignal.timeout(15_000),
-    })
-    if (!response.ok) throw new Error(`BPS_HTTP_${response.status}`)
-
-    const parsed = parseBpsResponse(await response.json(), binding)
+    const parsed = parseBpsResponse(await fetchBpsJson(buildBpsRequestUrl(binding, apiKey, page)), binding)
     documents.push(...parsed.documents)
     totalPages = parsed.pages
     page += 1

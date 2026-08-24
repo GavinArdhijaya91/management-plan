@@ -41,7 +41,8 @@ begin
     'market_observations_product_time_idx',
     'market_observations_binding_time_idx',
     'market_source_documents_product_time_idx',
-    'market_source_sync_runs_binding_time_idx'
+    'market_source_sync_runs_binding_time_idx',
+    'market_source_sync_runs_one_running_idx'
   ]
   loop
     if to_regclass('public.' || required_index) is null then

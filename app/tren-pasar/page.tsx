@@ -4,7 +4,7 @@ import { hasWorkspacePermission, requireActiveWorkspace } from '@/lib/workspace/
 import { Database, ExternalLink, TrendingUp } from 'lucide-react'
 import { MarketTrendChart } from './_components/market-trend-chart'
 import { FactualObservationChart } from './_components/factual-observation-chart'
-import { createBpsBindingAction } from './actions'
+import { BpsSourceManagement } from './_components/bps-source-management'
 
 interface MarketTrendsPageProps {
   searchParams: Promise<{ error?: string; success?: string }>
@@ -19,7 +19,7 @@ function jakartaDate(value: string) {
 export default async function MarketTrendsPage({ searchParams }: MarketTrendsPageProps) {
   const workspace = await requireActiveWorkspace('/tren-pasar')
   const supabase = await createClient()
-  const [{ data, error }, documentsResult, bindingsResult, observationsResult] = await Promise.all([
+  const [{ data, error }, documentsResult, bindingsResult, observationsResult, syncRunsResult] = await Promise.all([
     supabase
       .from('market_products')
       .select('id,name,description,active,market_snapshots(observed_on,change_percent,market_condition)')
@@ -31,13 +31,23 @@ export default async function MarketTrendsPage({ searchParams }: MarketTrendsPag
       .eq('workspace_id', workspace.workspace_id)
       .order('published_at', { ascending: false })
       .limit(12),
-    supabase.from('market_product_source_bindings').select('id').eq('workspace_id', workspace.workspace_id),
+    supabase
+      .from('market_product_source_bindings')
+      .select('id,product_id,external_identifier,is_active,refresh_interval_minutes')
+      .eq('workspace_id', workspace.workspace_id)
+      .order('created_at', { ascending: false }),
     supabase
       .from('market_observations')
       .select('id,product_id,metric_code,numeric_value,unit_code,observed_at,source_url')
       .eq('workspace_id', workspace.workspace_id)
       .order('observed_at', { ascending: true })
       .limit(500),
+    supabase
+      .from('market_source_sync_runs')
+      .select('binding_id,sync_outcome,started_at,completed_at,error_code')
+      .eq('workspace_id', workspace.workspace_id)
+      .order('started_at', { ascending: false })
+      .limit(200),
   ])
   const feedback = await searchParams
   const productNames = new Map(data?.map((product) => [product.id, product.name]))
@@ -160,55 +170,12 @@ export default async function MarketTrendsPage({ searchParams }: MarketTrendsPag
           </div>
 
           {canConfigure && data?.length ? (
-            <form
-              action={createBpsBindingAction}
-              className="app-card mt-5 grid gap-4 p-5 md:grid-cols-2 lg:grid-cols-5 lg:items-end"
-            >
-              <label className="grid gap-1.5 text-sm font-medium">
-                Produk
-                <select name="productId" required className="app-input">
-                  <option value="">Pilih produk</option>
-                  {data.map((product) => (
-                    <option key={product.id} value={product.id}>
-                      {product.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="grid gap-1.5 text-sm font-medium">
-                Jenis sumber
-                <select name="model" className="app-input">
-                  <option value="pressrelease">Berita resmi statistik</option>
-                  <option value="publication">Publikasi</option>
-                </select>
-              </label>
-              <label className="grid gap-1.5 text-sm font-medium">
-                Domain BPS
-                <input
-                  name="domain"
-                  defaultValue="0000"
-                  inputMode="numeric"
-                  pattern="[0-9]{4}"
-                  required
-                  className="app-input"
-                />
-                <span className="text-xs font-normal text-zinc-500">0000 = nasional</span>
-              </label>
-              <label className="grid gap-1.5 text-sm font-medium">
-                Kata kunci
-                <input
-                  name="keyword"
-                  placeholder="contoh: inflasi"
-                  minLength={2}
-                  maxLength={100}
-                  required
-                  className="app-input"
-                />
-              </label>
-              <button type="submit" className="app-button">
-                Hubungkan BPS
-              </button>
-            </form>
+            <BpsSourceManagement
+              bindings={bindingsResult.data ?? []}
+              canDelete={hasWorkspacePermission(workspace, 'market.delete')}
+              products={data.map(({ id, name }) => ({ id, name }))}
+              syncRuns={syncRunsResult.data ?? []}
+            />
           ) : null}
 
           {documentsResult.error ? (
