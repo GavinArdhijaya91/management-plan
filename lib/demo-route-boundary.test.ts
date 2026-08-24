@@ -27,6 +27,15 @@ describe('demo and private route boundary', () => {
     expect(source).toContain('href="/demo/dashboard"')
   })
 
+  it('exposes real account routes without presenting local storage as email delivery', () => {
+    const source = readFileSync(resolve(process.cwd(), 'app/page.tsx'), 'utf8')
+
+    expect(source).toContain('href="/auth/login"')
+    expect(source).toContain('href="/auth/sign-up"')
+    expect(source).not.toContain('siapin:interest-list')
+    expect(source).not.toContain('Daftar minat')
+  })
+
   it('keeps demo storage keys explicitly namespaced', () => {
     const demoSources = [
       'app/demo/dashboard/page.tsx',

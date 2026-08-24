@@ -1,21 +1,8 @@
-'use client'
-
-import { useLocalStorage } from '@/app/_lib/use-local-storage'
 import { MotionLogo } from '@/app/_components/motion-logo'
 import { Reveal } from '@/app/_components/reveal'
 import { TypewriterText } from '@/app/_components/typewriter-text'
-import {
-  ArrowRight,
-  BarChart3,
-  CalendarDays,
-  Check,
-  CheckCircle2,
-  PackageCheck,
-  TrendingUp,
-  WalletCards,
-} from 'lucide-react'
+import { ArrowRight, BarChart3, CalendarDays, Check, CheckCircle2, TrendingUp, WalletCards } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
 
 const businessPulses = [
   { label: 'Penjualan hari ini', value: 'Rp 1,84 jt', note: '+18%' },
@@ -55,16 +42,6 @@ const features = [
 ]
 
 export default function Home() {
-  const [email, setEmail] = useState('')
-  const [submitted, setSubmitted] = useState(false)
-  const [, setLeads] = useLocalStorage<string[]>('siapin:interest-list', [])
-
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setLeads((current) => (current.includes(email) ? current : [...current, email]))
-    setSubmitted(true)
-  }
-
   return (
     <main className="min-h-dvh bg-[#f7f7f5] text-zinc-950">
       <header className="sticky top-0 z-50 border-b border-zinc-200/80 bg-[#f7f7f5]/90 backdrop-blur-xl">
@@ -84,9 +61,17 @@ export default function Home() {
               Bantuan
             </Link>
           </nav>
-          <Link href="/demo/dashboard" className="app-button motion-press">
-            Buka demo <ArrowRight className="size-4" />
-          </Link>
+          <nav aria-label="Navigasi akun" className="flex items-center gap-2">
+            <Link
+              href="/auth/login"
+              className="motion-press inline-flex min-h-10 items-center justify-center rounded-xl px-3 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-950 sm:px-4"
+            >
+              Masuk
+            </Link>
+            <Link href="/auth/sign-up" className="app-button motion-press">
+              Buat akun
+            </Link>
+          </nav>
         </div>
       </header>
 
@@ -254,65 +239,68 @@ export default function Home() {
           <div>
             <CheckCircle2 className="size-8" />
             <h2 className="mt-7 max-w-3xl font-serif text-4xl font-semibold leading-[1.05] tracking-[-0.04em] md:text-6xl">
-              Mulai dengan data demo. Temukan cara kerja yang cocok.
+              Siap mengelola rencana bisnis yang nyata?
             </h2>
             <p className="mt-5 max-w-2xl text-zinc-400">
-              Tidak perlu menyiapkan spreadsheet atau laporan terlebih dahulu.
+              Buat akun untuk menyimpan data di workspace privat. Kami akan meminta verifikasi email sebelum Anda masuk.
             </p>
           </div>
-          <div className="lg:justify-self-end lg:text-right">
-            {submitted ? (
-              <div className="flex items-center gap-2 rounded-xl bg-white/10 px-5 py-4 text-sm">
-                <PackageCheck className="size-5" />
-                Kami akan menghubungi {email}.
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="flex max-w-xl flex-col gap-2 sm:flex-row">
-                <label htmlFor="email" className="sr-only">
-                  Email bisnis
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  placeholder="nama@usaha.com"
-                  className="min-h-12 flex-1 rounded-xl border border-white/20 bg-white/10 px-4 text-sm text-white outline-none placeholder:text-zinc-500 focus:border-white"
-                />
-                <button
-                  type="submit"
-                  className="min-h-12 rounded-xl bg-white px-5 text-sm font-semibold text-zinc-950 hover:bg-zinc-200"
-                >
-                  Daftar minat
-                </button>
-              </form>
-            )}
+          <div className="flex flex-col gap-3 sm:flex-row lg:justify-self-end">
+            <Link
+              href="/auth/sign-up"
+              className="motion-press inline-flex min-h-12 items-center justify-center rounded-xl bg-white px-6 text-sm font-semibold text-zinc-950 transition-colors hover:bg-zinc-200"
+            >
+              Buat akun
+            </Link>
+            <Link
+              href="/auth/login"
+              className="motion-press inline-flex min-h-12 items-center justify-center rounded-xl border border-white/25 px-6 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+            >
+              Masuk
+            </Link>
           </div>
         </Reveal>
       </section>
 
-      <footer className="border-t border-zinc-200 px-4 py-9 md:px-6">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="font-serif text-xl font-semibold">Siapin</p>
-            <p className="mt-1 text-sm text-zinc-500">Management plan yang dapat dipahami dan dijalankan.</p>
+      <footer className="border-t border-zinc-200 bg-white px-4 py-12 md:px-6">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-10 border-b border-zinc-200 pb-10 md:grid-cols-[minmax(0,1fr)_auto_auto] md:gap-16">
+            <div className="max-w-md">
+              <Link href="/" className="inline-flex items-center gap-3" aria-label="Siapin, kembali ke beranda">
+                <MotionLogo />
+                <span className="font-serif text-xl font-semibold">Siapin</span>
+              </Link>
+              <p className="mt-4 text-sm leading-6 text-zinc-500">
+                Workspace untuk memahami kondisi usaha, menyusun rencana, dan menjalankannya bersama tim.
+              </p>
+            </div>
+            <div>
+              <p className="app-label mb-4">Akun</p>
+              <nav aria-label="Tautan akun" className="flex flex-col items-start gap-3 text-sm text-zinc-600">
+                <Link href="/auth/login" className="hover:text-zinc-950">
+                  Masuk
+                </Link>
+                <Link href="/auth/sign-up" className="hover:text-zinc-950">
+                  Buat akun
+                </Link>
+              </nav>
+            </div>
+            <div>
+              <p className="app-label mb-4">Informasi</p>
+              <nav aria-label="Tautan informasi" className="flex flex-col items-start gap-3 text-sm text-zinc-600">
+                <Link href="/demo/dashboard" className="hover:text-zinc-950">
+                  Coba demo
+                </Link>
+                <Link href="/hubungi-kami" className="hover:text-zinc-950">
+                  Bantuan
+                </Link>
+              </nav>
+            </div>
           </div>
-          <nav aria-label="Navigasi footer" className="flex flex-wrap gap-5 text-sm text-zinc-600">
-            <Link href="/demo/dashboard" className="hover:text-zinc-950">
-              Dashboard
-            </Link>
-            <Link href="/demo/manajemen" className="hover:text-zinc-950">
-              Manajemen
-            </Link>
-            <Link href="/demo/kalender" className="hover:text-zinc-950">
-              Kalender
-            </Link>
-            <Link href="/hubungi-kami" className="hover:text-zinc-950">
-              Bantuan
-            </Link>
-          </nav>
-          <p className="font-mono text-xs text-zinc-400">© 2026 Siapin</p>
+          <div className="flex flex-col gap-2 pt-6 text-xs text-zinc-400 sm:flex-row sm:items-center sm:justify-between">
+            <p>© 2026 Siapin</p>
+            <p>Data demo tersimpan hanya di perangkat Anda.</p>
+          </div>
         </div>
       </footer>
     </main>
