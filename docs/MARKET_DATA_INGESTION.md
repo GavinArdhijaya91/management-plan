@@ -6,6 +6,7 @@ Integrasi pertama menggunakan WebAPI Badan Pusat Statistik (BPS). Sistem menyimp
 
 - `market_snapshots` adalah observasi manual workspace dan tidak boleh dilabeli sebagai data BPS.
 - `market_source_documents` adalah bukti eksternal berupa berita resmi statistik atau publikasi BPS.
+- `market_observations` adalah seri angka eksternal yang tervalidasi dan ditampilkan pada panel Data Statistik Resmi.
 - Dokumen BPS menjadi bahan telaah manusia. Kehadirannya tidak otomatis membuktikan perubahan permintaan suatu produk.
 - Angka statistik dinamis belum diingest pada tahap ini. Adapter baru boleh ditambahkan setelah dimensi, unit, periode, wilayah, dan tabel asal dapat divalidasi tanpa menebak struktur data.
 

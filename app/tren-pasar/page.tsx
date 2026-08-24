@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { hasWorkspacePermission, requireActiveWorkspace } from '@/lib/workspace/context'
 import { Database, ExternalLink, TrendingUp } from 'lucide-react'
 import { MarketTrendChart } from './_components/market-trend-chart'
+import { FactualObservationChart } from './_components/factual-observation-chart'
 import { createBpsBindingAction } from './actions'
 
 interface MarketTrendsPageProps {
@@ -18,7 +19,7 @@ function jakartaDate(value: string) {
 export default async function MarketTrendsPage({ searchParams }: MarketTrendsPageProps) {
   const workspace = await requireActiveWorkspace('/tren-pasar')
   const supabase = await createClient()
-  const [{ data, error }, documentsResult, bindingsResult] = await Promise.all([
+  const [{ data, error }, documentsResult, bindingsResult, observationsResult] = await Promise.all([
     supabase
       .from('market_products')
       .select('id,name,description,active,market_snapshots(observed_on,change_percent,market_condition)')
@@ -31,10 +32,26 @@ export default async function MarketTrendsPage({ searchParams }: MarketTrendsPag
       .order('published_at', { ascending: false })
       .limit(12),
     supabase.from('market_product_source_bindings').select('id').eq('workspace_id', workspace.workspace_id),
+    supabase
+      .from('market_observations')
+      .select('id,product_id,metric_code,numeric_value,unit_code,observed_at,source_url')
+      .eq('workspace_id', workspace.workspace_id)
+      .order('observed_at', { ascending: true })
+      .limit(500),
   ])
   const feedback = await searchParams
   const productNames = new Map(data?.map((product) => [product.id, product.name]))
   const canConfigure = hasWorkspacePermission(workspace, 'market.write')
+  const factualObservations = (observationsResult.data ?? []).map((observation) => ({
+    id: observation.id,
+    productId: observation.product_id,
+    productName: productNames.get(observation.product_id) ?? 'Produk',
+    metricCode: observation.metric_code,
+    numericValue: Number(observation.numeric_value),
+    observedAt: observation.observed_at,
+    sourceUrl: observation.source_url,
+    unitCode: observation.unit_code,
+  }))
 
   return (
     <main className="app-shell">
@@ -43,7 +60,9 @@ export default async function MarketTrendsPage({ searchParams }: MarketTrendsPag
         <div className="border-b border-zinc-200 pb-6">
           <p className="app-label mb-2">Workspace / {workspace.workspace_name}</p>
           <h1 className="app-heading">Tren pasar</h1>
-          <p className="mt-2 text-sm text-zinc-500">Observasi produk dan asumsi pasar milik workspace aktif.</p>
+          <p className="mt-2 text-sm text-zinc-500">
+            Bandingkan catatan internal dengan bukti statistik resmi tanpa mencampur sumbernya.
+          </p>
         </div>
         {feedback.error && (
           <p role="alert" className="mt-6 rounded-xl bg-red-50 p-4 text-sm text-red-700">
@@ -113,6 +132,14 @@ export default async function MarketTrendsPage({ searchParams }: MarketTrendsPag
               <p className="mt-1 text-sm text-zinc-500">Tambahkan produk ketika asumsi pasar siap dicatat.</p>
             </div>
           </section>
+        )}
+
+        {observationsResult.error ? (
+          <p role="alert" className="mt-6 rounded-xl bg-red-50 p-4 text-sm text-red-700">
+            Data statistik resmi gagal dimuat.
+          </p>
+        ) : (
+          <FactualObservationChart observations={factualObservations} />
         )}
 
         <section className="mt-8 border-t border-zinc-200 pt-8" aria-labelledby="factual-sources-title">

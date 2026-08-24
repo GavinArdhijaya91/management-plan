@@ -46,10 +46,10 @@ export function MarketTrendChart({ products }: { products: MarketTrendProduct[] 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 id="market-trend-title" className="text-base font-semibold">
-            Perubahan tren per produk
+            Observasi manual per produk
           </h2>
           <p className="mt-1 text-xs leading-5 text-zinc-500">
-            Persentase di atas nol menunjukkan kenaikan; pilih produk untuk membandingkan observasi.
+            Catatan internal workspace, bukan statistik BPS. Persentase di atas nol menunjukkan kenaikan.
           </p>
         </div>
         <span className="shrink-0 rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600">
