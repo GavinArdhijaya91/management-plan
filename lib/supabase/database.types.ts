@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -2111,6 +2111,189 @@ export type Database = {
           },
         ]
       }
+      market_data_categories: {
+        Row: {
+          code: string
+          created_at: string
+          description: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string
+        }
+        Relationships: []
+      }
+      market_observations: {
+        Row: {
+          binding_id: string
+          category_code: string
+          created_at: string
+          fetched_at: string
+          id: string
+          market_source_id: number
+          metric_code: string
+          numeric_value: number
+          observed_at: string
+          product_id: string
+          raw_payload_sha256: string
+          source_record_id: string
+          source_url: string
+          unit_code: string
+          workspace_id: string
+        }
+        Insert: {
+          binding_id: string
+          category_code: string
+          created_at?: string
+          fetched_at?: string
+          id?: string
+          market_source_id: number
+          metric_code: string
+          numeric_value: number
+          observed_at: string
+          product_id: string
+          raw_payload_sha256: string
+          source_record_id: string
+          source_url: string
+          unit_code: string
+          workspace_id: string
+        }
+        Update: {
+          binding_id?: string
+          category_code?: string
+          created_at?: string
+          fetched_at?: string
+          id?: string
+          market_source_id?: number
+          metric_code?: string
+          numeric_value?: number
+          observed_at?: string
+          product_id?: string
+          raw_payload_sha256?: string
+          source_record_id?: string
+          source_url?: string
+          unit_code?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_observations_binding_fkey"
+            columns: [
+              "workspace_id",
+              "product_id",
+              "binding_id",
+              "market_source_id",
+              "category_code",
+            ]
+            isOneToOne: false
+            referencedRelation: "market_product_source_bindings"
+            referencedColumns: [
+              "workspace_id",
+              "product_id",
+              "id",
+              "market_source_id",
+              "category_code",
+            ]
+          },
+          {
+            foreignKeyName: "market_observations_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_product_source_bindings: {
+        Row: {
+          category_code: string
+          country_code: string | null
+          created_at: string
+          created_by: string
+          external_identifier: string
+          id: string
+          is_active: boolean
+          market_source_id: number
+          product_id: string
+          refresh_interval_minutes: number
+          region_code: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          category_code: string
+          country_code?: string | null
+          created_at?: string
+          created_by: string
+          external_identifier: string
+          id?: string
+          is_active?: boolean
+          market_source_id: number
+          product_id: string
+          refresh_interval_minutes?: number
+          region_code?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          category_code?: string
+          country_code?: string | null
+          created_at?: string
+          created_by?: string
+          external_identifier?: string
+          id?: string
+          is_active?: boolean
+          market_source_id?: number
+          product_id?: string
+          refresh_interval_minutes?: number
+          region_code?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_product_source_bindings_country_code_fkey"
+            columns: ["country_code"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "market_product_source_bindings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "market_product_source_bindings_product_fkey"
+            columns: ["workspace_id", "product_id"]
+            isOneToOne: false
+            referencedRelation: "market_products"
+            referencedColumns: ["workspace_id", "id"]
+          },
+          {
+            foreignKeyName: "market_product_source_bindings_source_category_fkey"
+            columns: ["market_source_id", "category_code"]
+            isOneToOne: false
+            referencedRelation: "market_source_categories"
+            referencedColumns: ["market_source_id", "category_code"]
+          },
+          {
+            foreignKeyName: "market_product_source_bindings_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       market_products: {
         Row: {
           active: boolean
@@ -2199,6 +2382,241 @@ export type Database = {
             referencedColumns: ["workspace_id", "id"]
           },
         ]
+      }
+      market_source_categories: {
+        Row: {
+          category_code: string
+          created_at: string
+          market_source_id: number
+        }
+        Insert: {
+          category_code: string
+          created_at?: string
+          market_source_id: number
+        }
+        Update: {
+          category_code?: string
+          created_at?: string
+          market_source_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_source_categories_category_code_fkey"
+            columns: ["category_code"]
+            isOneToOne: false
+            referencedRelation: "market_data_categories"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "market_source_categories_market_source_id_fkey"
+            columns: ["market_source_id"]
+            isOneToOne: false
+            referencedRelation: "market_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_source_documents: {
+        Row: {
+          binding_id: string
+          canonical_url: string
+          category_code: string
+          country_code: string | null
+          created_at: string
+          fetched_at: string
+          id: string
+          language_code: string | null
+          market_source_id: number
+          product_id: string
+          published_at: string
+          publisher_name: string
+          raw_payload_sha256: string
+          source_record_id: string
+          title: string
+          workspace_id: string
+        }
+        Insert: {
+          binding_id: string
+          canonical_url: string
+          category_code: string
+          country_code?: string | null
+          created_at?: string
+          fetched_at?: string
+          id?: string
+          language_code?: string | null
+          market_source_id: number
+          product_id: string
+          published_at: string
+          publisher_name: string
+          raw_payload_sha256: string
+          source_record_id: string
+          title: string
+          workspace_id: string
+        }
+        Update: {
+          binding_id?: string
+          canonical_url?: string
+          category_code?: string
+          country_code?: string | null
+          created_at?: string
+          fetched_at?: string
+          id?: string
+          language_code?: string | null
+          market_source_id?: number
+          product_id?: string
+          published_at?: string
+          publisher_name?: string
+          raw_payload_sha256?: string
+          source_record_id?: string
+          title?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_source_documents_binding_fkey"
+            columns: [
+              "workspace_id",
+              "product_id",
+              "binding_id",
+              "market_source_id",
+              "category_code",
+            ]
+            isOneToOne: false
+            referencedRelation: "market_product_source_bindings"
+            referencedColumns: [
+              "workspace_id",
+              "product_id",
+              "id",
+              "market_source_id",
+              "category_code",
+            ]
+          },
+          {
+            foreignKeyName: "market_source_documents_country_code_fkey"
+            columns: ["country_code"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "market_source_documents_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_source_sync_runs: {
+        Row: {
+          accepted_count: number
+          binding_id: string
+          category_code: string
+          completed_at: string | null
+          created_at: string
+          error_code: string | null
+          fetched_count: number
+          id: string
+          market_source_id: number
+          product_id: string
+          started_at: string
+          sync_outcome: Database["public"]["Enums"]["market_sync_outcome"]
+          workspace_id: string
+        }
+        Insert: {
+          accepted_count?: number
+          binding_id: string
+          category_code: string
+          completed_at?: string | null
+          created_at?: string
+          error_code?: string | null
+          fetched_count?: number
+          id?: string
+          market_source_id: number
+          product_id: string
+          started_at?: string
+          sync_outcome?: Database["public"]["Enums"]["market_sync_outcome"]
+          workspace_id: string
+        }
+        Update: {
+          accepted_count?: number
+          binding_id?: string
+          category_code?: string
+          completed_at?: string | null
+          created_at?: string
+          error_code?: string | null
+          fetched_count?: number
+          id?: string
+          market_source_id?: number
+          product_id?: string
+          started_at?: string
+          sync_outcome?: Database["public"]["Enums"]["market_sync_outcome"]
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_source_sync_runs_binding_fkey"
+            columns: [
+              "workspace_id",
+              "product_id",
+              "binding_id",
+              "market_source_id",
+              "category_code",
+            ]
+            isOneToOne: false
+            referencedRelation: "market_product_source_bindings"
+            referencedColumns: [
+              "workspace_id",
+              "product_id",
+              "id",
+              "market_source_id",
+              "category_code",
+            ]
+          },
+          {
+            foreignKeyName: "market_source_sync_runs_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_sources: {
+        Row: {
+          code: string
+          created_at: string
+          documentation_url: string | null
+          homepage_url: string
+          id: number
+          is_active: boolean
+          name: string
+          terms_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          documentation_url?: string | null
+          homepage_url: string
+          id?: number
+          is_active?: boolean
+          name: string
+          terms_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          documentation_url?: string | null
+          homepage_url?: string
+          id?: number
+          is_active?: boolean
+          name?: string
+          terms_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       metric_definitions: {
         Row: {
@@ -4251,6 +4669,7 @@ export type Database = {
         | "revoked"
         | "expired"
         | "declined"
+      market_sync_outcome: "running" | "succeeded" | "failed"
       membership_status: "active" | "suspended"
       metric_actual_source: "manual" | "transaction"
       metric_aggregation:
@@ -4491,6 +4910,7 @@ export const Constants = {
         "expired",
         "declined",
       ],
+      market_sync_outcome: ["running", "succeeded", "failed"],
       membership_status: ["active", "suspended"],
       metric_actual_source: ["manual", "transaction"],
       metric_aggregation: [

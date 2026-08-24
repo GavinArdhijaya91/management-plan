@@ -121,7 +121,13 @@ record returns it to its initial state.
 | Goal-target contribution | Kontribusi target | `transaction_goal_target_contributions` | A transaction-derived value that contributes to one measurable goal target. |
 | Measurement transaction source | Sumber realisasi | `metric_measurement_transactions` | Evidence that a metric measurement was derived from a specific transaction. |
 | Market product | Produk pantauan | `market_products` | A product whose market movement is observed; it is not yet inventory. |
-| Market snapshot | Catatan tren | `market_snapshots` | A dated observation about a market product. |
+| Market snapshot | Catatan tren manual | `market_snapshots` | A dated observation recorded by a workspace member; it is not external provider evidence. |
+| Market data category | Kategori data pasar | `market_data_categories` | A controlled classification that keeps statistics, prices, disclosures, news, and search interest semantically separate. |
+| Market source | Sumber data pasar | `market_sources` | An identified publisher or data provider; an AI model is never registered as a factual source. |
+| Market source binding | Sumber produk | `market_product_source_bindings` | Workspace configuration mapping one monitored product to a provider series, query, filing identity, or feed without storing provider credentials. |
+| Market observation | Observasi sumber | `market_observations` | Append-only quantitative evidence fetched from an identified provider with its unit, observation time, canonical URL, and payload hash. |
+| Market source document | Dokumen sumber | `market_source_documents` | Append-only publisher-attributed metadata and canonical URL for news, filings, or publications; it stores neither copied article content nor AI summaries. |
+| Market source sync run | Status sinkronisasi | `market_source_sync_runs` | Bounded operational evidence used to show source freshness and failures without exposing credentials or raw provider payloads. |
 | Business partner | Mitra | `business_partners` | An external party such as a supplier, customer, distributor, or logistics provider. |
 | Contact message | Pesan kontak | `contact_messages` | A message submitted to the application operator, not an internal workspace conversation. |
 
@@ -236,7 +242,13 @@ Business operations
 ├── action_item_calendar_events
 ├── transaction_initiative_allocations
 ├── transaction_goal_target_contributions
-└── metric_measurement_transactions
+├── metric_measurement_transactions
+├── market_products
+├── market_snapshots
+├── market_product_source_bindings
+├── market_observations
+├── market_source_documents
+└── market_source_sync_runs
 
 Community and discovery (approved names; schema pending)
 ├── community_posts
@@ -248,7 +260,10 @@ Reference data
 ├── countries
 ├── currencies
 ├── business_categories
-└── workspace_business_categories
+├── workspace_business_categories
+├── market_data_categories
+├── market_sources
+└── market_source_categories
 
 System
 ├── permission_definitions

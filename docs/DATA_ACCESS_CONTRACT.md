@@ -42,6 +42,11 @@ the same object.
 | Transaction editing | `transactions` | permitted table writes | Amount is unsigned; type supplies financial direction. |
 | Transaction export | `prepare_transaction_export` | canonical RPC only | Requires `transaction.export`, remains workspace-scoped, separates currencies, and records audit evidence. |
 | Transaction result | `transaction_financial_results` | read-only | `net_result` is calculated consistently by the database. |
+| Manual market note | `market_snapshots` | permitted table write | A workspace member's dated observation; never present it as external provider evidence. |
+| External market configuration | `market_product_source_bindings` and controlled source catalogs | permitted binding write; migration-owned catalogs | Provider credentials stay in trusted deployment secrets, never browser-readable rows. |
+| Quantitative external market evidence | `market_observations` | trusted ingestion only | Preserve provider identity, unit, observation/fetch time, canonical URL, and payload hash; browser roles are read-only. |
+| External market documents | `market_source_documents` | trusted ingestion only | Store attribution and canonical URL, not copied article bodies or AI-generated summaries. |
+| External market freshness | `market_source_sync_runs` | trusted ingestion only | Expose bounded outcome and counts; never persist secrets or raw provider errors. |
 | Account balance | `financial_account_balances` | read-only | Native currency only; this is not double-entry accounting. |
 | Category reporting | `transaction_category_actuals` | allocation table | Category allocation may be partial but cannot exceed the transaction. |
 | Portfolio evidence | `business_portfolio_evidence` | portfolio tables | Portfolio remains private and only accepts finalized reviews. |
