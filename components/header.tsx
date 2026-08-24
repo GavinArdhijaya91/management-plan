@@ -13,7 +13,7 @@ import { UserCircleIcon as UserCircleSolidIcon } from '@heroicons/react/24/solid
 import { Bell, ChevronDown, LogOut, Menu, Search, User, X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 function isCurrentRoute(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`)
@@ -29,6 +29,7 @@ export function Header({ mode = 'private' }: HeaderProps) {
   const [profileOpen, setProfileOpen] = useState(false)
   const [logoutOpen, setLogoutOpen] = useState(false)
   const [commandOpen, setCommandOpen] = useState(false)
+  const commandTriggerRef = useRef<HTMLButtonElement>(null)
   const pathname = usePathname()
   const { dictionary } = useLanguage()
   const demoMode = mode === 'demo'
@@ -50,8 +51,13 @@ export function Header({ mode = 'private' }: HeaderProps) {
         setCommandOpen((open) => !open)
       }
     }
+    const commandTrigger = commandTriggerRef.current
     window.addEventListener('keydown', handleShortcut)
-    return () => window.removeEventListener('keydown', handleShortcut)
+    commandTrigger?.setAttribute('data-shortcut-ready', 'true')
+    return () => {
+      window.removeEventListener('keydown', handleShortcut)
+      commandTrigger?.removeAttribute('data-shortcut-ready')
+    }
   }, [])
 
   const closeMenus = () => {
@@ -214,6 +220,7 @@ export function Header({ mode = 'private' }: HeaderProps) {
 
           <div className="flex items-center gap-1 sm:gap-2">
             <button
+              ref={commandTriggerRef}
               type="button"
               onClick={() => setCommandOpen(true)}
               aria-label="Buka pencarian cepat"

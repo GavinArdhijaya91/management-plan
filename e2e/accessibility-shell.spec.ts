@@ -25,6 +25,10 @@ test('review route remains protected and preserves the intended return path', as
 test('demo command palette supports keyboard-first navigation', async ({ page }) => {
   await page.goto('/demo/dashboard')
 
+  await expect(page.getByRole('button', { name: 'Buka pencarian cepat' })).toHaveAttribute(
+    'data-shortcut-ready',
+    'true',
+  )
   await page.keyboard.press('Control+k')
   await expect(page.getByRole('dialog', { name: 'Pindah cepat' })).toBeVisible()
 

@@ -18,7 +18,7 @@ test.describe.serial('private workspace journey', () => {
   test('invalid credentials are rejected without exposing account details', async ({ page }) => {
     await page.goto('/auth/login')
     await page.getByLabel('Email').fill('unknown-user@siapin.test')
-    await page.getByLabel('Kata sandi').fill('Wrong-Password!2026')
+    await page.getByLabel('Kata sandi', { exact: true }).fill('Wrong-Password!2026')
     await page.getByRole('button', { name: 'Masuk' }).click()
 
     await expect(page).toHaveURL(/\/auth\/login\?error=/)
@@ -28,7 +28,7 @@ test.describe.serial('private workspace journey', () => {
   test('a confirmed account can create its first workspace and business plan', async ({ page }) => {
     await page.goto('/auth/login')
     await page.getByLabel('Email').fill(account.email)
-    await page.getByLabel('Kata sandi').fill(account.password)
+    await page.getByLabel('Kata sandi', { exact: true }).fill(account.password)
     await page.getByRole('button', { name: 'Masuk' }).click()
 
     await expect(page).toHaveURL(/\/workspace\/select$/)
