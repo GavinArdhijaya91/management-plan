@@ -1,0 +1,65 @@
+name: Scoped contributor task
+description: Propose a bounded, independently verifiable contribution.
+title: 'task: '
+labels:
+  - triage
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: User or contributor problem
+      description: Describe the problem without prescribing a broad redesign.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: In scope
+      description: List the smallest coherent behavior or artifact this task changes.
+    validations:
+      required: true
+  - type: textarea
+    id: exclusions
+    attributes:
+      label: Out of scope
+      description: State adjacent work this issue deliberately does not include.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Use observable outcomes a reviewer can verify.
+      placeholder: |
+        - [ ] …
+        - [ ] …
+    validations:
+      required: true
+  - type: textarea
+    id: files
+    attributes:
+      label: Likely files or documentation
+      description: Point contributors to the relevant area and domain references.
+    validations:
+      required: true
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Highest risk
+      options:
+        - Documentation only
+        - Isolated UI behavior
+        - Authenticated application behavior
+        - Database or tenant authorization
+        - Deployment or external service
+    validations:
+      required: true
+  - type: checkboxes
+    id: ready
+    attributes:
+      label: Ready for contributor review
+      options:
+        - label: The task has no dependency on production credentials or private user data.
+          required: true
+        - label: The acceptance criteria can be verified in one focused pull request.
+          required: true
