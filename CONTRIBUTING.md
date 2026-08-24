@@ -4,6 +4,12 @@ Thank you for improving Siapin. The repository is private-business-first:
 changes must preserve workspace isolation and must not expose business data by
 default.
 
+Start with the [roadmap](./ROADMAP.md) and choose an issue whose scope and
+acceptance criteria are already defined. An issue labeled `good first issue`
+must be independently verifiable, avoid production secrets, identify likely
+files, and fit one focused pull request. The label must not be used for an
+unbounded domain, security redesign, or undocumented migration.
+
 ## Before changing the schema
 
 1. Read the [domain glossary](./docs/DOMAIN_GLOSSARY.md).
@@ -42,6 +48,10 @@ pnpm exec supabase stop --no-backup
 The database CI job provisions a clean stack, applies every migration and the
 development seed, then runs all SQL contracts in `supabase/tests`. It does not
 connect to the linked remote project.
+
+When changing a sensitive table, actor, permission, or RPC, update the
+[database security test matrix](./docs/SECURITY_TEST_MATRIX.md) and include at
+least one negative authorization scenario.
 
 ## Pull requests
 
