@@ -2,6 +2,7 @@ import { Header } from '@/components/header'
 import { createClient } from '@/lib/supabase/server'
 import { requireActiveWorkspace } from '@/lib/workspace/context'
 import { TrendingUp } from 'lucide-react'
+import { MarketTrendChart } from './_components/market-trend-chart'
 
 export default async function MarketTrendsPage() {
   const workspace = await requireActiveWorkspace('/tren-pasar')
@@ -26,37 +27,51 @@ export default async function MarketTrendsPage() {
             Data tren pasar gagal dimuat.
           </p>
         ) : data?.length ? (
-          <div className="app-card mt-6 divide-y divide-zinc-100 overflow-hidden">
-            {data.map((product) => {
-              const latest = [...product.market_snapshots].sort((a, b) => b.observed_on.localeCompare(a.observed_on))[0]
-              return (
-                <article
-                  key={product.id}
-                  className="grid gap-4 p-4 hover:bg-zinc-50 sm:grid-cols-[1fr_auto] sm:items-center"
-                >
-                  <div className="flex min-w-0 items-start gap-3">
-                    <TrendingUp className="mt-0.5 size-5 shrink-0 text-zinc-400" aria-hidden="true" />
-                    <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h2 className="text-sm font-semibold">{product.name}</h2>
-                        <span className="inline-flex items-center gap-1.5 text-xs text-zinc-500">
-                          <span
-                            className={`size-1.5 rounded-full ${product.active ? 'bg-emerald-500' : 'bg-zinc-300'}`}
-                          />
-                          {product.active ? 'Aktif' : 'Tidak aktif'}
-                        </span>
+          <>
+            <MarketTrendChart
+              products={data.map((product) => ({
+                id: product.id,
+                name: product.name,
+                snapshots: product.market_snapshots.map((snapshot) => ({
+                  changePercent: Number(snapshot.change_percent),
+                  observedOn: snapshot.observed_on,
+                })),
+              }))}
+            />
+            <div className="app-card mt-6 divide-y divide-zinc-100 overflow-hidden">
+              {data.map((product) => {
+                const latest = [...product.market_snapshots].sort((a, b) =>
+                  b.observed_on.localeCompare(a.observed_on),
+                )[0]
+                return (
+                  <article
+                    key={product.id}
+                    className="grid gap-4 p-4 hover:bg-zinc-50 sm:grid-cols-[1fr_auto] sm:items-center"
+                  >
+                    <div className="flex min-w-0 items-start gap-3">
+                      <TrendingUp className="mt-0.5 size-5 shrink-0 text-zinc-400" aria-hidden="true" />
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h2 className="text-sm font-semibold">{product.name}</h2>
+                          <span className="inline-flex items-center gap-1.5 text-xs text-zinc-500">
+                            <span
+                              className={`size-1.5 rounded-full ${product.active ? 'bg-emerald-500' : 'bg-zinc-300'}`}
+                            />
+                            {product.active ? 'Aktif' : 'Tidak aktif'}
+                          </span>
+                        </div>
+                        {product.description && <p className="mt-1 text-sm text-zinc-500">{product.description}</p>}
                       </div>
-                      {product.description && <p className="mt-1 text-sm text-zinc-500">{product.description}</p>}
                     </div>
-                  </div>
-                  <div className="sm:text-right">
-                    <p className="app-data text-lg font-semibold">{latest ? `${latest.change_percent}%` : '—'}</p>
-                    <p className="mt-0.5 text-xs text-zinc-500">{latest?.market_condition ?? 'Belum diukur'}</p>
-                  </div>
-                </article>
-              )
-            })}
-          </div>
+                    <div className="sm:text-right">
+                      <p className="app-data text-lg font-semibold">{latest ? `${latest.change_percent}%` : '—'}</p>
+                      <p className="mt-0.5 text-xs text-zinc-500">{latest?.market_condition ?? 'Belum diukur'}</p>
+                    </div>
+                  </article>
+                )
+              })}
+            </div>
+          </>
         ) : (
           <section className="app-card mt-6 flex items-start gap-3 p-6">
             <TrendingUp className="size-5 shrink-0 text-zinc-400" aria-hidden="true" />
