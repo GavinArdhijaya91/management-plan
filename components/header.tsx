@@ -39,7 +39,7 @@ export function Header({ mode = 'private' }: HeaderProps) {
   const [commandOpen, setCommandOpen] = useState(false)
   const [headerProfile, setHeaderProfile] = useState<HeaderProfile | null>(null)
   const commandTriggerRef = useRef<HTMLButtonElement>(null)
-  const supabase = useMemo(() => createClient(), [])
+  const supabase = useMemo(() => (mode === 'demo' ? null : createClient()), [mode])
   const pathname = usePathname()
   const { dictionary } = useLanguage()
   const demoMode = mode === 'demo'
@@ -55,7 +55,7 @@ export function Header({ mode = 'private' }: HeaderProps) {
   const profileCurrent = isCurrentRoute(pathname, routeHref('/profil'))
 
   useEffect(() => {
-    if (demoMode) return
+    if (demoMode || !supabase) return
     let active = true
     void supabase
       .from('profiles')
