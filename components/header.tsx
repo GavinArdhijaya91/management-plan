@@ -8,12 +8,20 @@ import { useLanguage } from '@/app/_i18n/language-provider'
 import { logout as logoutAction } from '@/app/auth/actions'
 import { appRoutes } from '@/data/navigation'
 import { cn } from '@/lib/utils'
+import { createClient } from '@/lib/supabase/client'
+import { ProfileAvatar } from '@/components/profile-avatar'
 import { UserCircleIcon } from '@heroicons/react/24/outline'
 import { UserCircleIcon as UserCircleSolidIcon } from '@heroicons/react/24/solid'
 import { Bell, ChevronDown, LogOut, Menu, Search, User, X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+
+interface HeaderProfile {
+  avatar_path: string | null
+  display_name: string
+  headline: string | null
+}
 
 function isCurrentRoute(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`)
@@ -29,7 +37,9 @@ export function Header({ mode = 'private' }: HeaderProps) {
   const [profileOpen, setProfileOpen] = useState(false)
   const [logoutOpen, setLogoutOpen] = useState(false)
   const [commandOpen, setCommandOpen] = useState(false)
+  const [headerProfile, setHeaderProfile] = useState<HeaderProfile | null>(null)
   const commandTriggerRef = useRef<HTMLButtonElement>(null)
+  const supabase = useMemo(() => createClient(), [])
   const pathname = usePathname()
   const { dictionary } = useLanguage()
   const demoMode = mode === 'demo'
@@ -43,6 +53,21 @@ export function Header({ mode = 'private' }: HeaderProps) {
   const supportCurrent = supportRoute ? isCurrentRoute(pathname, routeHref(supportRoute.href)) : false
   const SupportIcon = supportRoute ? (supportCurrent ? supportRoute.activeIcon : supportRoute.icon) : null
   const profileCurrent = isCurrentRoute(pathname, routeHref('/profil'))
+
+  useEffect(() => {
+    if (demoMode) return
+    let active = true
+    void supabase
+      .from('profiles')
+      .select('avatar_path,display_name,headline')
+      .single()
+      .then(({ data }) => {
+        if (active && data) setHeaderProfile(data)
+      })
+    return () => {
+      active = false
+    }
+  }, [demoMode, supabase])
 
   useEffect(() => {
     const handleShortcut = (event: KeyboardEvent) => {
@@ -285,13 +310,23 @@ export function Header({ mode = 'private' }: HeaderProps) {
                 aria-expanded={profileOpen}
                 className="flex size-11 items-center justify-center rounded-xl bg-zinc-100 hover:bg-zinc-200"
               >
-                <User className="size-5 text-zinc-700" />
+                {headerProfile ? (
+                  <ProfileAvatar
+                    avatarPath={headerProfile.avatar_path}
+                    displayName={headerProfile.display_name}
+                    size="sm"
+                  />
+                ) : (
+                  <User className="size-5 text-zinc-700" />
+                )}
               </button>
               {profileOpen && (
                 <div className="motion-window-origin absolute right-0 top-12 w-56 rounded-lg border border-zinc-200 bg-[#fcfcfb] p-2 shadow-[0_18px_48px_rgba(24,24,27,0.12)]">
                   <div className="border-b border-zinc-100 px-3 py-2">
-                    <p className="text-sm font-semibold">Akun Siapin</p>
-                    <p className="text-xs text-zinc-500">{dictionary.header.businessOwner}</p>
+                    <p className="truncate text-sm font-semibold">{headerProfile?.display_name ?? 'Akun Siapin'}</p>
+                    <p className="truncate text-xs text-zinc-500">
+                      {headerProfile?.headline ?? dictionary.header.businessOwner}
+                    </p>
                   </div>
                   <Link
                     href={routeHref('/profil')}

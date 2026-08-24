@@ -13,8 +13,8 @@ import type {
 } from '@/app/kolaborasi/_lib/chat-types'
 import { hasExpectedFileSignature, sanitizeAttachmentName } from '@/app/kolaborasi/_lib/chat-file-security'
 import { createClient } from '@/lib/supabase/client'
+import { ProfileAvatar } from '@/components/profile-avatar'
 import {
-  Circle,
   Download,
   FileText,
   Hash,
@@ -124,6 +124,7 @@ export function CollaborationChat({
   const typingTimeouts = useRef(new Map<string, number>())
 
   const directoryByUserId = useMemo(() => new Map(directory.map((member) => [member.user_id, member])), [directory])
+  const publishesActivity = directoryByUserId.get(currentUserId)?.show_activity_status ?? true
   const messagesById = useMemo(() => new Map(messages.map((message) => [message.id, message])), [messages])
   const reactionsByMessageId = useMemo(() => {
     const grouped = new Map<string, ChatReaction[]>()
@@ -269,7 +270,9 @@ export function CollaborationChat({
         setOnlineUsers(Object.keys(workspacePresence.presenceState()))
       })
       .subscribe(async (status) => {
-        if (status === 'SUBSCRIBED') await workspacePresence.track({ online_at: new Date().toISOString() })
+        if (status === 'SUBSCRIBED' && publishesActivity) {
+          await workspacePresence.track({ online_at: new Date().toISOString() })
+        }
       })
 
     return () => {
@@ -278,7 +281,7 @@ export function CollaborationChat({
       void supabase.removeChannel(channel)
       void supabase.removeChannel(workspacePresence)
     }
-  }, [currentUserId, router, selectedConversation, supabase, workspaceId])
+  }, [currentUserId, publishesActivity, router, selectedConversation, supabase, workspaceId])
 
   useEffect(() => {
     const newest = messages.at(-1)
@@ -532,10 +535,19 @@ export function CollaborationChat({
                 onClick={() => startDirect(member.user_id)}
                 className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950"
               >
-                <Circle
-                  className={`size-2 fill-current ${onlineUsers.includes(member.user_id) ? 'text-emerald-500' : 'text-zinc-300'}`}
+                <ProfileAvatar
+                  avatarPath={member.avatar_path}
+                  displayName={member.display_name}
+                  online={onlineUsers.includes(member.user_id)}
+                  showPresence
+                  size="sm"
                 />
-                <span className="truncate">{member.display_name}</span>
+                <span className="min-w-0 flex-1">
+                  <strong className="block truncate text-sm font-medium">{member.display_name}</strong>
+                  <span className="block truncate text-[11px] text-zinc-400">
+                    {member.headline ?? member.role_name}
+                  </span>
+                </span>
               </button>
             ))}
         </div>
@@ -600,9 +612,11 @@ export function CollaborationChat({
                   ).length
                   return (
                     <article key={message.id} className="group flex gap-3">
-                      <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50 text-xs font-semibold text-zinc-600">
-                        {(sender?.display_name ?? '?').slice(0, 1).toUpperCase()}
-                      </div>
+                      <ProfileAvatar
+                        avatarPath={sender?.avatar_path}
+                        displayName={sender?.display_name ?? 'Anggota workspace'}
+                        size="sm"
+                      />
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-baseline gap-2">
                           <strong className="text-sm">{sender?.display_name ?? 'Anggota workspace'}</strong>
@@ -799,12 +813,21 @@ export function CollaborationChat({
             if (!joined && !(canManage && selectedConversation?.channel_visibility === 'private')) return null
             return (
               <div key={member.user_id} className="flex items-center gap-2 border-b border-zinc-100 px-1 py-3">
-                <Circle
-                  className={`size-2 fill-current ${onlineUsers.includes(member.user_id) ? 'text-emerald-500' : 'text-zinc-300'}`}
+                <ProfileAvatar
+                  avatarPath={member.avatar_path}
+                  displayName={member.display_name}
+                  online={onlineUsers.includes(member.user_id)}
+                  showPresence
+                  size="sm"
                 />
                 <span className="min-w-0 flex-1">
                   <strong className="block truncate text-xs">{member.display_name}</strong>
-                  <span className="block truncate text-[11px] text-zinc-400">{member.role_name}</span>
+                  <span className="block truncate text-[11px] text-zinc-400">
+                    {member.headline ?? member.role_name}
+                  </span>
+                  {member.status_text && (
+                    <span className="block truncate text-[11px] text-zinc-500">{member.status_text}</span>
+                  )}
                 </span>
                 {canManage &&
                   selectedConversation?.channel_visibility === 'private' &&
