@@ -10,6 +10,10 @@ must be independently verifiable, avoid production secrets, identify likely
 files, and fit one focused pull request. The label must not be used for an
 unbounded domain, security redesign, or undocumented migration.
 
+Maintainers can publish a verified starter from the
+[good first issue candidate catalog](./docs/GOOD_FIRST_ISSUES.md). Candidates
+must be rechecked against the default branch before receiving the label.
+
 ## Before changing the schema
 
 1. Read the [domain glossary](./docs/DOMAIN_GLOSSARY.md).
