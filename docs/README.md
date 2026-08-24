@@ -7,6 +7,7 @@ Mulai dari [FIGMA_START_HERE.md](./FIGMA_START_HERE.md) untuk dokumentasi desain
 ## Arsitektur dan database
 
 - [Market data ingestion](./MARKET_DATA_INGESTION.md) — kontrak sumber faktual, integrasi WebAPI BPS, rahasia server, dan proses sinkronisasi.
+- [Market data user guide](./MARKET_DATA_USER_GUIDE.md) — memilih sumber, membaca freshness, memeriksa bukti, dan batas interpretasi statistik.
 
 - [Product direction](./PRODUCT_DIRECTION.md) — positioning, core feedback loop, current application coverage, dan urutan vertical slice berikutnya.
 - [Database security hardening](./DATABASE_SECURITY_HARDENING.md) — threat model, trust boundary, least privilege, dan definition of done keamanan.
