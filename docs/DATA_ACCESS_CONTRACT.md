@@ -31,7 +31,7 @@ the same object.
 
 | Application concern | Read from | Write through | Important distinction |
 | --- | --- | --- | --- |
-| Current user identity | `profiles` | `update_my_personal_profile` | `display_name` is preferred display identity; `full_name` is the account name. Avatar, banner, headline, status text, and bio travel with the person across workspaces. |
+| Current user identity | `profiles` | `update_my_personal_profile` | `display_name` is preferred display identity; `full_name` is the account name. Avatar and banner use separate identity-owned buckets; headline, status text, and bio travel with the person across workspaces. |
 | Personal settings | `profile_preferences` | `update_my_personal_profile` | Preferences belong to a user, never a workspace. `show_activity_status` controls Realtime Presence publication and is not a stored online flag. |
 | Workspace settings | `workspaces` | permitted update | One private business boundary. |
 | Member and role display | `get_workspace_member_directory` | membership RPCs | Safe identity and activity-display fields only; do not infer access from `base_role`. |

@@ -167,6 +167,9 @@ Chat is internal to an active workspace membership:
   copying private message content into `audit_logs`.
 - Attachments use the private `chat-attachments` bucket, validated MIME types,
   a 10 MB limit, identity-scoped paths, and signed download URLs.
+- Personal avatars use the public `avatars` bucket with a 2 MB limit; profile
+  banners use the public `profile-banners` bucket with a 5 MB limit. Both keep
+  object metadata private to the owning identity and constrain paths by user ID.
 
 Run `workspace_chat_contracts.test.sql` through `pnpm db:test` after starting the
 local Supabase stack. Hosted projects should disable public Realtime channels so

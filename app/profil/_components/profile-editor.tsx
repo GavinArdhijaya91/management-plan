@@ -1,5 +1,5 @@
 import { ProfileAvatar } from '@/components/profile-avatar'
-import { getProfileAssetUrl } from '@/lib/profile/assets'
+import { getProfileBannerUrl } from '@/lib/profile/assets'
 import { ImagePlus, Radio, UserRound } from 'lucide-react'
 import { updateProfileAction } from '@/app/profil/actions'
 
@@ -16,7 +16,7 @@ interface ProfileEditorProps {
 }
 
 export function ProfileEditor({ profile, showActivityStatus }: ProfileEditorProps) {
-  const bannerUrl = getProfileAssetUrl(profile.profile_banner_path)
+  const bannerUrl = getProfileBannerUrl(profile.profile_banner_path)
 
   return (
     <form action={updateProfileAction} className="app-card mt-6 overflow-hidden">

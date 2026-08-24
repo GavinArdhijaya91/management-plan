@@ -6,6 +6,10 @@ const migration = readFileSync(
   join(process.cwd(), 'supabase/migrations/20260824170000_personal_profile_presence.sql'),
   'utf8',
 )
+const storageMigration = readFileSync(
+  join(process.cwd(), 'supabase/migrations/20260824171000_separate_profile_banner_storage.sql'),
+  'utf8',
+)
 
 describe('personal profile presence migration', () => {
   it('keeps activity visibility separate from ephemeral presence state', () => {
@@ -16,6 +20,13 @@ describe('personal profile presence migration', () => {
   it('binds profile banner paths to the authenticated profile folder', () => {
     expect(migration).toContain("split_part(profile_banner_path, '/', 1) = user_id::text")
     expect(migration).toContain("profile_banner_path not like '%..%'")
+  })
+
+  it('keeps avatar and banner limits in separate identity-owned buckets', () => {
+    expect(storageMigration).toContain("'profile-banners'")
+    expect(storageMigration).toContain('set file_size_limit = 2097152')
+    expect(storageMigration).toContain('file_size_limit, allowed_mime_types')
+    expect(storageMigration).toContain('and owner_id = (select auth.uid())::text')
   })
 
   it('exposes only collaboration-safe profile fields through the guarded directory', () => {

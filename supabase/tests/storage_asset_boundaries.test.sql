@@ -9,14 +9,15 @@ begin
   if (
     select count(*)
     from storage.buckets
-    where id in ('avatars', 'workspace-logos', 'workspace-branding')
+    where id in ('avatars', 'profile-banners', 'workspace-logos', 'workspace-branding')
       and public
       and allowed_mime_types = array['image/jpeg', 'image/png', 'image/webp']
       and file_size_limit = case id
         when 'workspace-branding' then 5242880
+        when 'profile-banners' then 5242880
         else 2097152
       end
-  ) <> 3 then
+  ) <> 4 then
     raise exception 'Storage bucket security configuration drifted';
   end if;
 end;
@@ -43,6 +44,13 @@ begin
   values (
     'avatars',
     'a1000000-0000-0000-0000-000000000001/avatar.webp',
+    'a1000000-0000-0000-0000-000000000001'
+  );
+
+  insert into storage.objects (bucket_id, name, owner_id)
+  values (
+    'profile-banners',
+    'a1000000-0000-0000-0000-000000000001/banner.webp',
     'a1000000-0000-0000-0000-000000000001'
   );
 
@@ -104,7 +112,9 @@ begin
   );
 
   update public.profiles
-  set avatar_path = 'a1000000-0000-0000-0000-000000000001/avatar.webp'
+  set
+    avatar_path = 'a1000000-0000-0000-0000-000000000001/avatar.webp',
+    profile_banner_path = 'a1000000-0000-0000-0000-000000000001/banner.webp'
   where user_id = 'a1000000-0000-0000-0000-000000000001';
 
   blocked := false;
@@ -117,6 +127,21 @@ begin
   end;
   if not blocked then
     raise exception 'Profile referenced another identity avatar';
+  end if;
+
+  blocked := false;
+  begin
+    insert into storage.objects (bucket_id, name, owner_id)
+    values (
+      'profile-banners',
+      'a1000000-0000-0000-0000-000000000006/forged.webp',
+      'a1000000-0000-0000-0000-000000000001'
+    );
+  exception
+    when insufficient_privilege or check_violation then blocked := true;
+  end;
+  if not blocked then
+    raise exception 'Authenticated user uploaded a banner into another identity folder';
   end if;
 
   update public.workspaces
@@ -161,6 +186,15 @@ begin
       and name = 'a1000000-0000-0000-0000-000000000001/avatar.webp'
   ) then
     raise exception 'Manager read another identity avatar metadata';
+  end if;
+
+  if exists (
+    select 1
+    from storage.objects
+    where bucket_id = 'profile-banners'
+      and name = 'a1000000-0000-0000-0000-000000000001/banner.webp'
+  ) then
+    raise exception 'Manager read another identity banner metadata';
   end if;
 
   insert into storage.objects (bucket_id, name, owner_id)

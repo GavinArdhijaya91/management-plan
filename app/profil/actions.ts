@@ -2,7 +2,7 @@
 
 import { hasExpectedFileSignature } from '@/app/kolaborasi/_lib/chat-file-security'
 import { requireAuthenticatedUser } from '@/lib/auth/session'
-import { profileAssetBucket } from '@/lib/profile/assets'
+import { profileAssetBucket, profileBannerBucket } from '@/lib/profile/assets'
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
@@ -58,15 +58,16 @@ export async function updateProfileAction(formData: FormData) {
   ])
   if (currentResult.error) fail('Profil saat ini tidak dapat dibaca.')
 
-  const uploadedPaths: string[] = []
+  const uploadedObjects: Array<{ bucket: string; path: string }> = []
   const upload = async (kind: 'avatar' | 'banner', image: NonNullable<typeof avatar>) => {
+    const bucket = kind === 'avatar' ? profileAssetBucket : profileBannerBucket
     const path = `${user.id}/${kind}-${crypto.randomUUID()}.${image.extension}`
-    const { error } = await supabase.storage.from(profileAssetBucket).upload(path, image.bytes, {
+    const { error } = await supabase.storage.from(bucket).upload(path, image.bytes, {
       contentType: image.contentType,
       upsert: false,
     })
     if (error) throw new Error(`Gagal mengunggah ${kind}.`)
-    uploadedPaths.push(path)
+    uploadedObjects.push({ bucket, path })
     return path
   }
 
@@ -78,7 +79,7 @@ export async function updateProfileAction(formData: FormData) {
     if (avatar) avatarPath = await upload('avatar', avatar)
     if (banner) bannerPath = await upload('banner', banner)
   } catch (error) {
-    if (uploadedPaths.length) await supabase.storage.from(profileAssetBucket).remove(uploadedPaths)
+    for (const object of uploadedObjects) await supabase.storage.from(object.bucket).remove([object.path])
     console.error('[profile.asset.upload.failed]', error)
     fail('Foto profil atau banner belum dapat diunggah.')
   }
@@ -94,15 +95,16 @@ export async function updateProfileAction(formData: FormData) {
   })
 
   if (updateError) {
-    if (uploadedPaths.length) await supabase.storage.from(profileAssetBucket).remove(uploadedPaths)
+    for (const object of uploadedObjects) await supabase.storage.from(object.bucket).remove([object.path])
     fail('Perubahan profil belum dapat disimpan.')
   }
 
-  const obsoletePaths = [
-    avatarPath !== currentResult.data.avatar_path ? currentResult.data.avatar_path : null,
-    bannerPath !== currentResult.data.profile_banner_path ? currentResult.data.profile_banner_path : null,
-  ].filter((path): path is string => Boolean(path))
-  if (obsoletePaths.length) await supabase.storage.from(profileAssetBucket).remove(obsoletePaths)
+  if (avatarPath !== currentResult.data.avatar_path && currentResult.data.avatar_path) {
+    await supabase.storage.from(profileAssetBucket).remove([currentResult.data.avatar_path])
+  }
+  if (bannerPath !== currentResult.data.profile_banner_path && currentResult.data.profile_banner_path) {
+    await supabase.storage.from(profileBannerBucket).remove([currentResult.data.profile_banner_path])
+  }
 
   revalidatePath('/profil')
   revalidatePath('/kolaborasi')
