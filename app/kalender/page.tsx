@@ -1,4 +1,5 @@
 import { Header } from '@/components/header'
+import { LocalDateTime } from '@/app/_components/local-date-time'
 import { createClient } from '@/lib/supabase/server'
 import { requireActiveWorkspace } from '@/lib/workspace/context'
 import { CalendarDays } from 'lucide-react'
@@ -46,9 +47,7 @@ export default async function CalendarPage() {
                   </div>
                 </div>
                 <p className="app-data whitespace-nowrap text-xs text-zinc-500">
-                  {new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium', timeStyle: 'short' }).format(
-                    new Date(event.starts_at),
-                  )}
+                  <LocalDateTime value={event.starts_at} />
                 </p>
               </article>
             ))}

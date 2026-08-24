@@ -1,6 +1,7 @@
 'use client'
 
 import { AppToast } from '@/app/_components/app-toast'
+import { LocalDateTime } from '@/app/_components/local-date-time'
 import { Modal } from '@/app/_components/modal'
 import type {
   ChatAttachment,
@@ -72,6 +73,8 @@ const attachmentExtensions: Record<string, string> = {
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
 }
 
+const chatTimeOptions: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' }
+
 function conversationTitle(conversation: ChatConversation, currentUserId: string, directory: ChatDirectoryMember[]) {
   if (conversation.kind === 'channel') return conversation.name ?? 'Channel'
   const counterpartId =
@@ -79,13 +82,6 @@ function conversationTitle(conversation: ChatConversation, currentUserId: string
       ? conversation.direct_participant_high
       : conversation.direct_participant_low
   return directory.find((member) => member.user_id === counterpartId)?.display_name ?? 'Anggota workspace'
-}
-
-function displayTime(value: string) {
-  const date = new Date(value)
-  return Number.isNaN(date.getTime())
-    ? ''
-    : new Intl.DateTimeFormat('id-ID', { hour: '2-digit', minute: '2-digit' }).format(date)
 }
 
 export function CollaborationChat({
@@ -610,7 +606,11 @@ export function CollaborationChat({
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-baseline gap-2">
                           <strong className="text-sm">{sender?.display_name ?? 'Anggota workspace'}</strong>
-                          <span className="text-xs text-zinc-400">{displayTime(message.created_at)}</span>
+                          <LocalDateTime
+                            className="text-xs text-zinc-400"
+                            options={chatTimeOptions}
+                            value={message.created_at}
+                          />
                           {message.edited_at && <span className="text-xs text-zinc-400">diedit</span>}
                         </div>
                         {message.deleted_at ? (

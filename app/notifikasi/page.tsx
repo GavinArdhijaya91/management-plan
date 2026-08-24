@@ -1,4 +1,5 @@
 import { Header } from '@/components/header'
+import { LocalDateTime } from '@/app/_components/local-date-time'
 import { createClient } from '@/lib/supabase/server'
 import { requireAuthenticatedUser } from '@/lib/auth/session'
 import { requireActiveWorkspace } from '@/lib/workspace/context'
@@ -49,12 +50,7 @@ export default async function NotificationsPage() {
                   <span className="min-w-0">
                     <strong className="block text-sm">{notification.title}</strong>
                     <span className="mt-1 block text-sm text-zinc-600">{notification.detail}</span>
-                    <span className="mt-2 block text-xs text-zinc-400">
-                      {new Intl.DateTimeFormat('id-ID', {
-                        dateStyle: 'medium',
-                        timeStyle: 'short',
-                      }).format(new Date(notification.occurred_at))}
-                    </span>
+                    <LocalDateTime className="mt-2 block text-xs text-zinc-400" value={notification.occurred_at} />
                   </span>
                 </>
               )
