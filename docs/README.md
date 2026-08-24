@@ -6,6 +6,7 @@ Mulai dari [FIGMA_START_HERE.md](./FIGMA_START_HERE.md) untuk dokumentasi desain
 
 ## Arsitektur dan database
 
+- [Operational monochrome](./OPERATIONAL_MONOCHROME.md) — arah visual hitam putih, batas warna semantik, dan penerapan berbeda untuk landing serta workspace CRUD.
 - [Market data ingestion](./MARKET_DATA_INGESTION.md) — kontrak sumber faktual, integrasi WebAPI BPS, rahasia server, dan proses sinkronisasi.
 - [Market data user guide](./MARKET_DATA_USER_GUIDE.md) — memilih sumber, membaca freshness, memeriksa bukti, dan batas interpretasi statistik.
 
