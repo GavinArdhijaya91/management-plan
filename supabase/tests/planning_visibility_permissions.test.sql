@@ -85,6 +85,71 @@ select
 from public.workspaces workspace
 where workspace.slug = 'kedai-siapin-demo';
 
+-- A custom role proves that restricted-plan grants and explicit permissions
+-- compose without inheriting the base viewer permission set.
+-- These are test fixtures rather than a browser role-management flow; the
+-- canonical owner RPC boundary is covered by the RBAC lifecycle contracts.
+reset role;
+
+insert into public.workspace_roles (
+  id,
+  workspace_id,
+  code,
+  name,
+  description,
+  hierarchy_rank,
+  base_role,
+  created_by
+)
+select
+  'a1900000-0000-0000-0000-000000000006',
+  workspace.id,
+  'planning_observer',
+  'Planning Observer',
+  'Reads a granted plan hierarchy without reading its actions.',
+  12,
+  'viewer',
+  'a1000000-0000-0000-0000-000000000001'
+from public.workspaces workspace
+where workspace.slug = 'kedai-siapin-demo';
+
+insert into public.workspace_role_permissions (
+  workspace_id,
+  workspace_role_id,
+  permission_code,
+  granted_by
+)
+select
+  workspace.id,
+  'a1900000-0000-0000-0000-000000000006',
+  'plan.read',
+  'a1000000-0000-0000-0000-000000000001'
+from public.workspaces workspace
+where workspace.slug = 'kedai-siapin-demo';
+
+insert into public.workspace_members (
+  workspace_id,
+  user_id,
+  role,
+  status,
+  workspace_role_id
+)
+select
+  workspace.id,
+  'a1000000-0000-0000-0000-000000000006',
+  'viewer',
+  'active',
+  'a1900000-0000-0000-0000-000000000006'
+from public.workspaces workspace
+where workspace.slug = 'kedai-siapin-demo';
+
+set local role authenticated;
+select set_config(
+  'request.jwt.claims',
+  '{"sub":"a1000000-0000-0000-0000-000000000001","role":"authenticated","email":"owner@siapin.local"}',
+  true
+);
+
 -- Assignees receive visibility before owner creates their restricted actions.
 insert into public.business_plan_role_grants (
   workspace_id,
@@ -221,6 +286,20 @@ cross join (
 where workspace.slug = 'kedai-siapin-demo'
 on conflict do nothing;
 
+insert into public.business_plan_role_grants (
+  workspace_id,
+  business_plan_id,
+  workspace_role_id,
+  granted_by
+)
+select
+  workspace.id,
+  'a1900000-0000-0000-0000-000000000001',
+  'a1900000-0000-0000-0000-000000000006',
+  'a1000000-0000-0000-0000-000000000001'
+from public.workspaces workspace
+where workspace.slug = 'kedai-siapin-demo';
+
 -- Role grants propagate through the complete plan hierarchy.
 select set_config(
   'request.jwt.claims',
@@ -298,6 +377,39 @@ begin
       'a1900000-0000-0000-0000-000000000003'
   ) <> 2 then
     raise exception 'Viewer member grant did not expose visible-plan actions';
+  end if;
+end;
+$$;
+
+-- Custom role can read the granted plan hierarchy but does not inherit
+-- action.read_all from its viewer base role.
+select set_config(
+  'request.jwt.claims',
+  '{"sub":"a1000000-0000-0000-0000-000000000006","role":"authenticated","email":"outsider@siapin.local"}',
+  true
+);
+
+do $$
+begin
+  if not exists (
+    select 1 from public.business_plans
+    where id = 'a1900000-0000-0000-0000-000000000001'
+  ) or not exists (
+    select 1 from public.business_goals
+    where id = 'a1900000-0000-0000-0000-000000000002'
+  ) or not exists (
+    select 1 from public.business_initiatives
+    where id = 'a1900000-0000-0000-0000-000000000003'
+  ) then
+    raise exception 'Custom planning role cannot read its granted hierarchy';
+  end if;
+
+  if exists (
+    select 1 from public.action_items
+    where business_initiative_id =
+      'a1900000-0000-0000-0000-000000000003'
+  ) then
+    raise exception 'Custom planning role inherited action.read_all from base role';
   end if;
 end;
 $$;
