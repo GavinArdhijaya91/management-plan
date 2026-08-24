@@ -43,9 +43,9 @@ export function LanguageSelector() {
         <span className="app-data">{activeOption.shortLabel}</span>
       </button>
       {open && (
-        <div className="absolute right-0 top-12 z-50 w-72 rounded-2xl border border-zinc-200 bg-white p-2 shadow-xl">
-          <div className="px-3 py-2">
-            <p className="font-serif text-lg font-semibold">{dictionary.language.title}</p>
+        <div className="motion-window-origin absolute right-0 top-12 z-50 w-[min(18rem,calc(100vw-2rem))] rounded-lg border border-zinc-200 bg-[#fcfcfb] p-3 shadow-[0_18px_48px_rgba(24,24,27,0.12)]">
+          <div className="px-2 py-1">
+            <p className="text-lg font-semibold">{dictionary.language.title}</p>
             <p className="text-xs text-zinc-500">{dictionary.language.region}: Asia, America, Europe</p>
           </div>
           <div
@@ -55,7 +55,7 @@ export function LanguageSelector() {
           >
             {continents.map((continent) => (
               <div key={continent} className="border-t border-zinc-100 py-2 first:border-0">
-                <p className="app-label px-3 py-1">{continent}</p>
+                <p className="app-label px-2 py-1">{continent}</p>
                 {localeOptions
                   .filter((option) => option.continent === continent)
                   .map((option) => (
@@ -68,7 +68,7 @@ export function LanguageSelector() {
                         setLocale(option.code)
                         setOpen(false)
                       }}
-                      className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 py-2 text-left hover:bg-zinc-100"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-zinc-100 aria-selected:bg-zinc-100"
                     >
                       <span className="grid size-8 place-items-center rounded-lg bg-zinc-100 font-mono text-xs">
                         {option.shortLabel}
