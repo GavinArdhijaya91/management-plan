@@ -42,6 +42,19 @@ test.describe.serial('private workspace journey', () => {
     await expect(page.getByRole('heading', { name: 'Dashboard usaha' })).toBeVisible()
     await expect(page.getByText(account.workspaceName, { exact: false }).first()).toBeVisible()
 
+    await page.goto('/profil')
+    await page.getByLabel('Display name').fill('Owner Presence E2E')
+    await page.getByLabel('Headline').fill('Pemilik usaha pengujian')
+    await page.getByLabel('Status').fill('Memastikan kolaborasi berjalan')
+    await page.getByLabel('Tampilkan status aktivitas').uncheck()
+    await page.getByRole('button', { name: 'Simpan profil' }).click()
+    await expect(page).toHaveURL(/\/profil\?success=/)
+    await expect(page.getByRole('status')).toContainText('Profil berhasil diperbarui.')
+
+    await page.goto('/kolaborasi')
+    await expect(page.getByText('Memastikan kolaborasi berjalan')).toBeVisible()
+    await expect(page.getByLabel('Owner Presence E2E, offline').last()).toBeVisible()
+
     await page.goto('/kalender')
     await expect(page.getByRole('heading', { name: 'Kalender & pengingat' })).toBeVisible()
     await page.getByRole('button', { name: 'Tambah agenda', exact: true }).click()
