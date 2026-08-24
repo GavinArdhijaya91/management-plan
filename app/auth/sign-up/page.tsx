@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { signUp } from '@/app/auth/actions'
 import { AuthFeedback, AuthField, AuthShell } from '@/app/auth/_components/auth-shell'
+import { PasswordField } from '@/app/auth/_components/password-field'
 
 export default async function SignUpPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const { error } = await searchParams
@@ -14,10 +15,8 @@ export default async function SignUpPage({ searchParams }: { searchParams: Promi
       <form action={signUp} className="space-y-5">
         <AuthField label="Nama lengkap" name="fullName" minLength={2} maxLength={100} autoComplete="name" />
         <AuthField label="Email" name="email" type="email" maxLength={254} autoComplete="email" />
-        <AuthField
+        <PasswordField
           label="Kata sandi (minimal 10 karakter, huruf besar/kecil, angka, dan simbol)"
-          name="password"
-          type="password"
           minLength={10}
           maxLength={72}
           autoComplete="new-password"
