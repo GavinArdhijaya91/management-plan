@@ -90,7 +90,7 @@ export default function Home() {
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Link href="/demo/dashboard" className="app-button motion-press px-6">
-                Jelajahi data demo <ArrowRight className="size-4" />
+                Buka demo <ArrowRight className="size-4" />
               </Link>
               <a
                 href="#fitur"
