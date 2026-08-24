@@ -190,6 +190,28 @@
     opacity: 0;
   }
 }
+
+@keyframes landing-chart-grow {
+  from {
+    opacity: 0.25;
+    transform: scaleY(0.08);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes landing-scroll-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 @keyframes dialog-arrive {
   from {
     opacity: 0;
@@ -265,6 +287,20 @@ a:active .motion-logo {
   background: currentColor;
   animation: cursor-blink 900ms steps(1, end) infinite;
 }
+
+.landing-chart-bar {
+  transform-origin: bottom;
+  animation: landing-chart-grow 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@supports (animation-timeline: view()) {
+  .landing-reveal {
+    animation: landing-scroll-reveal 1ms linear both;
+    animation-delay: var(--reveal-delay, 0ms);
+    animation-timeline: view();
+    animation-range: entry 0% entry 28%;
+  }
+}
 .motion-dialog {
   animation: dialog-arrive 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -308,5 +344,11 @@ a:active .motion-logo {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .landing-reveal,
+  .landing-chart-bar {
+    opacity: 1;
+    transform: none;
   }
 }

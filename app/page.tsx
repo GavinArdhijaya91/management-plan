@@ -1,5 +1,6 @@
 import { MotionLogo } from '@/app/_components/motion-logo'
 import { Reveal } from '@/app/_components/reveal'
+import { TypewriterText } from '@/app/_components/typewriter-text'
 import { ArrowRight, BarChart3, CalendarDays, Check, CheckCircle2, TrendingUp, WalletCards } from 'lucide-react'
 import Link from 'next/link'
 
@@ -80,7 +81,9 @@ export default function Home() {
             <p className="app-label mb-6">Workspace manajemen untuk usaha yang bertumbuh</p>
             <h1 className="min-w-0 max-w-4xl text-[clamp(3.25rem,6.4vw,5.75rem)] font-semibold leading-[0.94] tracking-[-0.055em]">
               Rencana jelas.
-              <span className="mt-2 block text-zinc-500">Keputusan terukur.</span>
+              <span className="mt-2 block min-h-[1.05em] text-zinc-500">
+                <TypewriterText items={['Keputusan terukur.', 'Prioritas terarah.', 'Pertumbuhan terbaca.']} />
+              </span>
             </h1>
             <p className="mt-7 max-w-xl text-base leading-7 text-zinc-600 md:text-lg">
               Satukan transaksi, agenda, target, dan insight bisnis dalam satu workspace yang mudah ditindaklanjuti.
@@ -127,7 +130,11 @@ export default function Home() {
                 </div>
                 <div className="mt-8 flex h-24 items-end gap-2" aria-label="Grafik laba enam minggu">
                   {[42, 57, 48, 70, 63, 92].map((height, index) => (
-                    <div key={index} className="flex-1 rounded-t-sm bg-white/80" style={{ height: `${height}%` }} />
+                    <div
+                      key={index}
+                      className="landing-chart-bar flex-1 rounded-t-sm bg-white/80"
+                      style={{ height: `${height}%`, animationDelay: `${180 + index * 65}ms` }}
+                    />
                   ))}
                 </div>
               </div>
@@ -167,7 +174,7 @@ export default function Home() {
                 <Reveal key={feature.title} delay={index * 70}>
                   <Link
                     href={feature.href}
-                    className={`motion-press group flex min-h-64 flex-col rounded-lg border p-6 transition-colors md:p-8 ${index === 0 ? 'border-zinc-950 bg-zinc-950 text-white' : 'border-zinc-200 bg-[#fcfcfb] hover:border-zinc-400'}`}
+                    className={`motion-press group flex min-h-64 flex-col rounded-lg border p-6 transition-[border-color,box-shadow,transform] hover:-translate-y-1 md:p-8 ${index === 0 ? 'border-zinc-950 bg-zinc-950 text-white shadow-[0_16px_40px_rgba(24,24,27,0.12)]' : 'border-zinc-200 bg-[#fcfcfb] hover:border-zinc-400 hover:shadow-[0_16px_40px_rgba(24,24,27,0.08)]'}`}
                   >
                     <div className="flex items-center justify-between">
                       <Icon className="size-6" />

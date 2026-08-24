@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
 interface RevealProps {
   children: ReactNode
@@ -6,6 +6,10 @@ interface RevealProps {
   delay?: number
 }
 
-export function Reveal({ children, className = '' }: RevealProps) {
-  return <div className={className}>{children}</div>
+export function Reveal({ children, className = '', delay = 0 }: RevealProps) {
+  return (
+    <div className={`landing-reveal ${className}`} style={{ '--reveal-delay': `${delay}ms` } as CSSProperties}>
+      {children}
+    </div>
+  )
 }
