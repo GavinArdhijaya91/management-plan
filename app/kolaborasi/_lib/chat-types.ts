@@ -9,7 +9,10 @@ export type ChatAttachment = Tables<'chat_attachments'>
 export interface ChatDirectoryMember {
   avatar_path: string | null
   display_name: string
+  headline: string | null
   membership_status: 'active' | 'suspended'
   role_name: string
+  show_activity_status: boolean
+  status_text: string | null
   user_id: string
 }

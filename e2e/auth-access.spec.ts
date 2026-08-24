@@ -11,3 +11,21 @@ test('a protected route redirects an anonymous visitor to login', async ({ page 
   await expect(page).toHaveURL(/\/auth\/sign-up$/)
   await expect(page.getByRole('heading', { name: 'Buat akun Siapin' })).toBeVisible()
 })
+
+test('password visibility can be toggled on login and sign-up', async ({ page }) => {
+  await page.goto('/auth/login')
+
+  const loginPassword = page.getByLabel('Kata sandi', { exact: true })
+  await expect(loginPassword).toHaveAttribute('type', 'password')
+  await page.getByRole('button', { name: 'Tampilkan kata sandi' }).click()
+  await expect(loginPassword).toHaveAttribute('type', 'text')
+  await page.getByRole('button', { name: 'Sembunyikan kata sandi' }).click()
+  await expect(loginPassword).toHaveAttribute('type', 'password')
+
+  await page.goto('/auth/sign-up')
+
+  const signUpPassword = page.getByLabel(/Kata sandi \(minimal 10 karakter/)
+  await expect(signUpPassword).toHaveAttribute('type', 'password')
+  await page.getByRole('button', { name: 'Tampilkan kata sandi' }).click()
+  await expect(signUpPassword).toHaveAttribute('type', 'text')
+})

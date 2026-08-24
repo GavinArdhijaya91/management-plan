@@ -18,7 +18,7 @@ test.describe.serial('private workspace journey', () => {
   test('invalid credentials are rejected without exposing account details', async ({ page }) => {
     await page.goto('/auth/login')
     await page.getByLabel('Email').fill('unknown-user@siapin.test')
-    await page.getByLabel('Kata sandi').fill('Wrong-Password!2026')
+    await page.getByLabel('Kata sandi', { exact: true }).fill('Wrong-Password!2026')
     await page.getByRole('button', { name: 'Masuk' }).click()
 
     await expect(page).toHaveURL(/\/auth\/login\?error=/)
@@ -28,7 +28,7 @@ test.describe.serial('private workspace journey', () => {
   test('a confirmed account can create its first workspace and business plan', async ({ page }) => {
     await page.goto('/auth/login')
     await page.getByLabel('Email').fill(account.email)
-    await page.getByLabel('Kata sandi').fill(account.password)
+    await page.getByLabel('Kata sandi', { exact: true }).fill(account.password)
     await page.getByRole('button', { name: 'Masuk' }).click()
 
     await expect(page).toHaveURL(/\/workspace\/select$/)
@@ -42,7 +42,41 @@ test.describe.serial('private workspace journey', () => {
     await expect(page.getByRole('heading', { name: 'Dashboard usaha' })).toBeVisible()
     await expect(page.getByText(account.workspaceName, { exact: false }).first()).toBeVisible()
 
-    await page.getByRole('link', { name: 'Buka planning' }).click()
+    await page.goto('/profil')
+    await page.getByLabel('Display name').fill('Owner Presence E2E')
+    await page.getByLabel('Headline').fill('Pemilik usaha pengujian')
+    await page.getByRole('textbox', { name: 'Status', exact: true }).fill('Memastikan kolaborasi berjalan')
+    await page.getByLabel('Tampilkan status aktivitas').uncheck()
+    await page.getByRole('button', { name: 'Simpan profil' }).click()
+    await expect(page).toHaveURL(/\/profil\?success=/)
+    await expect(page.getByRole('status')).toContainText('Profil berhasil diperbarui.')
+
+    await page.goto('/kolaborasi')
+    await expect(page.getByText('Memastikan kolaborasi berjalan')).toBeVisible()
+    await expect(page.getByLabel('Owner Presence E2E, offline').last()).toBeVisible()
+
+    await page.goto('/kalender')
+    await expect(page.getByRole('heading', { name: 'Kalender & pengingat' })).toBeVisible()
+    await page.getByRole('button', { name: 'Tambah agenda', exact: true }).click()
+    const createAgendaDialog = page.getByRole('dialog', { name: 'Tambah agenda' })
+    await createAgendaDialog.getByLabel('Judul agenda').fill('Bayar supplier E2E')
+    await createAgendaDialog.getByLabel('Kategori').selectOption('supplier')
+    await createAgendaDialog.getByLabel('Catatan (opsional)').fill('Agenda privat yang dibuat melalui browser.')
+    await createAgendaDialog.getByRole('button', { name: 'Tambah agenda', exact: true }).click()
+    await expect(page.getByRole('status')).toContainText('Agenda berhasil ditambahkan.')
+    await expect(page.getByText('Bayar supplier E2E')).toBeVisible()
+
+    await page.getByRole('button', { name: 'Edit' }).click()
+    await page.getByLabel('Judul agenda').fill('Bayar supplier E2E diperbarui')
+    await page.getByRole('button', { name: 'Simpan perubahan' }).click()
+    await expect(page.getByText('Bayar supplier E2E diperbarui')).toBeVisible()
+    await page.getByRole('button', { name: 'Selesai' }).click()
+    await expect(page.getByRole('button', { name: 'Buka kembali' })).toBeVisible()
+    await page.getByRole('button', { name: 'Hapus' }).click()
+    await page.getByRole('dialog', { name: 'Hapus agenda?' }).getByRole('button', { name: 'Hapus agenda' }).click()
+    await expect(page.getByText('Bayar supplier E2E diperbarui')).toHaveCount(0)
+
+    await page.goto('/planning')
     await expect(page).toHaveURL(/\/planning$/)
     await page.getByText('Buat rencana bisnis', { exact: true }).click()
     await page.getByLabel('Nama rencana').fill('Rencana pertumbuhan E2E')

@@ -49,30 +49,30 @@
 
 :root {
   color-scheme: light;
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --card: #ffffff;
-  --card-foreground: #0f172a;
+  --background: #f7f7f5;
+  --foreground: #18181b;
+  --card: #fcfcfb;
+  --card-foreground: #18181b;
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: #2563eb;
-  --primary-foreground: #ffffff;
-  --secondary: #eff6ff;
-  --secondary-foreground: #1d4ed8;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
+  --primary: #18181b;
+  --primary-foreground: #fafafa;
+  --secondary: #ececea;
+  --secondary-foreground: #27272a;
+  --muted: #efefed;
+  --muted-foreground: #71717a;
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: #ef4444;
-  --border: #e2e8f0;
-  --input: #cbd5e1;
-  --ring: #2563eb;
-  --chart-1: #2563eb;
-  --chart-2: #10b981;
-  --chart-3: #f59e0b;
-  --chart-4: #8b5cf6;
-  --chart-5: #ef4444;
-  --radius: 0.5rem;
+  --border: #dededb;
+  --input: #c9c9c5;
+  --ring: #3f3f46;
+  --chart-1: #18181b;
+  --chart-2: #52525b;
+  --chart-3: #71717a;
+  --chart-4: #a1a1aa;
+  --chart-5: #d4d4d8;
+  --radius: 0.625rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -129,6 +129,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-ibm-plex-sans), Arial, sans-serif;
+    text-rendering: optimizeLegibility;
   }
 
   button,
@@ -143,33 +144,36 @@
 
 @layer components {
   .page-shell {
-    @apply mx-auto w-full max-w-[90rem] px-4 py-7 md:px-8 md:py-9;
+    @apply mx-auto w-full max-w-[90rem] px-4 py-6 md:px-8 md:py-8;
   }
 
   .siapin-card {
-    @apply rounded-lg border border-border bg-card text-card-foreground shadow-sm transition-shadow hover:shadow-md;
+    @apply rounded-lg border border-border bg-card text-card-foreground transition-colors hover:border-zinc-400;
   }
 
   .app-shell {
-    @apply min-h-screen bg-[#fafafa] text-zinc-950 lg:pl-64;
+    @apply min-h-dvh bg-[#f7f7f5] text-zinc-950 lg:pl-64;
   }
   .app-card {
-    @apply rounded-xl border border-zinc-200 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.025)];
+    @apply rounded-lg border border-zinc-200 bg-[#fcfcfb];
   }
   .app-heading {
-    @apply font-serif text-3xl font-semibold leading-tight tracking-[-0.03em] text-zinc-950 md:text-4xl;
+    @apply text-3xl font-semibold leading-tight tracking-[-0.035em] text-zinc-950 md:text-[2.5rem];
   }
   .app-data {
     @apply font-mono tracking-[-0.035em] tabular-nums;
   }
   .app-label {
-    @apply text-[0.68rem] font-semibold uppercase tracking-[0.11em] text-zinc-500;
+    @apply text-[0.7rem] font-medium uppercase tracking-[0.09em] text-zinc-500;
   }
   .app-input {
-    @apply rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-zinc-400 focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950;
+    @apply rounded-lg border border-zinc-300 bg-[#fcfcfb] px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-zinc-400 hover:border-zinc-400 focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950;
   }
   .app-button {
-    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-zinc-950 px-3.5 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-zinc-800;
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-zinc-950 bg-zinc-950 px-3.5 py-2 text-sm font-medium text-white transition-[background-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:bg-zinc-800 hover:shadow-[0_8px_20px_rgba(24,24,27,0.16)] active:translate-y-px active:scale-[0.97] active:shadow-none;
+  }
+  .app-button-secondary {
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-[#fcfcfb] px-3.5 py-2 text-sm font-medium text-zinc-800 transition-[background-color,border-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:border-zinc-950 hover:bg-white hover:text-zinc-950 hover:shadow-[0_8px_20px_rgba(24,24,27,0.08)] active:translate-y-px active:scale-[0.97] active:shadow-none;
   }
 }
 
@@ -189,6 +193,18 @@
     opacity: 0;
   }
 }
+
+@keyframes landing-chart-grow {
+  from {
+    opacity: 0.25;
+    transform: scaleY(0.08);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
 @keyframes dialog-arrive {
   from {
     opacity: 0;
@@ -264,6 +280,24 @@ a:active .motion-logo {
   background: currentColor;
   animation: cursor-blink 900ms steps(1, end) infinite;
 }
+
+.landing-chart-bar {
+  transform-origin: bottom;
+  animation: landing-chart-grow 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.landing-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 640ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms),
+    transform 640ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
+}
+
+.landing-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 .motion-dialog {
   animation: dialog-arrive 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -285,20 +319,6 @@ a:active .motion-logo {
   animation: app-page-enter 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.motion-reveal {
-  opacity: 0;
-  transform: translateY(18px);
-  transition:
-    opacity 560ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
-  transition-delay: var(--reveal-delay, 0ms);
-}
-
-.motion-reveal.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 .motion-press {
   transition:
     transform 160ms ease,
@@ -306,8 +326,14 @@ a:active .motion-logo {
     border-color 160ms ease,
     box-shadow 160ms ease;
 }
+.motion-press:hover {
+  transform: translateY(-2px) scale(1.015);
+  box-shadow: 0 10px 24px rgba(24, 24, 27, 0.12);
+}
 .motion-press:active {
-  transform: scale(0.98);
+  transform: translateY(1px) scale(0.965);
+  box-shadow: none;
+  transition-duration: 90ms;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -322,7 +348,9 @@ a:active .motion-logo {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
   }
-  .motion-reveal {
+
+  .landing-reveal,
+  .landing-chart-bar {
     opacity: 1;
     transform: none;
   }

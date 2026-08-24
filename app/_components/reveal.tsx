@@ -9,31 +9,36 @@ interface RevealProps {
 }
 
 export function Reveal({ children, className = '', delay = 0 }: RevealProps) {
-  const ref = useRef<HTMLDivElement>(null)
+  const elementRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    const node = ref.current
-    if (!node) return
+    const element = elementRef.current
+    if (!element) return
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (reducedMotion.matches || !('IntersectionObserver' in window)) {
+      const frame = window.requestAnimationFrame(() => setVisible(true))
+      return () => window.cancelAnimationFrame(frame)
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true)
-          observer.unobserve(entry.target)
-        }
+        if (!entry?.isIntersecting) return
+        setVisible(true)
+        observer.disconnect()
       },
-      { threshold: 0.12, rootMargin: '0px 0px -48px' },
+      { rootMargin: '0px 0px -10% 0px', threshold: 0.12 },
     )
 
-    observer.observe(node)
+    observer.observe(element)
     return () => observer.disconnect()
   }, [])
 
   return (
     <div
-      ref={ref}
-      className={`motion-reveal ${visible ? 'is-visible' : ''} ${className}`}
+      ref={elementRef}
+      className={`landing-reveal ${visible ? 'is-visible' : ''} ${className}`}
       style={{ '--reveal-delay': `${delay}ms` } as CSSProperties}
     >
       {children}

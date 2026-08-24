@@ -68,22 +68,26 @@ export default function Dashboard() {
         >
           <KPICard
             title={copy.sales}
-            value={rupiah.format(summary.totalSales)}
+            value={summary.totalSales}
+            formatValue={(value) => rupiah.format(value)}
             icon={<CircleDollarSign className="size-5" />}
           />
           <KPICard
             title={copy.costAmount}
-            value={rupiah.format(summary.totalCostAmount)}
+            value={summary.totalCostAmount}
+            formatValue={(value) => rupiah.format(value)}
             icon={<ListChecks className="size-5" />}
           />
           <KPICard
             title={copy.profit}
-            value={rupiah.format(summary.totalNetResult)}
+            value={summary.totalNetResult}
+            formatValue={(value) => rupiah.format(value)}
             icon={<TrendingUp className="size-5" />}
           />
           <KPICard
             title={copy.remainingPlans}
-            value={`${unfinished} ${copy.tasks}`}
+            value={unfinished}
+            formatValue={(value) => `${value} ${copy.tasks}`}
             icon={<CalendarDays className="size-5" />}
           />
         </section>

@@ -1,6 +1,7 @@
 'use client'
 
 import { AppToast } from '@/app/_components/app-toast'
+import { LocalDateTime } from '@/app/_components/local-date-time'
 import { Modal } from '@/app/_components/modal'
 import type {
   ChatAttachment,
@@ -10,9 +11,10 @@ import type {
   ChatMessage,
   ChatReaction,
 } from '@/app/kolaborasi/_lib/chat-types'
+import { hasExpectedFileSignature, sanitizeAttachmentName } from '@/app/kolaborasi/_lib/chat-file-security'
 import { createClient } from '@/lib/supabase/client'
+import { ProfileAvatar } from '@/components/profile-avatar'
 import {
-  Circle,
   Download,
   FileText,
   Hash,
@@ -71,6 +73,8 @@ const attachmentExtensions: Record<string, string> = {
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
 }
 
+const chatTimeOptions: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' }
+
 function conversationTitle(conversation: ChatConversation, currentUserId: string, directory: ChatDirectoryMember[]) {
   if (conversation.kind === 'channel') return conversation.name ?? 'Channel'
   const counterpartId =
@@ -78,13 +82,6 @@ function conversationTitle(conversation: ChatConversation, currentUserId: string
       ? conversation.direct_participant_high
       : conversation.direct_participant_low
   return directory.find((member) => member.user_id === counterpartId)?.display_name ?? 'Anggota workspace'
-}
-
-function displayTime(value: string) {
-  const date = new Date(value)
-  return Number.isNaN(date.getTime())
-    ? ''
-    : new Intl.DateTimeFormat('id-ID', { hour: '2-digit', minute: '2-digit' }).format(date)
 }
 
 export function CollaborationChat({
@@ -123,9 +120,28 @@ export function CollaborationChat({
   const [channelName, setChannelName] = useState('')
   const [channelVisibility, setChannelVisibility] = useState<'public' | 'private'>('public')
   const bottomRef = useRef<HTMLDivElement | null>(null)
+  const lastTypingBroadcastAt = useRef(0)
+  const typingTimeouts = useRef(new Map<string, number>())
+
+  const directoryByUserId = useMemo(() => new Map(directory.map((member) => [member.user_id, member])), [directory])
+  const publishesActivity = directoryByUserId.get(currentUserId)?.show_activity_status ?? true
+  const messagesById = useMemo(() => new Map(messages.map((message) => [message.id, message])), [messages])
+  const reactionsByMessageId = useMemo(() => {
+    const grouped = new Map<string, ChatReaction[]>()
+    for (const reaction of reactions)
+      grouped.set(reaction.message_id, [...(grouped.get(reaction.message_id) ?? []), reaction])
+    return grouped
+  }, [reactions])
+  const attachmentsByMessageId = useMemo(() => {
+    const grouped = new Map<string, ChatAttachment[]>()
+    for (const attachment of attachments)
+      grouped.set(attachment.message_id, [...(grouped.get(attachment.message_id) ?? []), attachment])
+    return grouped
+  }, [attachments])
 
   useEffect(() => {
     if (!selectedConversation) return
+    const activeTypingTimeouts = typingTimeouts.current
 
     const topic = `chat:${selectedConversation.id}`
     void supabase.realtime.setAuth()
@@ -222,9 +238,13 @@ export function CollaborationChat({
         const userId = typeof payload?.userId === 'string' ? payload.userId : null
         if (!userId || userId === currentUserId) return
         setTypingUsers((current) => [...new Set([...current, userId])])
-        window.setTimeout(() => {
+        const previousTimeout = activeTypingTimeouts.get(userId)
+        if (previousTimeout) window.clearTimeout(previousTimeout)
+        const timeout = window.setTimeout(() => {
           setTypingUsers((current) => current.filter((candidate) => candidate !== userId))
+          activeTypingTimeouts.delete(userId)
         }, 2500)
+        activeTypingTimeouts.set(userId, timeout)
       })
       .subscribe()
 
@@ -250,14 +270,18 @@ export function CollaborationChat({
         setOnlineUsers(Object.keys(workspacePresence.presenceState()))
       })
       .subscribe(async (status) => {
-        if (status === 'SUBSCRIBED') await workspacePresence.track({ online_at: new Date().toISOString() })
+        if (status === 'SUBSCRIBED' && publishesActivity) {
+          await workspacePresence.track({ online_at: new Date().toISOString() })
+        }
       })
 
     return () => {
+      for (const timeout of activeTypingTimeouts.values()) window.clearTimeout(timeout)
+      activeTypingTimeouts.clear()
       void supabase.removeChannel(channel)
       void supabase.removeChannel(workspacePresence)
     }
-  }, [currentUserId, router, selectedConversation, supabase, workspaceId])
+  }, [currentUserId, publishesActivity, router, selectedConversation, supabase, workspaceId])
 
   useEffect(() => {
     const newest = messages.at(-1)
@@ -272,6 +296,9 @@ export function CollaborationChat({
 
   const broadcastTyping = () => {
     if (!selectedConversation) return
+    const now = Date.now()
+    if (now - lastTypingBroadcastAt.current < 1000) return
+    lastTypingBroadcastAt.current = now
     const channel = supabase
       .getChannels()
       .find((candidate) => candidate.topic.endsWith(`chat:${selectedConversation.id}`))
@@ -284,6 +311,9 @@ export function CollaborationChat({
       throw new Error('Lampiran tidak didukung atau melebihi 10 MB.')
     }
     if (!selectedConversation) throw new Error('Percakapan tidak tersedia.')
+    const header = new Uint8Array(await selectedFile.slice(0, 12).arrayBuffer())
+    if (!hasExpectedFileSignature(selectedFile.type, header))
+      throw new Error('Isi lampiran tidak cocok dengan tipe file yang dipilih.')
 
     const extension = attachmentExtensions[selectedFile.type] ?? 'file'
     const objectPath = `${workspaceId}/${selectedConversation.id}/${currentUserId}/${crypto.randomUUID()}.${extension}`
@@ -296,7 +326,7 @@ export function CollaborationChat({
     const { data: attachmentId, error: registrationError } = await supabase.rpc('register_chat_attachment', {
       target_message_id: messageId,
       target_object_path: objectPath,
-      target_original_file_name: selectedFile.name.replaceAll('/', '-').replaceAll('\\', '-'),
+      target_original_file_name: sanitizeAttachmentName(selectedFile.name),
       target_media_type: selectedFile.type,
       target_byte_size: selectedFile.size,
     })
@@ -505,10 +535,19 @@ export function CollaborationChat({
                 onClick={() => startDirect(member.user_id)}
                 className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950"
               >
-                <Circle
-                  className={`size-2 fill-current ${onlineUsers.includes(member.user_id) ? 'text-emerald-500' : 'text-zinc-300'}`}
+                <ProfileAvatar
+                  avatarPath={member.avatar_path}
+                  displayName={member.display_name}
+                  online={onlineUsers.includes(member.user_id)}
+                  showPresence
+                  size="sm"
                 />
-                <span className="truncate">{member.display_name}</span>
+                <span className="min-w-0 flex-1">
+                  <strong className="block truncate text-sm font-medium">{member.display_name}</strong>
+                  <span className="block truncate text-[11px] text-zinc-400">
+                    {member.headline ?? member.role_name}
+                  </span>
+                </span>
               </button>
             ))}
         </div>
@@ -552,11 +591,13 @@ export function CollaborationChat({
                   </div>
                 )}
                 {messages.map((message) => {
-                  const sender = directory.find((member) => member.user_id === message.sender_id)
+                  const sender = directoryByUserId.get(message.sender_id)
                   const own = message.sender_id === currentUserId
-                  const messageReactions = reactions.filter((reaction) => reaction.message_id === message.id)
-                  const messageAttachments = attachments.filter((attachment) => attachment.message_id === message.id)
-                  const repliedMessage = messages.find((candidate) => candidate.id === message.reply_to_message_id)
+                  const messageReactions = reactionsByMessageId.get(message.id) ?? []
+                  const messageAttachments = attachmentsByMessageId.get(message.id) ?? []
+                  const repliedMessage = message.reply_to_message_id
+                    ? messagesById.get(message.reply_to_message_id)
+                    : undefined
                   const readCount = members.filter(
                     (member) =>
                       member.user_id !== message.sender_id &&
@@ -571,13 +612,19 @@ export function CollaborationChat({
                   ).length
                   return (
                     <article key={message.id} className="group flex gap-3">
-                      <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50 text-xs font-semibold text-zinc-600">
-                        {(sender?.display_name ?? '?').slice(0, 1).toUpperCase()}
-                      </div>
+                      <ProfileAvatar
+                        avatarPath={sender?.avatar_path}
+                        displayName={sender?.display_name ?? 'Anggota workspace'}
+                        size="sm"
+                      />
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-baseline gap-2">
                           <strong className="text-sm">{sender?.display_name ?? 'Anggota workspace'}</strong>
-                          <span className="text-xs text-zinc-400">{displayTime(message.created_at)}</span>
+                          <LocalDateTime
+                            className="text-xs text-zinc-400"
+                            options={chatTimeOptions}
+                            value={message.created_at}
+                          />
                           {message.edited_at && <span className="text-xs text-zinc-400">diedit</span>}
                         </div>
                         {message.deleted_at ? (
@@ -694,6 +741,7 @@ export function CollaborationChat({
                     <Paperclip className="size-5" />
                     <input
                       type="file"
+                      accept={Array.from(allowedAttachmentTypes).join(',')}
                       aria-label="Lampirkan file"
                       className="sr-only"
                       disabled={!canWrite}
@@ -765,12 +813,21 @@ export function CollaborationChat({
             if (!joined && !(canManage && selectedConversation?.channel_visibility === 'private')) return null
             return (
               <div key={member.user_id} className="flex items-center gap-2 border-b border-zinc-100 px-1 py-3">
-                <Circle
-                  className={`size-2 fill-current ${onlineUsers.includes(member.user_id) ? 'text-emerald-500' : 'text-zinc-300'}`}
+                <ProfileAvatar
+                  avatarPath={member.avatar_path}
+                  displayName={member.display_name}
+                  online={onlineUsers.includes(member.user_id)}
+                  showPresence
+                  size="sm"
                 />
                 <span className="min-w-0 flex-1">
                   <strong className="block truncate text-xs">{member.display_name}</strong>
-                  <span className="block truncate text-[11px] text-zinc-400">{member.role_name}</span>
+                  <span className="block truncate text-[11px] text-zinc-400">
+                    {member.headline ?? member.role_name}
+                  </span>
+                  {member.status_text && (
+                    <span className="block truncate text-[11px] text-zinc-500">{member.status_text}</span>
+                  )}
                 </span>
                 {canManage &&
                   selectedConversation?.channel_visibility === 'private' &&

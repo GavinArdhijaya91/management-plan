@@ -23,7 +23,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   metadataBase: getSiteUrl(),
   title: {
-    default: 'Siapin — Rencana Bisnis yang Terhubung dengan Hasil',
+    default: 'Siapin | Rencana Bisnis yang Terhubung dengan Hasil',
     template: '%s | Siapin',
   },
   description: siteConfig.description,
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     locale: siteConfig.locale,
     url: '/',
     siteName: siteConfig.name,
-    title: 'Siapin — Rencana Bisnis yang Terhubung dengan Hasil',
+    title: 'Siapin | Rencana Bisnis yang Terhubung dengan Hasil',
     description: siteConfig.description,
     images: [
       {
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Siapin — Rencana Bisnis yang Terhubung dengan Hasil',
+    title: 'Siapin | Rencana Bisnis yang Terhubung dengan Hasil',
     description: siteConfig.description,
     images: ['/images/siapin.webp'],
   },
@@ -104,7 +104,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="id" data-scroll-behavior="smooth">
+    <html lang="id" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <StructuredData />
       </head>

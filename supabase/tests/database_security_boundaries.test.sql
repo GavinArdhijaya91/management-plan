@@ -7,6 +7,57 @@ select plan(1);
 do $$
 declare
   insecure_object text;
+  actual_authenticated_definer_functions text[];
+  expected_authenticated_definer_functions constant text[] := array[
+    'accept_workspace_invitation(invitation_token text)',
+    'archive_community_post(target_community_post_id uuid, reason text)',
+    'cancel_workspace_deletion(target_deletion_request_id uuid)',
+    'change_workspace_member_role(target_workspace_id uuid, target_user_id uuid, target_workspace_role_id uuid)',
+    'create_chat_channel(target_workspace_id uuid, channel_name text, channel_slug text, channel_visibility chat_channel_visibility, channel_description text)',
+    'create_transaction(target_workspace_id uuid, transaction_type transaction_type, transaction_amount numeric, transaction_date date, request_idempotency_key uuid, transaction_cost_amount numeric, transaction_note text, target_financial_account_id uuid)',
+    'create_workspace(workspace_name text, workspace_slug text)',
+    'create_workspace_invitation(target_workspace_id uuid, invited_email text, target_workspace_role_id uuid, valid_for_days integer)',
+    'create_workspace_role(target_workspace_id uuid, role_name text, role_code text, role_description text, role_hierarchy_rank smallint, role_base_role workspace_role, permission_codes text[])',
+    'decline_workspace_invitation(invitation_token text)',
+    'delete_chat_message(target_message_id uuid)',
+    'delete_workspace_role(target_workspace_role_id uuid)',
+    'edit_chat_message(target_message_id uuid, message_body text)',
+    'execute_workspace_deletion(target_deletion_request_id uuid, confirmation_workspace_name text)',
+    'finalize_business_review(target_business_review_id uuid, acknowledge_warnings boolean)',
+    'generate_my_workspace_reminders(target_workspace_id uuid, reference_time timestamp with time zone)',
+    'get_business_review_readiness(target_business_review_id uuid)',
+    'get_chat_unread_counts(target_workspace_id uuid)',
+    'get_my_workspace_access()',
+    'get_own_publish_quota(target_workspace_id uuid)',
+    'get_public_business_portfolio(requested_public_slug text)',
+    'get_workspace_invitation_preview(invitation_token text)',
+    'get_workspace_member_directory(target_workspace_id uuid)',
+    'mark_all_notifications_read(target_workspace_id uuid)',
+    'mark_chat_conversation_read(target_conversation_id uuid, delivered_through timestamp with time zone, read_through timestamp with time zone)',
+    'mark_notification_read(target_notification_id uuid)',
+    'orchestrate_my_workspace_notifications(target_workspace_id uuid, reference_time timestamp with time zone)',
+    'prepare_transaction_export(target_workspace_id uuid, target_format text, period_start date, period_end date)',
+    'publish_business_portfolio(target_business_portfolio_id uuid, requested_public_slug text, should_publish boolean)',
+    'publish_community_post(target_community_post_id uuid)',
+    'refresh_business_review_snapshots(target_business_review_id uuid)',
+    'register_chat_attachment(target_message_id uuid, target_object_path text, target_original_file_name text, target_media_type text, target_byte_size bigint)',
+    'remove_workspace_member(target_workspace_id uuid, target_user_id uuid)',
+    'request_workspace_deletion(target_workspace_id uuid, confirmation_workspace_name text)',
+    'resend_workspace_invitation(target_invitation_id uuid, valid_for_days integer)',
+    'revoke_workspace_invitation(invitation_id uuid)',
+    'send_chat_message(target_conversation_id uuid, message_body text, request_id uuid, reply_to_id uuid, mentioned_user_ids uuid[])',
+    'set_chat_conversation_membership(target_conversation_id uuid, target_user_id uuid, should_join boolean)',
+    'set_planning_record_archived(target_record_type planning_record_type, target_record_id uuid, should_archive boolean)',
+    'set_workspace_member_status(target_workspace_id uuid, target_user_id uuid, target_status membership_status)',
+    'start_direct_chat(target_workspace_id uuid, target_user_id uuid)',
+    'toggle_chat_message_reaction(target_message_id uuid, reaction_emoji text)',
+    'transfer_workspace_ownership(target_workspace_id uuid, next_owner_user_id uuid, previous_owner_workspace_role_id uuid, request_idempotency_key uuid)',
+    'transition_action_item(target_action_item_id uuid, target_status action_item_status, transition_reason text)',
+    'transition_business_goal(target_business_goal_id uuid, target_status business_goal_status, transition_reason text, replacement_target_date date)',
+    'transition_business_initiative(target_business_initiative_id uuid, target_status business_initiative_status, transition_reason text)',
+    'transition_business_plan(target_business_plan_id uuid, target_status business_plan_status, transition_reason text)',
+    'update_workspace_role(target_workspace_role_id uuid, role_name text, role_description text, role_hierarchy_rank smallint, permission_codes text[])'
+  ];
 begin
   if has_schema_privilege('anon', 'private', 'usage')
     or has_schema_privilege('authenticated', 'private', 'usage') then
@@ -173,6 +224,39 @@ begin
     'execute'
   ) then
     raise exception 'Anonymous public portfolio capability was removed';
+  end if;
+
+  select coalesce(
+    array_agg(
+      format(
+        '%I(%s)',
+        procedure.proname,
+        -- PostgreSQL omits a type's schema when it is visible in the
+        -- session search_path. Normalize public types so CI and linked
+        -- Advisor sessions compare the same identity signature.
+        regexp_replace(
+          pg_get_function_identity_arguments(procedure.oid),
+          'public\.',
+          '',
+          'g'
+        )
+      )
+      order by procedure.proname, pg_get_function_identity_arguments(procedure.oid)
+    ),
+    array[]::text[]
+  )
+  into actual_authenticated_definer_functions
+  from pg_proc procedure
+  join pg_namespace namespace on namespace.oid = procedure.pronamespace
+  where namespace.nspname = 'public'
+    and procedure.prosecdef
+    and has_function_privilege('authenticated', procedure.oid, 'execute');
+
+  if actual_authenticated_definer_functions is distinct from
+    expected_authenticated_definer_functions then
+    raise exception E'Authenticated SECURITY DEFINER allowlist changed.\nExpected: %\nActual: %',
+      expected_authenticated_definer_functions,
+      actual_authenticated_definer_functions;
   end if;
 
   if has_function_privilege(

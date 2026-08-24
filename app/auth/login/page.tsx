@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { login } from '@/app/auth/actions'
 import { AuthFeedback, AuthField, AuthShell } from '@/app/auth/_components/auth-shell'
+import { PasswordField } from '@/app/auth/_components/password-field'
 import { getSafeInternalPath } from '@/lib/auth/redirect'
 
 export default async function LoginPage({
@@ -17,14 +18,7 @@ export default async function LoginPage({
       <form action={login} className="space-y-5">
         <input type="hidden" name="next" value={next} />
         <AuthField label="Email" name="email" type="email" maxLength={254} autoComplete="email" />
-        <AuthField
-          label="Kata sandi"
-          name="password"
-          type="password"
-          minLength={8}
-          maxLength={72}
-          autoComplete="current-password"
-        />
+        <PasswordField label="Kata sandi" minLength={8} maxLength={72} autoComplete="current-password" />
         <button className="app-button min-h-11 w-full justify-center" type="submit">
           Masuk
         </button>

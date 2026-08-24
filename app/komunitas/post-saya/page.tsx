@@ -6,7 +6,12 @@ import { createClient } from '@/lib/supabase/server'
 import { hasWorkspacePermission, requireActiveWorkspace } from '@/lib/workspace/context'
 import { CommunityEmptyState } from '../_components/community-empty-state'
 import { CommunityPostCard } from '../_components/community-post-card'
-import { COMMUNITY_PAGE_SIZE, listOwnCommunityPosts, listWorkspaceArchive } from '../_domain/community-query'
+import {
+  COMMUNITY_MAX_RESULTS,
+  COMMUNITY_PAGE_SIZE,
+  listOwnCommunityPosts,
+  listWorkspaceArchive,
+} from '../_domain/community-query'
 
 const statuses = [
   ['all', 'Semua'],
@@ -28,7 +33,10 @@ export default async function MyCommunityPostsPage({
   const canModerate = hasWorkspacePermission(workspace, 'community_post.moderate')
   const workspaceArchive = params.view === 'workspace-archive' && canModerate
   const status = statuses.some(([value]) => value === params.status) ? (params.status ?? 'all') : 'all'
-  const limit = Math.min(100, Math.max(COMMUNITY_PAGE_SIZE, Number(params.limit) || COMMUNITY_PAGE_SIZE))
+  const limit = Math.min(
+    COMMUNITY_MAX_RESULTS,
+    Math.max(COMMUNITY_PAGE_SIZE, Number(params.limit) || COMMUNITY_PAGE_SIZE),
+  )
   const supabase = await createClient()
   let result = { posts: [] as Awaited<ReturnType<typeof listOwnCommunityPosts>>['posts'], hasMore: false }
   let error = false

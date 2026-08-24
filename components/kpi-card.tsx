@@ -1,3 +1,4 @@
+import { AnimatedNumber } from '@/app/_components/animated-number'
 import { ReactNode } from 'react'
 import { TrendingUp, TrendingDown } from 'lucide-react'
 import type { DashboardTrendDirection } from '@/types'
@@ -5,6 +6,7 @@ import type { DashboardTrendDirection } from '@/types'
 interface KPICardProps {
   title: string
   value: string | number
+  formatValue?: (value: number) => string
   icon: ReactNode
   trend?: {
     direction: DashboardTrendDirection
@@ -12,14 +14,16 @@ interface KPICardProps {
   }
 }
 
-export function KPICard({ title, value, icon, trend }: KPICardProps) {
+export function KPICard({ title, value, formatValue, icon, trend }: KPICardProps) {
   return (
     <div className="flex flex-col border-b border-zinc-200 bg-white p-4 last:border-b-0 sm:[&:nth-child(odd)]:border-r md:p-5 lg:border-b-0 lg:border-r lg:last:border-r-0">
       <div className="flex items-center gap-2 text-zinc-500">
         <span className="[&>svg]:size-[1.1rem]">{icon}</span>
         <p className="text-xs font-medium">{title}</p>
       </div>
-      <p className="app-data mt-4 text-2xl font-semibold text-zinc-950 md:text-[1.7rem]">{value}</p>
+      <p className="app-data mt-4 text-2xl font-semibold text-zinc-950 md:text-[1.7rem]">
+        {typeof value === 'number' ? <AnimatedNumber value={value} format={formatValue} /> : value}
+      </p>
       {trend && (
         <div className="mt-2 flex items-center gap-1">
           {trend.direction === 'up' ? (

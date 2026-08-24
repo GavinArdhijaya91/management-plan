@@ -31,10 +31,10 @@ the same object.
 
 | Application concern | Read from | Write through | Important distinction |
 | --- | --- | --- | --- |
-| Current user identity | `profiles` | own-row update | `display_name` is preferred display identity; `full_name` is the account name. |
-| Personal settings | `profile_preferences` | own-row update | Preferences belong to a user, never a workspace. |
+| Current user identity | `profiles` | `update_my_personal_profile` | `display_name` is preferred display identity; `full_name` is the account name. Avatar and banner use separate identity-owned buckets; headline, status text, and bio travel with the person across workspaces. |
+| Personal settings | `profile_preferences` | `update_my_personal_profile` | Preferences belong to a user, never a workspace. `show_activity_status` controls Realtime Presence publication and is not a stored online flag. |
 | Workspace settings | `workspaces` | permitted update | One private business boundary. |
-| Member and role display | `get_workspace_member_directory` | membership RPCs | Safe identity fields only; do not infer access from `base_role`. |
+| Member and role display | `get_workspace_member_directory` | membership RPCs | Safe identity and activity-display fields only; do not infer access from `base_role`. |
 | Invitation management | `workspace_invitation_access` | invitation RPCs | Invitation role activation is `workspace_role_id`. |
 | Plans and execution | canonical planning tables | lifecycle RPCs plus permitted content writes | Goal is an outcome; initiative is a strategy; action item is work. |
 | Restricted planning | plan hierarchy under `business_plans` | owner-managed role/member grants | Child records inherit plan visibility; managers have no implicit bypass. |
@@ -42,6 +42,11 @@ the same object.
 | Transaction editing | `transactions` | permitted table writes | Amount is unsigned; type supplies financial direction. |
 | Transaction export | `prepare_transaction_export` | canonical RPC only | Requires `transaction.export`, remains workspace-scoped, separates currencies, and records audit evidence. |
 | Transaction result | `transaction_financial_results` | read-only | `net_result` is calculated consistently by the database. |
+| Manual market note | `market_snapshots` | permitted table write | A workspace member's dated observation; never present it as external provider evidence. |
+| External market configuration | `market_product_source_bindings` and controlled source catalogs | permitted binding write; migration-owned catalogs | Provider credentials stay in trusted deployment secrets, never browser-readable rows. |
+| Quantitative external market evidence | `market_observations` | trusted ingestion only | Preserve provider identity, unit, observation/fetch time, canonical URL, and payload hash; browser roles are read-only. |
+| External market documents | `market_source_documents` | trusted ingestion only | Store attribution and canonical URL, not copied article bodies or AI-generated summaries. |
+| External market freshness | `market_source_sync_runs` | trusted ingestion only | Expose bounded outcome and counts; never persist secrets or raw provider errors. |
 | Account balance | `financial_account_balances` | read-only | Native currency only; this is not double-entry accounting. |
 | Category reporting | `transaction_category_actuals` | allocation table | Category allocation may be partial but cannot exceed the transaction. |
 | Portfolio evidence | `business_portfolio_evidence` | portfolio tables | Portfolio remains private and only accepts finalized reviews. |
@@ -84,6 +89,7 @@ database row. Do not cast it to one.
 - Reminder generation and notification read actions
 - Safe workspace member directory reads
 - Workspace transaction export preparation
+- Atomic personal-profile and activity-visibility updates
 
 Direct table mutation is appropriate only where an explicit RLS write policy
 exists and no lifecycle invariant spans multiple tables.

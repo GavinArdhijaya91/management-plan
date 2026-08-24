@@ -18,7 +18,7 @@ export function TypewriterText({
   pauseDuration = 1700,
 }: TypewriterTextProps) {
   const [itemIndex, setItemIndex] = useState(0)
-  const [characterIndex, setCharacterIndex] = useState(0)
+  const [characterIndex, setCharacterIndex] = useState(() => items[0]?.length ?? 0)
   const [deleting, setDeleting] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(false)
   const currentItem = items[itemIndex] ?? ''
