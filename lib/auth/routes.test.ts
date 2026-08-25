@@ -10,6 +10,7 @@ describe('isProtectedPath', () => {
     '/komunitas',
     '/komunitas/post-saya',
     '/planning',
+    '/planning/metrics',
     '/planning/reviews',
     '/portfolio',
     '/workspace',

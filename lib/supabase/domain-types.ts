@@ -11,6 +11,7 @@ export type WorkspaceRoleRow = Tables<'workspace_roles'>
 // Planning and review
 export type BusinessPlanRow = Tables<'business_plans'>
 export type BusinessGoalRow = Tables<'business_goals'>
+export type MetricDefinitionRow = Tables<'metric_definitions'>
 export type GoalTargetRow = Tables<'goal_targets'>
 export type MetricMeasurementRow = Tables<'metric_measurements'>
 export type GoalTargetActualReconciliationRow = Tables<'goal_target_actual_reconciliation'>
