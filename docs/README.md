@@ -6,6 +6,11 @@ Mulai dari [FIGMA_START_HERE.md](./FIGMA_START_HERE.md) untuk dokumentasi desain
 
 ## Arsitektur dan database
 
+- [Planning domain ERD](./PLANNING_DOMAIN_ERD.md) — relasi kanonik Plan–Goal–Initiative–Action, actual result, review, dan invariannya.
+- [Senior review follow-up](./SENIOR_REVIEW_FOLLOW_UP.md) — audit bukti, koreksi asumsi, batas klaim, dan tindak lanjut penilaian eksternal.
+- [Database security test matrix](./SECURITY_TEST_MATRIX.md) — cakupan aktor × aset, bukti kontrak pgTAP, dan gap yang masih terbuka.
+- [Release and hosting strategy](./RELEASE_AND_HOSTING_STRATEGY.md) — positioning self-hosted, tahapan staging, serta gate aksesibilitas dan operasional.
+- [Good first issue candidates](./GOOD_FIRST_ISSUES.md) — backlog tugas pemula yang terukur beserta scope dan acceptance criteria.
 - [Operational monochrome](./OPERATIONAL_MONOCHROME.md) — arah visual hitam putih, batas warna semantik, dan penerapan berbeda untuk landing serta workspace CRUD.
 - [Market data ingestion](./MARKET_DATA_INGESTION.md) — kontrak sumber faktual, integrasi WebAPI BPS, rahasia server, dan proses sinkronisasi.
 - [Market data user guide](./MARKET_DATA_USER_GUIDE.md) — memilih sumber, membaca freshness, memeriksa bukti, dan batas interpretasi statistik.

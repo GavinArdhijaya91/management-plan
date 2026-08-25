@@ -13,6 +13,19 @@ The core feedback loop is:
 Plan -> Goal -> Initiative -> Action -> Actual result -> Review
 ```
 
+See the [planning domain ERD](./docs/PLANNING_DOMAIN_ERD.md) for the canonical
+tables, relationships, and lifecycle boundaries behind this loop.
+
+Siapin is currently an open-source, self-hostable preview. It does not yet
+offer a managed hosted service or production SLA. See the
+[roadmap](./ROADMAP.md) and [release strategy](./docs/RELEASE_AND_HOSTING_STRATEGY.md)
+for the evidence required before that positioning changes.
+
+The project aims to improve access to structured business planning, especially
+for owners and small teams currently relying on disconnected documents. That
+is a product hypothesis and social-impact direction—not evidence that the
+current preview already serves every business or accessibility need.
+
 ![Siapin dashboard preview](./Siapin.png)
 
 ## Technology stack

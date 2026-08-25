@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/GavinArdhijaya91/management-plan/security/advisories/new
+    about: Report vulnerabilities privately; do not disclose tenant data or exploit details in a public issue.
