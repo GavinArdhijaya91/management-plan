@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { createGoalTargetSchema, createMetricDefinitionSchema, createMetricMeasurementSchema } from './schemas'
+import {
+  createGoalTargetSchema,
+  createMetricDefinitionSchema,
+  createMetricMeasurementSchema,
+  createTransactionContributionSchema,
+} from './schemas'
 
 const goalId = 'a1900000-0000-0000-0000-000000000002'
 const metricId = 'a1900000-0000-0000-0000-000000000006'
@@ -65,6 +70,24 @@ describe('planning metric schemas', () => {
         measuredValue: '15000000',
         measuredAt: 'not-a-date',
         source: 'x',
+      }).success,
+    ).toBe(false)
+  })
+
+  it('requires a non-zero signed transaction contribution', () => {
+    expect(
+      createTransactionContributionSchema.safeParse({
+        transactionId: metricId,
+        goalTargetId: goalId,
+        contributionValue: '-25000',
+        note: 'Biaya operasional terkait target.',
+      }).success,
+    ).toBe(true)
+    expect(
+      createTransactionContributionSchema.safeParse({
+        transactionId: metricId,
+        goalTargetId: goalId,
+        contributionValue: '0',
       }).success,
     ).toBe(false)
   })

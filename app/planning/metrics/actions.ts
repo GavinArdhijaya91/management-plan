@@ -6,6 +6,7 @@ import {
   createGoalTarget,
   createMetricDefinition,
   createMetricMeasurement,
+  createTransactionGoalTargetContribution,
   type PlanningMutationResult,
 } from '@/lib/planning/service'
 import { planningErrorMessage } from '@/app/planning/_lib/mutation-feedback'
@@ -13,6 +14,7 @@ import {
   createGoalTargetSchema,
   createMetricDefinitionSchema,
   createMetricMeasurementSchema,
+  createTransactionContributionSchema,
 } from '@/app/planning/metrics/schemas'
 
 function value(formData: FormData, key: string) {
@@ -112,5 +114,25 @@ export async function createMetricMeasurementAction(formData: FormData) {
       note: parsed.data.note,
     }),
     'Hasil aktual berhasil dicatat.',
+  )
+}
+
+export async function createTransactionContributionAction(formData: FormData) {
+  const parsed = createTransactionContributionSchema.safeParse({
+    transactionId: value(formData, 'transactionId'),
+    goalTargetId: value(formData, 'goalTargetId'),
+    contributionValue: value(formData, 'contributionValue'),
+    note: value(formData, 'note'),
+  })
+  if (!parsed.success) invalid(parsed.error.issues[0]?.message)
+
+  finish(
+    await createTransactionGoalTargetContribution({
+      transaction_id: parsed.data.transactionId,
+      goal_target_id: parsed.data.goalTargetId,
+      contribution_value: parsed.data.contributionValue,
+      note: parsed.data.note,
+    }),
+    'Kontribusi transaksi berhasil dihubungkan ke target.',
   )
 }

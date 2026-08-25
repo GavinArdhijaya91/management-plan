@@ -51,3 +51,13 @@ export const createMetricMeasurementSchema = z.object({
   source: z.string().trim().min(2).max(50),
   note: optionalText(500),
 })
+
+export const createTransactionContributionSchema = z.object({
+  transactionId: databaseUuid,
+  goalTargetId: databaseUuid,
+  contributionValue: z.coerce
+    .number()
+    .finite()
+    .refine((value) => value !== 0, 'Kontribusi tidak boleh nol.'),
+  note: optionalText(500),
+})

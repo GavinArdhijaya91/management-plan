@@ -1,11 +1,12 @@
 import Link from 'next/link'
-import { Activity, ArrowLeft, ClipboardCheck, Database, Gauge, Plus, Target } from 'lucide-react'
+import { Activity, ArrowLeft, ClipboardCheck, Database, Gauge, Link2, Plus, Target } from 'lucide-react'
 import { Header } from '@/components/header'
 import { getMetricBoard } from '@/lib/planning/service'
 import {
   createGoalTargetAction,
   createMetricDefinitionAction,
   createMetricMeasurementAction,
+  createTransactionContributionAction,
 } from '@/app/planning/metrics/actions'
 import type { MetricDefinitionRow } from '@/lib/supabase/domain-types'
 
@@ -36,6 +37,30 @@ function formatValue(value: number | null, metric?: MetricDefinitionRow) {
     : `${formatted}${metric?.unit_label ? ` ${metric.unit_label}` : ''}`
 }
 
+function formatTransactionValue(value: number | null, currencyCode: string | null) {
+  if (value === null) return 'Nilai tidak tersedia'
+  return new Intl.NumberFormat('id-ID', {
+    style: currencyCode ? 'currency' : 'decimal',
+    currency: currencyCode ?? undefined,
+    maximumFractionDigits: 2,
+  }).format(value)
+}
+
+function reconciliationLabel(status: string | null | undefined) {
+  switch (status) {
+    case 'reconciled':
+      return 'Selaras'
+    case 'attention':
+      return 'Perlu diperiksa'
+    case 'missing_authoritative':
+      return 'Sumber utama belum ada'
+    case 'missing_comparison':
+      return 'Pembanding belum ada'
+    default:
+      return 'Belum tersedia'
+  }
+}
+
 interface MetricPageProps {
   searchParams: Promise<{ error?: string; success?: string }>
 }
@@ -43,6 +68,7 @@ interface MetricPageProps {
 export default async function MetricPage({ searchParams }: MetricPageProps) {
   const [{ error, success }, board] = await Promise.all([searchParams, getMetricBoard()])
   const canManage = board.workspace.permission_codes.includes('metric.manage')
+  const canLinkTransactions = canManage && board.workspace.permission_codes.includes('transaction.write')
   const metricById = new Map(board.metrics.map((metric) => [metric.id, metric]))
   const goalById = new Map(board.goals.map((goal) => [goal.id, goal]))
   const planById = new Map(board.plans.map((plan) => [plan.id, plan]))
@@ -96,7 +122,7 @@ export default async function MetricPage({ searchParams }: MetricPageProps) {
         )}
 
         {canManage && (
-          <section aria-label="Input pengukuran" className="mb-7 grid gap-4 lg:grid-cols-3">
+          <section aria-label="Input pengukuran" className="mb-7 grid gap-4 lg:grid-cols-2">
             <EntryPanel
               icon={Gauge}
               title="1. Definisikan metrik"
@@ -306,6 +332,70 @@ export default async function MetricPage({ searchParams }: MetricPageProps) {
                 <DependencyEmpty text="Tetapkan sekurangnya satu target terukur dahulu." />
               )}
             </EntryPanel>
+
+            {canLinkTransactions && (
+              <EntryPanel
+                icon={Link2}
+                title="4. Hubungkan transaksi"
+                description="Gunakan transaksi sebagai bukti aktual atau pembanding."
+                defaultOpen={false}
+              >
+                {board.targets.length && board.transactions.length ? (
+                  <form action={createTransactionContributionAction} className="grid gap-3">
+                    <label className={labelClass}>
+                      Transaksi
+                      <select name="transactionId" required defaultValue="" className={fieldClass}>
+                        <option value="" disabled>
+                          Pilih transaksi
+                        </option>
+                        {board.transactions.map((transaction) =>
+                          transaction.transaction_id ? (
+                            <option key={transaction.transaction_id} value={transaction.transaction_id}>
+                              {transaction.transaction_date} -{' '}
+                              {transaction.transaction_type === 'sale' ? 'Penjualan' : 'Pengeluaran'} -{' '}
+                              {formatTransactionValue(transaction.net_result, transaction.currency_code)}
+                            </option>
+                          ) : null,
+                        )}
+                      </select>
+                    </label>
+                    <label className={labelClass}>
+                      Target terukur
+                      <select name="goalTargetId" required defaultValue="" className={fieldClass}>
+                        <option value="" disabled>
+                          Pilih target
+                        </option>
+                        {board.targets.map((target) => {
+                          const goal = goalById.get(target.business_goal_id)
+                          const metric = metricById.get(target.metric_definition_id)
+                          return (
+                            <option key={target.id} value={target.id}>
+                              {goal?.title} - {metric?.name}
+                            </option>
+                          )
+                        })}
+                      </select>
+                    </label>
+                    <label className={labelClass}>
+                      Nilai kontribusi bertanda
+                      <input type="number" name="contributionValue" step="any" required className={fieldClass} />
+                      <span className="text-xs font-normal leading-5 text-zinc-500">
+                        Gunakan nilai positif untuk penambahan dan negatif untuk pengurang. Nilai tidak boleh nol.
+                      </span>
+                    </label>
+                    <label className={labelClass}>
+                      Catatan hubungan
+                      <textarea name="note" maxLength={500} rows={2} className={fieldClass} />
+                    </label>
+                    <button type="submit" className="app-button w-full">
+                      Hubungkan transaksi
+                    </button>
+                  </form>
+                ) : (
+                  <DependencyEmpty text="Target terukur dan transaksi workspace diperlukan sebelum membuat hubungan." />
+                )}
+              </EntryPanel>
+            )}
           </section>
         )}
 
@@ -332,10 +422,13 @@ export default async function MetricPage({ searchParams }: MetricPageProps) {
                 const metric = metricById.get(target.metric_definition_id)
                 const actual = actualByTargetId.get(target.id)
                 const latest = latestMeasurementByTargetId.get(target.id)
+                const contributionCount = board.contributions.filter(
+                  (contribution) => contribution.goal_target_id === target.id,
+                ).length
                 return (
                   <article
                     key={target.id}
-                    className="grid gap-4 bg-white p-5 lg:grid-cols-[minmax(0,1fr)_repeat(3,minmax(8rem,auto))] lg:items-center"
+                    className="grid gap-4 bg-white p-5 xl:grid-cols-[minmax(0,1fr)_repeat(4,minmax(8rem,auto))] xl:items-center"
                   >
                     <div>
                       <p className="text-xs text-zinc-500">
@@ -346,17 +439,16 @@ export default async function MetricPage({ searchParams }: MetricPageProps) {
                         Sumber utama:{' '}
                         {metric?.authoritative_source === 'transaction' ? 'transaksi workspace' : 'pengukuran manual'}
                         {latest ? ` · Bukti terakhir: ${latest.source}` : ''}
+                        {contributionCount ? ` · ${contributionCount} transaksi terhubung` : ''}
                       </p>
                     </div>
                     <Measure label="Target" value={formatValue(target.target_value, metric)} />
                     <Measure label="Aktual" value={formatValue(actual?.actual_value ?? null, metric)} />
+                    <Measure label="Manual" value={formatValue(actual?.manual_actual_value ?? null, metric)} />
+                    <Measure label="Transaksi" value={formatValue(actual?.transaction_actual_value ?? null, metric)} />
                     <Measure
-                      label="Progress"
-                      value={
-                        actual?.progress_percent === null || actual?.progress_percent === undefined
-                          ? 'Belum tersedia'
-                          : `${new Intl.NumberFormat('id-ID', { maximumFractionDigits: 1 }).format(actual.progress_percent)}%`
-                      }
+                      label="Rekonsiliasi"
+                      value={reconciliationLabel(actual?.reconciliation_status)}
                       attention={actual?.reconciliation_status === 'attention'}
                     />
                   </article>

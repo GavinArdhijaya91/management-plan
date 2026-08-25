@@ -158,37 +158,55 @@ export async function getMetricBoard() {
   ])
   const supabase = await createClient()
 
-  const [plansResult, goalsResult, metricsResult, targetsResult, measurementsResult, actualsResult] = await Promise.all(
-    [
-      supabase
-        .from('business_plans')
-        .select('*')
-        .eq('workspace_id', workspace.workspace_id)
-        .order('updated_at', { ascending: false }),
-      supabase
-        .from('business_goals')
-        .select('*')
-        .eq('workspace_id', workspace.workspace_id)
-        .is('archived_at', null)
-        .order('target_date', { ascending: true }),
-      supabase
-        .from('metric_definitions')
-        .select('*')
-        .eq('workspace_id', workspace.workspace_id)
-        .order('name', { ascending: true }),
-      supabase
-        .from('goal_targets')
-        .select('*')
-        .eq('workspace_id', workspace.workspace_id)
-        .order('target_date', { ascending: true }),
-      supabase
-        .from('metric_measurements')
-        .select('*')
-        .eq('workspace_id', workspace.workspace_id)
-        .order('measured_at', { ascending: false }),
-      supabase.from('goal_target_actual_reconciliation').select('*').eq('workspace_id', workspace.workspace_id),
-    ],
-  )
+  const [
+    plansResult,
+    goalsResult,
+    metricsResult,
+    targetsResult,
+    measurementsResult,
+    actualsResult,
+    transactionsResult,
+    contributionsResult,
+  ] = await Promise.all([
+    supabase
+      .from('business_plans')
+      .select('*')
+      .eq('workspace_id', workspace.workspace_id)
+      .order('updated_at', { ascending: false }),
+    supabase
+      .from('business_goals')
+      .select('*')
+      .eq('workspace_id', workspace.workspace_id)
+      .is('archived_at', null)
+      .order('target_date', { ascending: true }),
+    supabase
+      .from('metric_definitions')
+      .select('*')
+      .eq('workspace_id', workspace.workspace_id)
+      .order('name', { ascending: true }),
+    supabase
+      .from('goal_targets')
+      .select('*')
+      .eq('workspace_id', workspace.workspace_id)
+      .order('target_date', { ascending: true }),
+    supabase
+      .from('metric_measurements')
+      .select('*')
+      .eq('workspace_id', workspace.workspace_id)
+      .order('measured_at', { ascending: false }),
+    supabase.from('goal_target_actual_reconciliation').select('*').eq('workspace_id', workspace.workspace_id),
+    supabase
+      .from('transaction_financial_results')
+      .select('*')
+      .eq('workspace_id', workspace.workspace_id)
+      .order('transaction_date', { ascending: false })
+      .limit(100),
+    supabase
+      .from('transaction_goal_target_contributions')
+      .select('*')
+      .eq('workspace_id', workspace.workspace_id)
+      .order('created_at', { ascending: false }),
+  ])
 
   const error =
     plansResult.error ??
@@ -196,7 +214,9 @@ export async function getMetricBoard() {
     metricsResult.error ??
     targetsResult.error ??
     measurementsResult.error ??
-    actualsResult.error
+    actualsResult.error ??
+    transactionsResult.error ??
+    contributionsResult.error
   if (error) throw new Error(`Unable to load metric workspace: ${error.message}`)
 
   return {
@@ -208,6 +228,8 @@ export async function getMetricBoard() {
     targets: targetsResult.data ?? [],
     measurements: measurementsResult.data ?? [],
     actuals: actualsResult.data ?? [],
+    transactions: transactionsResult.data ?? [],
+    contributions: contributionsResult.data ?? [],
   }
 }
 
@@ -240,6 +262,18 @@ export async function createMetricMeasurement(
 ): Promise<PlanningMutationResult> {
   const { user, workspace, supabase } = await planningMutationContext()
   const { error } = await supabase.from('metric_measurements').insert({
+    ...input,
+    workspace_id: workspace.workspace_id,
+    created_by: user.id,
+  })
+  return { error }
+}
+
+export async function createTransactionGoalTargetContribution(
+  input: Omit<TablesInsert<'transaction_goal_target_contributions'>, 'workspace_id' | 'created_by'>,
+): Promise<PlanningMutationResult> {
+  const { user, workspace, supabase } = await planningMutationContext()
+  const { error } = await supabase.from('transaction_goal_target_contributions').insert({
     ...input,
     workspace_id: workspace.workspace_id,
     created_by: user.id,
