@@ -121,7 +121,7 @@ integration:
 | Create and assign action | Integrated | `/planning` creates action items using permission-aware member choices. |
 | Run lifecycle transitions | Integrated | Plan, goal, initiative, action, and archive mutations use canonical RPCs. |
 | Define metric and goal target | Integrated | `/planning/metrics` creates permission-bound definitions and measurable targets for visible goals. |
-| Record and reconcile actual | Partial | `/planning/metrics` records sourced manual measurements and renders canonical reconciliation; transaction contribution management remains outside the UI. |
+| Record and reconcile actual | Integrated | `/manajemen` records idempotent workspace transactions, while `/planning/metrics` links signed contributions to targets and renders canonical manual-versus-transaction reconciliation. |
 | Prepare and finalize review | Integrated | `/planning/reviews` creates drafts, checks readiness, refreshes snapshots, and finalizes through canonical RPCs. |
 | Curate portfolio evidence | Integrated | `/portfolio` reads finalized evidence and manages explicit publication without exposing raw workspace rows. |
 | Award achievements | Database-ready | Database-owned achievement rules exist; the application display flow is not integrated. |
@@ -138,14 +138,15 @@ The authenticated application now implements this narrow path:
 
 1. Add a metric definition to an existing workspace.
 2. Attach a measurable goal target to an existing business goal.
-3. Record an actual measurement and show its source.
-4. Display target versus actual for one compatible period.
-5. Create a business review for the plan.
-6. Finalize the review through the canonical RPC.
-7. Display the immutable review evidence.
+3. Record an idempotent workspace transaction.
+4. Record an actual measurement and show its source.
+5. Link a signed transaction contribution to the same target.
+6. Display target, manual actual, transaction actual, and reconciliation status.
+7. Create a business review for the plan.
+8. Finalize the review through the canonical RPC.
+9. Display the immutable review evidence.
 
-The remaining integration work is transaction contribution management and an
-authenticated E2E journey that proves the complete loop against a clean
+The authenticated E2E journey now proves this complete loop against a clean
 database. Achievement display remains a later priority.
 
 ## Definition of done for the slice

@@ -10,7 +10,7 @@ promise of dates, production availability, or a managed hosted service.
 - [x] Compare compatible target and actual periods.
 - [x] Prepare and finalize a review through the canonical RPC.
 - [x] Render the immutable evidence snapshot.
-- [ ] Cover the happy path and unauthorized path in database and E2E tests.
+- [x] Cover the happy path and unauthorized path in database and E2E tests.
 
 ## Next — validate collaboration and accessibility
 
