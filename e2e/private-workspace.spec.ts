@@ -119,7 +119,7 @@ test.describe.serial('private workspace journey', () => {
     await expect(page).toHaveURL(/\/planning\/metrics\?success=/)
 
     await page.getByLabel('Goal').selectOption({ label: 'Naikkan omzet E2E' })
-    await page.getByLabel('Metrik').selectOption({ label: 'Omzet E2E' })
+    await page.getByLabel('Metrik', { exact: true }).selectOption({ label: 'Omzet E2E' })
     await page.getByLabel('Nilai awal').fill('1000000')
     await page.getByLabel('Nilai target').fill('2000000')
     await page.getByRole('button', { name: 'Tambahkan target' }).click()
