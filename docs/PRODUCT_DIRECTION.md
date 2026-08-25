@@ -88,8 +88,7 @@ Metrics use a hybrid strategy:
 - Each metric definition must identify its authoritative source.
 - A secondary source is a comparison signal, not an automatic overwrite.
 - Material differences produce a warning for an authorized reviewer.
-- Finalizing a business review freezes the evidence snapshot used by that
-  review.
+- Finalizing a business review freezes the evidence snapshot used by that review.
 
 Hybrid does not mean averaging every source. Combining values is only valid
 when their unit, period, aggregation rule, and business meaning are compatible.
@@ -121,19 +120,21 @@ integration:
 | Create initiative | Integrated | `/planning` creates a linked or explicitly unlinked initiative. |
 | Create and assign action | Integrated | `/planning` creates action items using permission-aware member choices. |
 | Run lifecycle transitions | Integrated | Plan, goal, initiative, action, and archive mutations use canonical RPCs. |
-| Define metric and goal target | Database-ready | Tables and security contracts exist; the application flow is not integrated. |
-| Record and reconcile actual | Database-ready | Measurement and transaction linkage exist; the application flow is not integrated. |
-| Prepare and finalize review | Database-ready | Review lifecycle and immutable snapshots exist; the application flow is not integrated. |
-| Curate portfolio evidence | Database-ready | Private portfolio and evidence contracts exist; the application flow is not integrated. |
+| Define metric and goal target | Integrated | `/planning/metrics` creates permission-bound definitions and measurable targets for visible goals. |
+| Record and reconcile actual | Partial | `/planning/metrics` records sourced manual measurements and renders canonical reconciliation; transaction contribution management remains outside the UI. |
+| Prepare and finalize review | Integrated | `/planning/reviews` creates drafts, checks readiness, refreshes snapshots, and finalizes through canonical RPCs. |
+| Curate portfolio evidence | Integrated | `/portfolio` reads finalized evidence and manages explicit publication without exposing raw workspace rows. |
 | Award achievements | Database-ready | Database-owned achievement rules exist; the application display flow is not integrated. |
-| Business operations pages | Partial | Private routes read Supabase workspace data; demo CRUD remains isolated under `/demo/*` while some private write workflows are still pending. |
+| Public community | Integrated | Authenticated workspaces explicitly publish bounded posts to a cross-tenant feed; drafts, private workspace rows, and publication evidence remain protected. |
+| Personal profile and presence | Integrated | Users control public identity fields and whether activity presence is disclosed to workspace collaborators. |
+| Decision dashboard | Partial | `/dashboard` surfaces target reconciliation, overdue work, draft reviews, and recent financial activity; deeper period analysis remains pending. |
 
 `Database-ready` means that schema, authorization, and contracts exist. It does
 not mean the user journey is complete.
 
-## Next vertical slice
+## Current vertical slice
 
-The next business-logic phase should complete one narrow path in this order:
+The authenticated application now implements this narrow path:
 
 1. Add a metric definition to an existing workspace.
 2. Attach a measurable goal target to an existing business goal.
@@ -143,8 +144,9 @@ The next business-logic phase should complete one narrow path in this order:
 6. Finalize the review through the canonical RPC.
 7. Display the immutable review evidence.
 
-Only after this slice works end to end should portfolio presentation and
-achievement display become application priorities.
+The remaining integration work is transaction contribution management and an
+authenticated E2E journey that proves the complete loop against a clean
+database. Achievement display remains a later priority.
 
 ## Definition of done for the slice
 
@@ -166,10 +168,9 @@ The slice is complete when:
 The following remain outside the current vertical slice:
 
 - Lead generation or CRM workflows
-- Public community posts and collaboration threads
 - Import/export operations
-- Presence status
-- Public portfolio publishing
+- Public comment threads and cross-workspace direct messaging
+- Automated recommendations or AI-generated business decisions
 - Enterprise integrations
 
 Research templates may help refine product hypotheses and positioning, but they

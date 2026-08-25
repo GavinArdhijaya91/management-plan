@@ -86,5 +86,6 @@ teams record necessary operational work without inventing a false outcome.
 | Archived evidence preservation | `20260728100000_preserve_archived_planning_evidence.sql` |
 | Final review contracts | `20260730120000_business_review_finalization_readiness.sql` |
 
-Database-ready does not mean journey-ready. The current application coverage
-and next vertical slice are tracked in [PRODUCT_DIRECTION.md](./PRODUCT_DIRECTION.md).
+Database-ready does not mean journey-ready. The current application coverage,
+including the authenticated metric and review surfaces, is tracked in
+[PRODUCT_DIRECTION.md](./PRODUCT_DIRECTION.md).

@@ -5,11 +5,11 @@ promise of dates, production availability, or a managed hosted service.
 
 ## Now — complete the core evidence loop
 
-- [ ] Define a metric and target from the authenticated planning journey.
-- [ ] Record an actual result with an explicit source.
-- [ ] Compare compatible target and actual periods.
-- [ ] Prepare and finalize a review through the canonical RPC.
-- [ ] Render the immutable evidence snapshot.
+- [x] Define a metric and target from the authenticated planning journey.
+- [x] Record an actual result with an explicit source.
+- [x] Compare compatible target and actual periods.
+- [x] Prepare and finalize a review through the canonical RPC.
+- [x] Render the immutable evidence snapshot.
 - [ ] Cover the happy path and unauthorized path in database and E2E tests.
 
 ## Next — validate collaboration and accessibility
