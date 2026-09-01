@@ -134,7 +134,9 @@ test.describe.serial('private workspace journey', () => {
     await actualComposer.getByLabel('Catatan bukti').fill('Observasi sintetis untuk kontrak browser.')
     await actualComposer.getByRole('button', { name: 'Catat hasil aktual' }).click()
     await expect(page).toHaveURL(/\/planning\/metrics\?success=/)
-    await expect(page.getByText(/1\.500\.000/)).toBeVisible()
+
+    const measurementRegister = page.getByRole('region', { name: 'Target versus aktual' })
+    await expect(measurementRegister.getByText('Manual', { exact: true }).locator('..')).toContainText('1.500.000')
 
     const contributionComposer = page.locator('details').filter({ hasText: '4. Hubungkan transaksi' })
     await contributionComposer.getByText('4. Hubungkan transaksi', { exact: true }).click()
@@ -145,7 +147,7 @@ test.describe.serial('private workspace journey', () => {
     await contributionComposer.getByRole('button', { name: 'Hubungkan transaksi' }).click()
     await expect(page).toHaveURL(/\/planning\/metrics\?success=/)
     await expect(page.getByRole('status')).toContainText('Kontribusi transaksi berhasil dihubungkan ke target.')
-    await expect(page.getByText('Selaras')).toBeVisible()
+    await expect(measurementRegister.getByText('Rekonsiliasi', { exact: true }).locator('..')).toContainText('Selaras')
 
     await page.getByRole('link', { name: 'Buka evaluasi' }).click()
     await expect(page).toHaveURL(/\/planning\/reviews$/)
