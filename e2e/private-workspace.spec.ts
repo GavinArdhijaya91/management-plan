@@ -118,11 +118,12 @@ test.describe.serial('private workspace journey', () => {
     await page.getByRole('button', { name: 'Simpan metrik' }).click()
     await expect(page).toHaveURL(/\/planning\/metrics\?success=/)
 
-    await page.getByLabel('Goal').selectOption({ label: 'Naikkan omzet E2E' })
-    await page.getByLabel('Metrik', { exact: true }).selectOption({ label: 'Omzet E2E' })
-    await page.getByLabel('Nilai awal').fill('1000000')
-    await page.getByLabel('Nilai target').fill('2000000')
-    await page.getByRole('button', { name: 'Tambahkan target' }).click()
+    const targetComposer = page.locator('details').filter({ hasText: '2. Tetapkan target' })
+    await targetComposer.getByLabel('Goal').selectOption({ label: 'Naikkan omzet E2E' })
+    await targetComposer.getByLabel('Metrik').selectOption({ label: 'Omzet E2E' })
+    await targetComposer.getByLabel('Nilai awal').fill('1000000')
+    await targetComposer.getByLabel('Nilai target').fill('2000000')
+    await targetComposer.getByRole('button', { name: 'Tambahkan target' }).click()
     await expect(page).toHaveURL(/\/planning\/metrics\?success=/)
 
     await page.getByLabel('Target terukur').selectOption({ label: 'Naikkan omzet E2E - Omzet E2E' })
