@@ -1,3 +1,6 @@
+import { randomUUID } from 'node:crypto'
+import { Plus } from 'lucide-react'
+import { createPrivateTransactionAction } from '@/app/manajemen/actions'
 import { PrivateTransactionExportButton } from '@/app/manajemen/_components/private-transaction-export-button'
 import { Header } from '@/components/header'
 import { createClient } from '@/lib/supabase/server'
@@ -8,8 +11,14 @@ function formatWorkspaceAmount(value: number, currencyCode: string | null) {
   return new Intl.NumberFormat('id-ID', { style: 'currency', currency: currencyCode }).format(value)
 }
 
-export default async function ManagementPage() {
+export default async function ManagementPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; success?: string }>
+}) {
   const workspace = await requireActiveWorkspace('/manajemen')
+  const feedback = await searchParams
+  const canWrite = workspace.permission_codes.includes('transaction.write')
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('transaction_financial_results')
@@ -30,6 +39,82 @@ export default async function ManagementPage() {
           </div>
           <PrivateTransactionExportButton />
         </div>
+
+        {feedback.success ? (
+          <p
+            role="status"
+            className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800"
+          >
+            {feedback.success}
+          </p>
+        ) : null}
+        {feedback.error ? (
+          <p role="alert" className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            {feedback.error}
+          </p>
+        ) : null}
+
+        {canWrite ? (
+          <details className="app-card group mt-6 p-5">
+            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 font-medium marker:content-none">
+              <span className="inline-flex items-center gap-2">
+                <Plus className="size-4" aria-hidden="true" />
+                Tambah transaksi
+              </span>
+              <span className="text-xs font-normal text-zinc-500 group-open:hidden">Buka formulir</span>
+            </summary>
+            <form action={createPrivateTransactionAction} className="mt-5 border-t border-zinc-200 pt-5">
+              <input type="hidden" name="idempotencyKey" value={randomUUID()} />
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <label className="text-sm font-medium">
+                  Tanggal
+                  <input required name="transactionDate" type="date" className="app-input mt-1.5 w-full" />
+                </label>
+                <label className="text-sm font-medium">
+                  Tipe
+                  <select name="transactionType" className="app-input mt-1.5 w-full">
+                    <option value="sale">Penjualan</option>
+                    <option value="expense">Pengeluaran</option>
+                  </select>
+                </label>
+                <label className="text-sm font-medium">
+                  Jumlah
+                  <input
+                    required
+                    name="amount"
+                    type="number"
+                    inputMode="decimal"
+                    min="0.01"
+                    step="0.01"
+                    className="app-input mt-1.5 w-full"
+                  />
+                </label>
+                <label className="text-sm font-medium">
+                  Biaya pokok
+                  <input
+                    required
+                    name="costAmount"
+                    type="number"
+                    inputMode="decimal"
+                    min="0"
+                    step="0.01"
+                    defaultValue="0"
+                    className="app-input mt-1.5 w-full"
+                  />
+                </label>
+              </div>
+              <label className="mt-4 block text-sm font-medium">
+                Catatan <span className="font-normal text-zinc-500">(opsional)</span>
+                <textarea name="note" rows={2} maxLength={500} className="app-input mt-1.5 w-full" />
+              </label>
+              <div className="mt-4 flex justify-end">
+                <button type="submit" className="app-button">
+                  Simpan transaksi
+                </button>
+              </div>
+            </form>
+          </details>
+        ) : null}
 
         {error ? (
           <p role="alert" className="mt-6 rounded-xl bg-red-50 p-4 text-sm text-red-700">

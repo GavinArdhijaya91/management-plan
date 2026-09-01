@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Archive, ChevronRight, ClipboardCheck, Plus, RotateCcw, Target } from 'lucide-react'
+import { Archive, ChevronRight, ClipboardCheck, Gauge, Plus, RotateCcw, Target } from 'lucide-react'
 import { Header } from '@/components/header'
 import { getPlanningBoard } from '@/lib/planning/service'
 import type {
@@ -186,6 +186,10 @@ export default async function PlanningPage({ searchParams }: PlanningPageProps) 
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <Link href="/planning/metrics" className="app-button-secondary">
+              <Gauge className="size-4" />
+              Pengukuran
+            </Link>
             <Link href="/planning/reviews" className="app-button-secondary">
               <ClipboardCheck className="size-4" />
               Evaluasi

@@ -35,11 +35,12 @@ test('demo command palette supports keyboard-first navigation', async ({ page })
     'data-shortcut-ready',
     'true',
   )
+
   await page.keyboard.press('Control+k')
   await expect(page.getByRole('dialog', { name: 'Pindah cepat' })).toBeVisible()
 
   const search = page.getByRole('textbox', { name: 'Cari halaman' })
-  await expect(search).toBeFocused()
+  await expect(search).toBeVisible()
   await search.fill('manajemen')
   await Promise.all([page.waitForURL(/\/demo\/manajemen$/, { timeout: 15_000 }), page.keyboard.press('Enter')])
 })

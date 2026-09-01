@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Globe2, Plus } from 'lucide-react'
+import { Globe2, Plus, ShieldCheck } from 'lucide-react'
 import { Header } from '@/components/header'
 import { createClient } from '@/lib/supabase/server'
 import { requireActiveWorkspace } from '@/lib/workspace/context'
@@ -71,6 +71,16 @@ export default async function CommunityPage({
             </Link>
           </div>
         </div>
+        <aside className="mt-5 grid gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 sm:grid-cols-[auto_1fr] sm:items-start">
+          <ShieldCheck className="mt-0.5 size-4 text-zinc-600" aria-hidden="true" />
+          <div>
+            <p className="text-sm font-semibold text-zinc-800">Publik lintas workspace, privat untuk operasi usaha</p>
+            <p className="mt-1 text-xs leading-5 text-zinc-500">
+              Feed hanya menampilkan post yang diterbitkan secara eksplisit. Planning, transaksi, anggota, chat, dan
+              audit workspace tidak ikut dipublikasikan.
+            </p>
+          </div>
+        </aside>
         <CommunityCategoryFilter categories={categories} selectedId={categoryId} />
         {loadError ? (
           <p role="alert" className="mt-6 rounded-xl bg-red-50 p-4 text-sm text-red-700">
