@@ -1,9 +1,12 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { IBM_Plex_Mono, IBM_Plex_Sans } from 'next/font/google'
+import { cookies, headers } from 'next/headers'
 import './globals.css'
 import { StructuredData } from '@/app/_components/structured-data'
 import { LanguageProvider } from '@/app/_i18n/language-provider'
+import { getDictionary } from '@/app/_i18n/dictionaries'
+import { LOCALE_COOKIE, resolveLocale } from '@/app/_i18n/locale'
 import { getSiteUrl, siteConfig } from '@/lib/site'
 
 const ibmPlexSans = IBM_Plex_Sans({
@@ -98,20 +101,29 @@ export const viewport: Viewport = {
   userScalable: true,
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const cookieStore = await cookies()
+  const headerStore = await headers()
+  const cookieLocale = cookieStore.get(LOCALE_COOKIE)?.value ?? null
+  const acceptLanguage = headerStore.get('accept-language')
+  const locale = resolveLocale({ cookieLocale, acceptLanguageHeader: acceptLanguage })
+  const dictionary = await getDictionary(locale)
+
   return (
-    <html lang="id" data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html lang={locale} data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <StructuredData />
       </head>
       <body
         className={`${ibmPlexSans.variable} ${ibmPlexMono.variable} min-h-dvh bg-background text-foreground antialiased`}
       >
-        <LanguageProvider>{children}</LanguageProvider>
+        <LanguageProvider initialLocale={locale} initialDictionary={dictionary}>
+          {children}
+        </LanguageProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
