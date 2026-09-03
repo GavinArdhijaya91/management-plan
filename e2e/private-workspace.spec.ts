@@ -76,7 +76,7 @@ test.describe.serial('private workspace journey', () => {
     await page.getByRole('dialog', { name: 'Hapus agenda?' }).getByRole('button', { name: 'Hapus agenda' }).click()
     await expect(page.getByText('Bayar supplier E2E diperbarui')).toHaveCount(0)
 
-    await page.goto('/management')
+<    await page.goto('/management')
     await page.getByText('Tambah transaksi', { exact: true }).click()
     await page.getByLabel('Tanggal').fill('2026-08-25')
     await page.getByLabel('Tipe').selectOption('sale')
@@ -84,7 +84,7 @@ test.describe.serial('private workspace journey', () => {
     await page.getByLabel('Biaya pokok').fill('500000')
     await page.getByLabel('Catatan').fill('Penjualan E2E untuk bukti target omzet.')
     await page.getByRole('button', { name: 'Simpan transaksi' }).click()
-    await expect(page).toHaveURL(/\/management\?success=/)
+<    await expect(page).toHaveURL(/\/management\?success=/)
     await expect(page.getByRole('status')).toContainText('Transaksi berhasil ditambahkan.')
     await expect(page.getByText(/1\.500\.000/)).toBeVisible()
 
