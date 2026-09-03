@@ -5,6 +5,7 @@ allowBuilds:
   unrs-resolver: true
 
 overrides:
+  browserslist@<4.28.7: 4.28.7
   dompurify@<3.4.13: 3.4.13
   nanoid@<3.3.18: 3.3.18
   postcss@<8.5.23: 8.5.23
