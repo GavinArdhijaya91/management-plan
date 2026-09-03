@@ -16,7 +16,7 @@ export default async function ManagementPage({
 }: {
   searchParams: Promise<{ error?: string; success?: string }>
 }) {
-<  const workspace = await requireActiveWorkspace('/management')
+  const workspace = await requireActiveWorkspace('/management')
   const feedback = await searchParams
   const canWrite = workspace.permission_codes.includes('transaction.write')
   const supabase = await createClient()
