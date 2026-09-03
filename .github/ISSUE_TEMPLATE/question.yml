@@ -1,0 +1,33 @@
+name: '💬 Question'
+description: Ask a question — setup, docs, or how something works.
+title: 'question: '
+labels:
+  - question
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for asking! We will try to answer within a few days. Please check the [README](https://github.com/GavinArdhijaya91/management-plan/blob/main/README.md) and [docs](https://github.com/GavinArdhijaya91/management-plan/blob/main/docs/README.md) first — your answer might already be there.
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      description: What would you like to know? Be as specific as you can.
+      placeholder: |
+        I tried to ... and I expected ... but I got ...
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: What have you tried so far?
+      description: Links, docs, or steps you already checked.
+    validations:
+      required: false
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed any secrets, tokens, passwords, or private business data.
+          required: true

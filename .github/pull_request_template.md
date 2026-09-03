@@ -1,32 +1,38 @@
-## Summary
+## What does this PR do?
 
-<!-- Explain the user-visible or engineering outcome. -->
+<!-- In 1–2 simple sentences: what problem does this solve and who benefits? -->
 
-## Validation
+## How to check it
 
-- [ ] Relevant automated tests pass.
-- [ ] Typecheck, lint, and format checks pass.
-- [ ] Production build passes when application code changes.
-- [ ] No credentials, private business data, or generated environment files are included.
-- [ ] `pnpm security:secrets` passes for the tracked repository tree.
+<!-- Steps for a reviewer to verify: e.g. 1. pnpm dev 2. Open /planning 3. ... -->
+<!-- Add screenshots or a short video for UI changes -->
 
-## Security and data boundary
+## Checklist
 
-- [ ] The change does not broaden anonymous access unintentionally.
-- [ ] Workspace-scoped reads and writes preserve tenant isolation.
-- [ ] New mutations have explicit authorization and a negative test.
-- [ ] New public tables enable RLS; new views use `security_invoker`.
-- [ ] New RPCs revoke default `PUBLIC`/`anon` execution before granting callers.
-- [ ] Identity-owned fields cannot be forged through submitted IDs or metadata.
-- [ ] Storage changes bind object paths and permissions to the correct user or workspace.
+### Quality
 
-## Database changes
+- [ ] `pnpm typecheck` and `pnpm lint` pass
+- [ ] `pnpm test` passes (and `pnpm test:e2e` if you changed UI/flows)
+- [ ] `pnpm build` passes if you changed app code
+- [ ] No secrets, tokens, passwords, or real business data included
+- [ ] `pnpm security:secrets` passes
 
-- [ ] Not applicable.
-- [ ] A forward-only migration is included.
-- [ ] Constraints, indexes, grants, RLS policies, and rollback implications were reviewed.
-- [ ] Clean-database pgTAP contracts cover the permitted and denied behavior.
+### Safety — does this keep workspace data private?
 
-## Screenshots or operational notes
+- [ ] No broader anonymous access than intended
+- [ ] Workspace data stays isolated (one workspace cannot see another's data)
+- [ ] If you added a write/mutation: it checks permissions and has a test for the denied case
+- [ ] If you added a table: RLS is enabled; if a view: it uses `security_invoker`
+- [ ] If you added an RPC: you revoked `PUBLIC`/`anon` before granting callers
+- [ ] No way to fake user identity via submitted IDs or metadata
 
-<!-- Add UI evidence, migration considerations, or deployment configuration that reviewers need. -->
+### Database (if you changed database)
+
+- [ ] Not applicable — no database change
+- [ ] New migration is forward-only (never edited an old one)
+- [ ] Constraints, indexes, grants, RLS, and rollback were considered
+- [ ] pgTAP tests cover both allowed and denied cases
+
+### Notes for reviewer
+
+<!-- Anything else: migration notes, follow-up tasks, docs updated, etc. -->
