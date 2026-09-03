@@ -2,7 +2,7 @@ import { cookies } from 'next/headers'
 import type { NextRequest } from 'next/server'
 import { apiError, apiSuccess } from '@/app/api/_lib/http'
 import { transactionExportRequestSchema } from '@/app/api/exports/transactions/request'
-import type { TransactionExportRow } from '@/app/manajemen/_domain/transaction-export'
+import type { TransactionExportRow } from '@/app/management/_domain/transaction-export'
 import { activeWorkspaceCookie } from '@/lib/workspace/context'
 import { createClient } from '@/lib/supabase/server'
 

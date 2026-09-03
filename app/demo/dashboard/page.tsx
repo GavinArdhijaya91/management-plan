@@ -6,7 +6,7 @@ import {
   decodeStoredTransactions,
   formatTransactionDate,
   transactionAggregate,
-} from '@/app/manajemen/_domain/transaction-aggregate'
+} from '@/app/management/_domain/transaction-aggregate'
 import { Header } from '@/components/header'
 import { KPICard } from '@/components/kpi-card'
 import { SalesChart } from '@/components/sales-chart'
@@ -56,7 +56,7 @@ export default function Dashboard() {
             <h1 className="app-heading">{copy.title}</h1>
             <p className="mt-2 text-zinc-500">{copy.description}</p>
           </div>
-          <Link href="/demo/manajemen" className="app-button">
+          <Link href="/demo/management" className="app-button">
             {copy.manage}
           </Link>
         </div>

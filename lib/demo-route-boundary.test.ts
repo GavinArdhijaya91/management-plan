@@ -4,12 +4,12 @@ import { describe, expect, it } from 'vitest'
 
 const privatePages = [
   'app/dashboard/page.tsx',
-  'app/manajemen/page.tsx',
-  'app/kalender/page.tsx',
-  'app/kolaborasi/page.tsx',
-  'app/notifikasi/page.tsx',
-  'app/profil/page.tsx',
-  'app/tren-pasar/page.tsx',
+  'app/management/page.tsx',
+  'app/calendar/page.tsx',
+  'app/collaboration/page.tsx',
+  'app/notifications/page.tsx',
+  'app/profile/page.tsx',
+  'app/market-trends/page.tsx',
 ]
 
 describe('demo and private route boundary', () => {
@@ -39,10 +39,10 @@ describe('demo and private route boundary', () => {
   it('keeps demo storage keys explicitly namespaced', () => {
     const demoSources = [
       'app/demo/dashboard/page.tsx',
-      'app/demo/kalender/page.tsx',
-      'app/demo/notifikasi/page.tsx',
-      'app/demo/profil/page.tsx',
-      'app/demo/tren-pasar/page.tsx',
+      'app/demo/calendar/page.tsx',
+      'app/demo/notifications/page.tsx',
+      'app/demo/profile/page.tsx',
+      'app/demo/market-trends/page.tsx',
     ]
       .map((fileName) => readFileSync(resolve(process.cwd(), fileName), 'utf8'))
       .join('\n')

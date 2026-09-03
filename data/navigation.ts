@@ -40,7 +40,7 @@ export const appRoutes: AppRoute[] = [
     translationKey: 'planning',
   },
   {
-    href: '/manajemen',
+    href: '/management',
     label: 'Manajemen',
     shortLabel: 'Kelola',
     description: 'Catat modal, penjualan, dan laba atau rugi.',
@@ -49,7 +49,7 @@ export const appRoutes: AppRoute[] = [
     translationKey: 'management',
   },
   {
-    href: '/kalender',
+    href: '/calendar',
     label: 'Kalender',
     shortLabel: 'Jadwal',
     description: 'Rencanakan pembayaran, stok, dan agenda bisnis.',
@@ -58,7 +58,7 @@ export const appRoutes: AppRoute[] = [
     translationKey: 'calendar',
   },
   {
-    href: '/kolaborasi',
+    href: '/collaboration',
     label: 'Kolaborasi',
     shortLabel: 'Chat',
     description: 'Berkomunikasi privat dengan anggota workspace.',
@@ -67,7 +67,7 @@ export const appRoutes: AppRoute[] = [
     translationKey: 'collaboration',
   },
   {
-    href: '/tren-pasar',
+    href: '/market-trends',
     label: 'Tren Pasar',
     shortLabel: 'Tren',
     description: 'Pelajari performa produk dan peluang pasar.',
@@ -76,7 +76,7 @@ export const appRoutes: AppRoute[] = [
     translationKey: 'market',
   },
   {
-    href: '/komunitas',
+    href: '/community',
     label: 'Komunitas',
     shortLabel: 'Komunitas',
     description: 'Temukan insight dan mitra dari sesama UMKM.',
@@ -85,7 +85,7 @@ export const appRoutes: AppRoute[] = [
     translationKey: 'community',
   },
   {
-    href: '/hubungi-kami',
+    href: '/contact',
     label: 'Hubungi Kami',
     shortLabel: 'Bantuan',
     description: 'Temukan bantuan atau kirim pertanyaan kepada tim.',

@@ -13,7 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: new URL('/hubungi-kami', siteUrl).toString(),
+      url: new URL('/contact', siteUrl).toString(),
       lastModified,
       changeFrequency: 'monthly',
       priority: 0.6,

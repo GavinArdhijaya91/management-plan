@@ -201,7 +201,7 @@ export default async function DashboardPage() {
               <p className="mt-0.5 text-xs text-zinc-500">Aktivitas finansial terakhir pada workspace.</p>
             </div>
             <Link
-              href="/manajemen"
+              href="/management"
               className="mr-5 inline-flex items-center gap-1 text-xs font-medium text-zinc-600 hover:text-zinc-950"
             >
               Lihat semua

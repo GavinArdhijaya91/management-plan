@@ -1,6 +1,6 @@
 'use client'
 
-import { ConfirmationDialog } from '@/app/manajemen/_components/confirmation-dialog'
+import { ConfirmationDialog } from '@/app/management/_components/confirmation-dialog'
 import { CommandPalette } from '@/app/_components/command-palette'
 import { LanguageSelector } from '@/app/_components/language-selector'
 import { MotionLogo } from '@/app/_components/motion-logo'
@@ -45,14 +45,14 @@ export function Header({ mode = 'private' }: HeaderProps) {
   const demoMode = mode === 'demo'
   const routeHref = (href: string) => (demoMode ? `/demo${href}` : href)
   const primaryRoutes = appRoutes.filter(
-    (item) => item.href !== '/hubungi-kami' && item.href !== '/komunitas' && (!demoMode || item.href !== '/kolaborasi'),
+    (item) => item.href !== '/contact' && item.href !== '/community' && (!demoMode || item.href !== '/collaboration'),
   )
-  const communityRoute = !demoMode ? appRoutes.find((item) => item.href === '/komunitas') : undefined
-  const supportRoute = appRoutes.find((item) => item.href === '/hubungi-kami')
+  const communityRoute = !demoMode ? appRoutes.find((item) => item.href === '/community') : undefined
+  const supportRoute = appRoutes.find((item) => item.href === '/contact')
   const activeRoute = appRoutes.find((item) => isCurrentRoute(pathname, routeHref(item.href)))
   const supportCurrent = supportRoute ? isCurrentRoute(pathname, routeHref(supportRoute.href)) : false
   const SupportIcon = supportRoute ? (supportCurrent ? supportRoute.activeIcon : supportRoute.icon) : null
-  const profileCurrent = isCurrentRoute(pathname, routeHref('/profil'))
+  const profileCurrent = isCurrentRoute(pathname, routeHref('/profile'))
 
   useEffect(() => {
     if (demoMode || !supabase) return
@@ -168,7 +168,7 @@ export function Header({ mode = 'private' }: HeaderProps) {
           </Link>
         )}
         <Link
-          href={routeHref('/profil')}
+          href={routeHref('/profile')}
           aria-current={profileCurrent ? 'page' : undefined}
           onClick={closeMenus}
           className={cn(
@@ -280,7 +280,7 @@ export function Header({ mode = 'private' }: HeaderProps) {
                   <p className="px-2 py-1 text-lg font-semibold">{dictionary.header.notifications}</p>
                   {demoMode && (
                     <Link
-                      href={routeHref('/notifikasi')}
+                      href={routeHref('/notifications')}
                       onClick={closeMenus}
                       className="mt-2 block rounded-xl bg-zinc-100 p-3 text-sm"
                     >
@@ -289,7 +289,7 @@ export function Header({ mode = 'private' }: HeaderProps) {
                     </Link>
                   )}
                   <Link
-                    href={routeHref('/notifikasi')}
+                    href={routeHref('/notifications')}
                     onClick={closeMenus}
                     className="mt-1 block rounded-xl p-3 text-sm hover:bg-zinc-50"
                   >
@@ -329,7 +329,7 @@ export function Header({ mode = 'private' }: HeaderProps) {
                     </p>
                   </div>
                   <Link
-                    href={routeHref('/profil')}
+                    href={routeHref('/profile')}
                     onClick={closeMenus}
                     className="mt-1 block rounded-lg px-3 py-2 text-sm hover:bg-zinc-100"
                   >

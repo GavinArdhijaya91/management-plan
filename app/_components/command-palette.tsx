@@ -18,7 +18,7 @@ export function CommandPalette({ mode, open, onClose }: Readonly<CommandPaletteP
   const router = useRouter()
   const demoMode = mode === 'demo'
 
-  const routes = useMemo(() => appRoutes.filter((route) => !demoMode || route.href !== '/kolaborasi'), [demoMode])
+  const routes = useMemo(() => appRoutes.filter((route) => !demoMode || route.href !== '/collaboration'), [demoMode])
   const results = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase('id-ID')
     if (!normalizedQuery) return routes
