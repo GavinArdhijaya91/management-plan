@@ -6,7 +6,7 @@ test('a visitor can explore demo data without an account', async ({ page }) => {
 
   await expect(page).toHaveURL(/\/demo\/dashboard$/)
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
-  await expect(page.getByText(/mode demo aktif/i)).toBeVisible()
+  await expect(page.getByText(/mode demo aktif|demo mode is active/i)).toBeVisible()
 
   await page.locator('.page-shell a[href="/demo/management"]').click()
   await expect(page).toHaveURL(/\/demo\/management$/, { timeout: 15_000 })
