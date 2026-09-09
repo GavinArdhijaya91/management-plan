@@ -22,7 +22,7 @@ test('the application shell uses mobile navigation at tablet width', async ({ pa
   await page.setViewportSize({ width: 820, height: 1180 })
   await page.goto('/demo/dashboard')
 
-  const openMenu = page.getByRole('button', { name: /buka menu/i })
+  const openMenu = page.getByRole('button', { name: /buka menu|open menu/i })
   await expect(openMenu).toBeVisible()
   await openMenu.click()
   await expect(page.locator('#mobile-navigation')).toBeVisible()
@@ -30,7 +30,7 @@ test('the application shell uses mobile navigation at tablet width', async ({ pa
 
   await page
     .locator('#mobile-navigation')
-    .getByRole('button', { name: /tutup menu/i })
+    .getByRole('button', { name: /tutup menu|close menu/i })
     .click()
   await expect(page.locator('#mobile-navigation')).toBeHidden()
 })
@@ -39,7 +39,7 @@ test('the application shell exposes its persistent sidebar on desktop', async ({
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/demo/dashboard')
 
-  await expect(page.getByRole('navigation', { name: /navigasi utama/i })).toBeVisible()
-  await expect(page.getByRole('button', { name: /buka menu/i })).toBeHidden()
+  await expect(page.getByRole('navigation', { name: /navigasi utama|main navigation/i })).toBeVisible()
+  await expect(page.getByRole('button', { name: /buka menu|open menu/i })).toBeHidden()
   await expectNoHorizontalOverflow(page)
 })

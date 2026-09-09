@@ -1,5 +1,11 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Security vulnerability
+  - name: 💬 Ask a question
+    url: https://github.com/GavinArdhijaya91/management-plan/discussions
+    about: Not sure if it's a bug? Ask here first — no question is too small.
+  - name: 🔒 Security vulnerability
     url: https://github.com/GavinArdhijaya91/management-plan/security/advisories/new
-    about: Report vulnerabilities privately; do not disclose tenant data or exploit details in a public issue.
+    about: Found a security issue? Please report it privately — do not share details in a public issue.
+  - name: 📖 Read the docs
+    url: https://github.com/GavinArdhijaya91/management-plan/blob/main/docs/README.md
+    about: Start with the docs, domain glossary, and getting started guide.

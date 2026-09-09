@@ -16,21 +16,21 @@ const features = [
     label: 'Keuangan',
     title: 'Pahami uang yang masuk, keluar, dan bertumbuh.',
     description: 'Catat modal, omzet, serta laba tanpa laporan yang rumit.',
-    href: '/demo/manajemen',
+    href: '/demo/management',
   },
   {
     icon: CalendarDays,
     label: 'Perencanaan',
     title: 'Jadikan agenda bisnis sebagai langkah yang terukur.',
     description: 'Satukan jadwal supplier, stok, gaji, dan evaluasi.',
-    href: '/demo/kalender',
+    href: '/demo/calendar',
   },
   {
     icon: TrendingUp,
     label: 'Analisis',
     title: 'Temukan pola sebelum menentukan arah berikutnya.',
     description: 'Pelajari perubahan performa produk dari waktu ke waktu.',
-    href: '/demo/tren-pasar',
+    href: '/demo/market-trends',
   },
   {
     icon: BarChart3,
@@ -57,7 +57,7 @@ export default function Home() {
             <a href="#cara-kerja" className="transition-colors hover:text-zinc-950">
               Cara kerja
             </a>
-            <Link href="/hubungi-kami" className="transition-colors hover:text-zinc-950">
+            <Link href="/contact" className="transition-colors hover:text-zinc-950">
               Bantuan
             </Link>
           </nav>
@@ -296,7 +296,7 @@ export default function Home() {
                 <Link href="/demo/dashboard" className="hover:text-zinc-950">
                   Coba demo
                 </Link>
-                <Link href="/hubungi-kami" className="hover:text-zinc-950">
+                <Link href="/contact" className="hover:text-zinc-950">
                   Bantuan
                 </Link>
               </nav>

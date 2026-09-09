@@ -1,100 +1,147 @@
-# Siapin
+# Siapin — Plan it first, then make it happen.
 
-**Plan it first, then make it happen.**
+> An open-source workspace that helps small businesses turn plans into real results.
 
-Siapin is a private-first business planning workspace that connects plans,
-execution, actual results, and review. It helps owners and teams move from a
-business direction to measurable goals, coordinated initiatives, concrete
-actions, and evidence-based evaluation.
+![Siapin preview](./Siapin.png)
 
-The core feedback loop is:
+<p>
+  <a href="https://github.com/GavinArdhijaya91/management-plan/actions"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/GavinArdhijaya91/management-plan/ci.yml?branch=main&label=CI"></a>
+  <a href="./CONTRIBUTING.md"><img alt="Contributions welcome" src="https://img.shields.io/badge/contributions-welcome-brightgreen"></a>
+  <a href="./SECURITY.md"><img alt="Security policy" src="https://img.shields.io/badge/security-policy-blue"></a>
+  <a href="./LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-green"></a>
+</p>
 
-```text
-Plan -> Goal -> Initiative -> Action -> Actual result -> Review
+**Try it without signing up:** open `/demo` after you run the project locally. All demo data is fake and isolated from real workspaces.
+
+---
+
+## What is Siapin?
+
+Siapin is a simple, private workspace for small business owners and small teams.
+
+Most teams already work hard. The problem is not effort — it is that important things are scattered:
+
+- plans live in a document,
+- sales and expenses live in another app or notebook,
+- tasks live in chat,
+- and reviews only happen when something goes wrong.
+
+**Siapin brings those pieces together in one loop:**
+
+```
+Plan → Goal → Initiative → Action → Actual Result → Review → Next Decision
 ```
 
-See the [planning domain ERD](./docs/PLANNING_DOMAIN_ERD.md) for the canonical
-tables, relationships, and lifecycle boundaries behind this loop.
+1.  **Plan** — where are we going?
+2.  **Goal + Target** — what does success look like, in numbers?
+3.  **Initiative** — what is the strategy to get there?
+4.  **Action** — who does what, by when?
+5.  **Actual Result** — what really happened?
+6.  **Review** — what did we learn, and what will we do next?
 
-Siapin is currently an open-source, self-hostable preview. It does not yet
-offer a managed hosted service or production SLA. See the
-[roadmap](./ROADMAP.md) and [release strategy](./docs/RELEASE_AND_HOSTING_STRATEGY.md)
-for the evidence required before that positioning changes.
+If you can follow this loop, you can use Siapin. No business degree needed.
 
-The project aims to improve access to structured business planning, especially
-for owners and small teams currently relying on disconnected documents. That
-is a product hypothesis and social-impact direction—not evidence that the
-current preview already serves every business or accessibility need.
+> **Current status:** Siapin is a **self-hostable preview**. You can run it, learn from it, and help build it. It is not a hosted service yet and it is not ready to store real business or personal data in production. See [Release and Hosting Strategy](./docs/RELEASE_AND_HOSTING_STRATEGY.md).
 
-![Siapin dashboard preview](./Siapin.png)
+---
 
-## Technology stack
+## Why did we build this? (The real-world problem)
 
-- Next.js 16 with App Router and Route Handlers
-- React 19
-- TypeScript
-- Tailwind CSS 4
-- PostgreSQL through Supabase
-- Supabase Auth and Row Level Security
-- Typed client-side language dictionaries
-- React Hook Form and Zod
-- Recharts
-- Vitest
-- pnpm
+We talked to many small business owners (UMKM) in Indonesia. The same story came up again and again:
 
-## Prerequisites
+**They have big dreams, but they don't have a shared system to guide daily decisions.**
 
-Make sure your system has:
+- A plan is written once and then forgotten.
+- Daily transactions are not connected to the plan, so owners cannot see if they are on track.
+- Team members are not sure who is responsible for what.
+- When it is time to review, there is no clear evidence — only memory and feeling.
 
-- [Node.js](https://nodejs.org/) 22.13 or newer
-- [Corepack](https://nodejs.org/api/corepack.html)
-- A [Supabase](https://supabase.com/) account and project
-- Git
+This has a social impact. When a small business cannot see what is working, it is harder to grow, hire, or survive a tough month. Good ideas fail not because they are bad, but because the follow-through is invisible.
 
-This repository uses pnpm. Avoid creating a `package-lock.json` or installing dependencies with npm.
+**Siapin tries to solve both sides:**
 
-Docker is only required when running the complete Supabase stack locally. The basic setup below uses a hosted Supabase project, so Docker is optional.
+- **Practical side:** connect planning, doing, and measuring in one private place, with clear roles so everyone knows what they can see and do.
+- **Human side:** use simple language that non-technical people understand, make progress visible, and keep private business data truly private.
 
-## Local setup
+Siapin does not replace an accountant, a mentor, or your own judgment. It just makes your thinking visible, so your team can talk about it and improve together.
 
-### 1. Clone the repository
+---
+
+## Who is Siapin for?
+
+- **Small business owners** who want a clearer way to plan and check progress.
+- **Small teams (2–20 people)** who need a private space with roles like Owner, Manager, Member, Viewer — and custom roles if needed.
+- **Students, builders, and contributors** who want to learn how real business software is designed and built.
+- **Designers and writers** who care about making business tools friendly for everyone, not just experts.
+
+You do not need to be a developer to contribute. Better words, clearer docs, bug reports, and accessibility checks are real contributions.
+
+---
+
+## What can you do today?
+
+| Area                           | What exists now                                                                                          |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| **Explore without an account** | Public demo pages at `/demo`                                                                             |
+| **Workspace**                  | Sign up, create a workspace, invite teammates, set roles & permissions                                   |
+| **Planning loop**              | Create plans, goals, initiatives, action items, measurable targets, actual results, and business reviews |
+| **Money**                      | Record simple transactions and link them to goals                                                        |
+| **Calendar & more**            | Calendar, notifications, profile, community posts, and a curated portfolio of finished reviews           |
+| **Safety**                     | PostgreSQL (Supabase) with Row Level Security — your workspace cannot see another workspace's data       |
+| **Quality**                    | Unit tests, database security contracts, and Playwright end-to-end tests                                 |
+
+What is next is tracked honestly in [ROADMAP.md](./ROADMAP.md) and [Product Direction](./docs/PRODUCT_DIRECTION.md).
+
+---
+
+## Screenshots
+
+| Landing                           | Dashboard                             | Management                             | Calendar                            |
+| --------------------------------- | ------------------------------------- | -------------------------------------- | ----------------------------------- |
+| ![Landing](./desktop-landing.png) | ![Dashboard](./desktop-dashboard.png) | ![Management](./desktop-manajemen.png) | ![Calendar](./desktop-kalender.png) |
+
+Mobile is also supported — same pages, adapted for small screens.
+
+---
+
+## Get started — from zero to running (5–10 minutes)
+
+This is the full setup, start to end. No step is skipped.
+
+### 1. What you need before you start
+
+- **Node.js 22.13 or newer** — check with `node -v`
+- **Git**
+- **pnpm** via Corepack (comes with Node.js) — check with `pnpm -v`
+- A free **Supabase** account at https://supabase.com
+
+> On Windows, you will use PowerShell. On Mac/Linux, you will use Terminal. Commands are almost the same — we note the difference where it matters.
+
+### 2. Get the code
 
 ```bash
-git clone <REPOSITORY_URL>
+git clone https://github.com/GavinArdhijaya91/management-plan.git
 cd management-plan
 ```
 
-Replace `<REPOSITORY_URL>` with this repository's GitHub URL.
-
-### 2. Enable pnpm
+### 3. Install the app
 
 ```bash
 corepack enable pnpm
-```
-
-### 3. Install dependencies
-
-```bash
 pnpm install
 ```
 
-### 4. Configure the environment
+### 4. Create your environment file
 
-Copy `.env.example` to `.env.local`.
+```bash
+# Mac / Linux
+cp .env.example .env.local
 
-PowerShell:
-
-```powershell
+# Windows PowerShell
 Copy-Item .env.example .env.local
 ```
 
-Bash:
-
-```bash
-cp .env.example .env.local
-```
-
-Fill in `.env.local`:
+Open `.env.local` in any text editor and fill it in:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
@@ -103,381 +150,174 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 SUPABASE_SECRET_KEY=
 ```
 
-The Project URL and publishable key are available from **Connect** or **Settings > API Keys** in the Supabase Dashboard.
+Where to find those two Supabase values:
 
-`SUPABASE_SECRET_KEY` may remain empty until the application needs administrative operations. When used, it must have the `sb_secret_...` format, remain server-only, and never use the `NEXT_PUBLIC_` prefix.
+1. Create a new project at https://supabase.com/dashboard
+2. Go to **Project Settings → API**
+3. Copy **Project URL** → paste as `NEXT_PUBLIC_SUPABASE_URL`
+4. Copy **publishable key** (starts with `sb_publishable_`) → paste as `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 
-Never commit `.env.local`. It is already excluded by `.gitignore`.
+Leave `SUPABASE_SECRET_KEY` empty for local development. Never commit `.env.local`.
 
-## Supabase PostgreSQL setup
+### 5. Set up the database
 
-### 1. Find the project reference
-
-The project reference is the identifier in the Supabase Dashboard URL:
-
-```text
-https://supabase.com/dashboard/project/PROJECT_REF
-```
-
-The project reference is not the Project URL, publishable key, secret key, or database password.
-
-### 2. Sign in with the Supabase CLI
+Siapin uses Supabase migrations to create tables and security rules.
 
 ```bash
-pnpm supabase login
-```
+# Link your local project to Supabase (first time only)
+pnpm db:link
 
-### 3. Link the repository to the project
+# Check what will change (safe, no changes yet)
+pnpm db:dry-run
 
-```bash
-pnpm db:link --project-ref PROJECT_REF
-```
-
-The CLI may request the database password created with the Supabase project.
-
-### 4. Check migration status
-
-```bash
-pnpm db:status
-```
-
-### 5. Preview the initial migration
-
-```bash
-pnpm db:push --dry-run
-```
-
-Review the output before continuing. The initial migration is located at:
-
-```text
-supabase/migrations/20260722000000_initial_management_schema.sql
-```
-
-The migration creates:
-
-- `profiles`
-- `workspaces`
-- `workspace_members`
-- `transactions`
-- `calendar_events`
-- `market_products`
-- `market_snapshots`
-- `notifications`
-- `contact_messages`
-- `audit_logs`
-- Constraints, foreign keys, and indexes
-- `updated_at` triggers
-- Automatic profile creation after registration
-- An atomic workspace creation function
-- Row Level Security and workspace roles
-
-### 6. Apply the migration
-
-When the dry run output is correct:
-
-```bash
+# Apply migrations
 pnpm db:push
 ```
 
-Never reset a production project. Seed data is intended for development and staging environments only.
-
-### 7. Generate TypeScript database types
-
-PowerShell:
-
-```powershell
-pnpm db:types | Set-Content lib/supabase/database.types.ts
-```
-
-Bash:
+If you prefer to run Supabase locally with Docker:
 
 ```bash
-pnpm db:types > lib/supabase/database.types.ts
+npx supabase start
+npx supabase db reset
 ```
 
-Regenerate this file whenever the PostgreSQL schema changes. Do not edit generated database types manually.
+> Database rule: never edit a migration that has already been applied. Always create a new one. See [Database Conventions](./docs/DATABASE_CONVENTIONS.md).
 
-## Supabase Auth configuration
-
-Open **Authentication > URL Configuration** in the Supabase Dashboard.
-
-Use the following development configuration:
-
-```text
-Site URL: http://localhost:3000
-Redirect URL: http://localhost:3000/**
-```
-
-Use the official domain and specific redirect URLs in production.
-
-Then open **Authentication > Providers > Email** and enable the Email provider. Email confirmation may be simplified during development but should be enabled in production.
-
-## Running the application
+### 6. Run the app
 
 ```bash
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Press `Ctrl+C` to stop the development server.
+Open http://localhost:3000
 
-The API health endpoint is available at:
+You should see the landing page. Try the demo at http://localhost:3000/demo — no account needed.
+
+Create an account to try the full workspace flow: Plan → Goal → Initiative → Action → Result → Review.
+
+### 7. Check that everything works
+
+```bash
+pnpm verify   # runs tests + typecheck + lint + format check + build
+```
+
+Other useful commands:
+
+```bash
+pnpm typecheck      # check TypeScript
+pnpm lint           # check code style
+pnpm format:check   # check formatting
+pnpm test           # unit tests (Vitest)
+pnpm test:e2e       # browser tests (Playwright)
+pnpm build          # production build
+```
+
+If something fails, see [Troubleshooting](#troubleshooting) below.
+
+---
+
+## How the project is organized
 
 ```text
-GET http://localhost:3000/api/health
+app/         pages, API routes, and feature modules
+components/  shared UI components
+data/        fake demo data (never real business data)
+lib/         helpers, domain logic, Supabase clients
+public/      images and static files
+supabase/    database migrations, config, seed, and security tests
+docs/        deeper docs — domain, security, operations, release notes
+e2e/         Playwright browser tests
+scripts/     helper scripts (image optimization, data checks, etc.)
 ```
 
-This endpoint only reports the service status and whether the Supabase environment is configured. It does not expose keys or secrets.
+Want to understand the business terms? Start with [Domain Glossary](./docs/DOMAIN_GLOSSARY.md). It explains words like Plan, Goal, Initiative, Action, and Review in one place — and we use the same words in code, database, and UI.
 
-## Available pages
+---
 
-| Page                    | Local URL                                                         |
-| ----------------------- | ----------------------------------------------------------------- |
-| Landing page            | [localhost:3000](http://localhost:3000)                           |
-| Isolated demo           | [localhost:3000/demo](http://localhost:3000/demo)                 |
-| Dashboard               | [localhost:3000/dashboard](http://localhost:3000/dashboard)       |
-| Business planning       | [localhost:3000/planning](http://localhost:3000/planning)         |
-| Transaction management  | [localhost:3000/manajemen](http://localhost:3000/manajemen)       |
-| Calendar                | [localhost:3000/kalender](http://localhost:3000/kalender)         |
-| Workspace collaboration | [localhost:3000/kolaborasi](http://localhost:3000/kolaborasi)     |
-| Market trends           | [localhost:3000/tren-pasar](http://localhost:3000/tren-pasar)     |
-| Contact                 | [localhost:3000/hubungi-kami](http://localhost:3000/hubungi-kami) |
-| Notifications           | [localhost:3000/notifikasi](http://localhost:3000/notifikasi)     |
-| Profile                 | [localhost:3000/profil](http://localhost:3000/profil)             |
+## Tech stack (simple version)
 
-## Language support
+- **Next.js 16** (App Router) + **TypeScript** — the web framework
+- **Tailwind CSS + shadcn/ui** — styling and UI components
+- **Supabase (PostgreSQL + Auth + RLS)** — database, login, and row-level security
+- **Vitest + Playwright** — unit tests and browser tests
+- **pnpm** — package manager
 
-The shared application navigation currently supports six persisted interface languages:
+You do not need to know all of these to contribute. Docs and small issues are a great first step.
 
-| Region  | Country reference | Language         | Locale |
-| ------- | ----------------- | ---------------- | ------ |
-| Asia    | Indonesia         | Bahasa Indonesia | `id`   |
-| Asia    | Japan             | Japanese         | `ja`   |
-| America | United States     | English          | `en`   |
-| America | Mexico            | Spanish          | `es`   |
-| Europe  | France            | French           | `fr`   |
-| Europe  | Germany           | German           | `de`   |
+---
 
-The selected locale is stored under `siapin:locale` in local storage. Typed dictionaries are located in `app/_i18n`, while the selector is a shared component. Route-specific content can be migrated into the same dictionary structure incrementally.
+## Want to contribute?
 
-## Quality gates
+We would love your help — and it does not have to be code.
 
-Run these commands before committing or opening a pull request:
+- Fix a typo or make an explanation clearer
+- Report a bug with steps to reproduce it
+- Suggest better wording for a button or page
+- Add or improve a test
+- Check accessibility with keyboard only
+
+**Start here:**
+
+1. Read [CONTRIBUTING.md](./CONTRIBUTING.md) — the full but friendly guide
+2. Look at [ROADMAP.md](./ROADMAP.md) — what we are focusing on now
+3. Pick a beginner-friendly task in [Good First Issues](./docs/GOOD_FIRST_ISSUES.md)
+4. Learn the language in [Domain Glossary](./docs/DOMAIN_GLOSSARY.md)
+
+Please be kind and respectful. See [Code of Conduct](./CODE_OF_CONDUCT.md).
+
+---
+
+## Troubleshooting
+
+**`pnpm` not found?**
 
 ```bash
-pnpm typecheck
-pnpm lint
-pnpm format:check
-pnpm test
-pnpm test:e2e
-pnpm build
+corepack enable pnpm
+corepack prepare pnpm@latest --activate
 ```
 
-### Browser E2E tests
-
-Playwright verifies the application through the same HTTP and browser
-boundaries used by a real user. The current journeys cover public demo access,
-authentication boundaries, first-workspace onboarding, and business-plan
-creation.
-
-Install the Chromium test browser once:
+**Styles not loading or page is blank?**
 
 ```bash
-pnpm exec playwright install chromium
+rm -rf .next
+pnpm dev
 ```
 
-For demo-only tests, run `pnpm dev` in one terminal and this command in another:
+**Database error / RLS error?**
 
-```bash
-pnpm test:e2e e2e/demo-access.spec.ts
-```
+- Make sure `.env.local` has the correct Supabase URL and publishable key
+- Run `pnpm db:status` to see if migrations are applied
+- Never disable RLS to make a query work — ask for help in an issue instead
 
-Authenticated journeys require an isolated local Supabase stack. Start Docker
-Desktop and Supabase, then expose the local API URL, anonymous key, and service
-role key to the test process as:
+**Still stuck?**
+Open an issue with: what you did, what you expected, what you saw, and your Node/pnpm version. Or see [SUPPORT.md](./SUPPORT.md).
 
-```text
-NEXT_PUBLIC_SUPABASE_URL
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-SUPABASE_SERVICE_ROLE_KEY
-```
-
-Obtain the local values with `pnpm exec supabase status -o env`. The service
-role key is used only by the Node.js fixture to create a confirmed test
-account. Never prefix it with `NEXT_PUBLIC_`, store it in source control, or
-send it to browser code. GitHub Actions configures these ephemeral values from
-its isolated Supabase instance automatically.
-
-## Image optimization and SEO assets
-
-Raster assets in `public/` support PNG, JPG, and JPEG source files. Generate
-their optimized WebP counterparts with:
-
-```bash
-pnpm images:optimize
-```
-
-Verify that every public raster source has a generated WebP file:
-
-```bash
-pnpm images:check
-```
-
-Regenerate the 1200×630 Open Graph and social-sharing preview from
-`Siapin.png`:
-
-```bash
-pnpm images:og
-```
-
-SVG assets remain vector files and are not converted to WebP. Trusted SVG
-files can be stored in `public/` and referenced using paths such as
-`/icon.svg`. Do not publish untrusted user-uploaded SVG files because they may
-contain active content.
-
-Run all image checks and project quality gates together:
-
-```bash
-pnpm verify
-```
-
-See [Asset and SEO Guide](./docs/ASSET_AND_SEO_GUIDE.md) for resize options,
-SEO routes, social metadata, and SVG security guidance.
-
-To test the production build locally:
-
-```bash
-pnpm build
-pnpm start
-```
-
-## Project scripts
-
-| Command                 | Purpose                                         |
-| ----------------------- | ----------------------------------------------- |
-| `pnpm dev`              | Start the development server                    |
-| `pnpm typecheck`        | Check TypeScript types                          |
-| `pnpm lint`             | Run ESLint                                      |
-| `pnpm format`           | Format supported project files with Prettier    |
-| `pnpm format:check`     | Verify formatting without changing files        |
-| `pnpm images:optimize`  | Convert public PNG/JPG/JPEG assets to WebP      |
-| `pnpm images:check`     | Verify public raster assets have WebP output    |
-| `pnpm images:og`        | Regenerate the 1200×630 social preview          |
-| `pnpm data:check`       | Validate database and presentation boundaries   |
-| `pnpm test`             | Run Vitest unit tests                           |
-| `pnpm test:e2e`         | Run Playwright browser journeys                 |
-| `pnpm test:e2e:ui`      | Open the interactive Playwright runner          |
-| `pnpm security:secrets` | Reject credentials accidentally tracked by Git  |
-| `pnpm security:verify`  | Run the local application security release gate |
-| `pnpm build`            | Create a production build                       |
-| `pnpm start`            | Start the production build                      |
-| `pnpm db:link`          | Link the repository to a Supabase project       |
-| `pnpm db:status`        | Compare local and remote migrations             |
-| `pnpm db:push`          | Apply pending database migrations               |
-| `pnpm db:types`         | Generate database types to standard output      |
-| `pnpm db:test`          | Run SQL contracts on local isolated Supabase    |
-
-## Project structure
-
-```text
-.
-|-- app/                    # Pages, feature modules, and Route Handlers
-|   `-- api/                # HTTP API boundary
-|-- components/             # Shared React components
-|-- data/                   # App-first demo data
-|-- lib/
-|   `-- supabase/           # Browser and server database clients
-|-- public/                 # Static assets
-|-- supabase/
-|   |-- migrations/         # Versioned PostgreSQL schema
-|   |-- config.toml         # Local Supabase configuration
-|   `-- seed.sql            # Development seed template
-`-- types/                  # Shared TypeScript types
-```
-
-## Contributing and domain language
-
-Before adding a feature or database table, read:
-
-- [Contributing guide](./CONTRIBUTING.md)
-- [Domain glossary](./docs/DOMAIN_GLOSSARY.md)
-- [Database conventions](./docs/DATABASE_CONVENTIONS.md)
-
-These documents define the difference between plans, goals, metrics,
-initiatives, actions, schedules, reviews, members, and external partners.
-Product UI may be translated, while code and database identifiers remain in
-consistent English.
-
-## Security practices
-
-- Never commit `.env.local`.
-- Never use the secret key in a Client Component.
-- Do not disable RLS to work around query issues.
-- Treat the active-workspace cookie as a UI preference only. Authorization must use the authenticated database user, active membership, canonical workspace role, and effective permissions.
-- Never run `db reset --linked` against production.
-- Create a new migration when changing an applied schema.
-- Add rate limiting before exposing contact, upload, export, or integration endpoints.
-
-## Authentication and workspace session
-
-The private backend flow is:
-
-```text
-sign up -> confirm email -> exchange auth code -> authenticated cookie session
-        -> create/select workspace -> validate active membership
-        -> resolve canonical role and effective permissions -> private page
-```
-
-The Next.js proxy refreshes Supabase cookies and performs an optimistic route
-check. Server Components and Server Actions repeat the authoritative check with
-`supabase.auth.getUser()`. Workspace access is resolved by
-`get_my_workspace_access()`, which only returns memberships belonging to
-`auth.uid()`.
-
-Apply migrations and regenerate database types before testing a newly linked
-environment:
-
-```bash
-pnpm db:status
-pnpm db:dry-run
-pnpm db:push
-pnpm db:types
-pnpm verify
-```
-
-Supabase Auth must allow the application origin and
-`/auth/callback?next=/workspace/select` as redirect URLs. Email confirmation
-must also be configured in the Supabase project according to the target
-environment.
-
-## Continuous integration
-
-GitHub Actions runs two read-only workflows for pushes to `main` and pull requests:
-
-- `Format` verifies that supported source and documentation files match the committed Prettier configuration.
-- `CI` installs the frozen pnpm lockfile, checks TypeScript, runs ESLint and unit tests, and creates a production build.
-
-Deployment is intentionally excluded. Continuous delivery will be introduced only after the production environment and release policy are defined.
+---
 
 ## Security
 
-Report suspected vulnerabilities through
-[GitHub private vulnerability reporting](./SECURITY.md), not through public
-issues or discussions. Database and authorization changes must preserve the
-security contracts documented in
-[`docs/DATABASE_SECURITY_HARDENING.md`](./docs/DATABASE_SECURITY_HARDENING.md).
+If you find a security problem, please **do not** open a public issue. See [SECURITY.md](./SECURITY.md) for how to report it privately. We take workspace isolation and data privacy seriously.
 
-This repository currently targets portfolio and development use. Its connected
-Supabase environment must contain synthetic data only and is not a production
-service. Paid-plan safeguards may be unavailable during development; see
-[Development environment limitations](./SECURITY.md#development-environment-limitations)
-for the accepted constraints and required production-readiness gate.
+---
 
-## Development status
+## License
 
-Authentication, cookie session refresh, private-route protection, workspace
-onboarding, active-workspace selection, and role/permission resolution are
-integrated. Planning reads live workspace data and routes lifecycle mutations
-through validated Server Actions plus canonical Supabase RPCs. Application
-routes read private workspace data from Supabase. Local example data is isolated
-under `/demo/*`, uses `siapin:demo:*` browser-storage keys, and never appears as
-workspace data after authentication.
+This project is licensed under the [MIT License](./LICENSE).
+
+You are free to use, copy, modify, and share it — including for commercial use — as long as you keep the original copyright notice. See `LICENSE` for the full text.
+
+Copyright (c) 2026 Siapin Contributors.
+
+---
+
+## Acknowledgments
+
+Siapin is built for small business owners who keep going even when it is hard. Thank you to everyone who shares feedback, reports bugs, improves words, and helps make business planning more human.
+
+If Siapin helps you, a star ⭐ on GitHub helps others find it.
+
+---
+
+<p align="center">
+  <sub>Built with care for small teams. Private data stays private. Demo data stays separate.</sub>
+</p>

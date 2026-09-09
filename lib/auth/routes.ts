@@ -1,13 +1,13 @@
 const protectedPrefixes = [
   '/dashboard',
-  '/kalender',
-  '/kolaborasi',
-  '/komunitas',
-  '/manajemen',
-  '/notifikasi',
+  '/calendar',
+  '/collaboration',
+  '/community',
+  '/management',
+  '/notifications',
   '/planning',
-  '/profil',
-  '/tren-pasar',
+  '/profile',
+  '/market-trends',
   '/workspace',
 ] as const
 const protectedExactPaths = ['/portfolio'] as const

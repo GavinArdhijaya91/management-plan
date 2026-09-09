@@ -1,61 +1,68 @@
-name: Bug report
-description: Report a reproducible problem without including private business data.
+name: '🐛 Bug report'
+description: Tell us what broke — we will help fix it. Please use fake data only.
 title: 'bug: '
 labels:
   - bug
 body:
   - type: markdown
     attributes:
-      value: Do not attach credentials, invitation tokens, personal data, or real workspace content.
+      value: |
+        Thanks for reporting! Please use **fake data only** — no real passwords, tokens, emails, or business numbers.
+        If this is a security issue (you can see another workspace's data), report it **privately** at https://github.com/GavinArdhijaya91/management-plan/security/advisories/new instead.
   - type: textarea
     id: problem
     attributes:
-      label: Problem
-      description: What happened, and what did you expect instead?
+      label: What happened?
+      description: What did you see, and what did you expect instead?
+      placeholder: |
+        I opened ... and clicked ...
+        I expected ... but I saw ...
     validations:
       required: true
   - type: textarea
     id: reproduction
     attributes:
-      label: Minimal reproduction
-      description: Use synthetic data and list the smallest reliable sequence.
+      label: How can we reproduce it? (step by step)
+      description: Use fake data and keep it as short as possible.
       placeholder: |
-        1. Open …
-        2. Select …
-        3. Observe …
+        1. Open /demo
+        2. Click ...
+        3. See error: ...
     validations:
       required: true
   - type: dropdown
     id: surface
     attributes:
-      label: Affected surface
+      label: Where did it happen?
       options:
-        - Public or demo UI
-        - Authenticated workspace UI
-        - Authentication or invitation
-        - Database, RLS, or migration
-        - Documentation or contributor tooling
-        - Accessibility
+        - Public or demo pages (no login)
+        - Workspace pages (after login)
+        - Login / invitation
+        - Database or permissions (RLS)
+        - Docs or contributor setup
+        - Accessibility (keyboard, screen reader, contrast)
     validations:
       required: true
   - type: input
     id: revision
     attributes:
-      label: Revision
-      description: Commit SHA, branch, or release where this occurred.
+      label: Which version?
+      description: Commit SHA, branch name, or "latest main".
     validations:
       required: true
   - type: textarea
     id: environment
     attributes:
-      label: Environment
-      description: OS, browser, Node version, and local/staging context as relevant.
+      label: Your environment
+      description: OS, browser, Node.js version (node -v), pnpm version.
+      placeholder: |
+        macOS 14, Chrome 126, Node 22.13, pnpm 9
     validations:
-      required: true
+      required: false
   - type: checkboxes
     id: safety
     attributes:
       label: Safety check
       options:
-        - label: I removed credentials, tokens, personal data, and private business content.
+        - label: I removed all secrets, tokens, personal data, and real business content.
           required: true

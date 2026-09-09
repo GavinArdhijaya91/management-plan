@@ -1,65 +1,73 @@
-name: Scoped contributor task
-description: Propose a bounded, independently verifiable contribution.
+name: '✨ Task idea'
+description: Suggest a small, clear task that one person can finish in one PR.
 title: 'task: '
 labels:
   - triage
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Keep it small and focused — one PR = one idea. If you are not sure, open it anyway and we will help shape it.
   - type: textarea
     id: problem
     attributes:
-      label: User or contributor problem
-      description: Describe the problem without prescribing a broad redesign.
+      label: What problem does this solve?
+      description: Who has the problem and why does it matter? No need for technical jargon.
+      placeholder: |
+        As a small business owner, I want ... so that ...
     validations:
       required: true
   - type: textarea
     id: scope
     attributes:
-      label: In scope
-      description: List the smallest coherent behavior or artifact this task changes.
+      label: What should be done? (in scope)
+      description: The smallest useful change.
     validations:
       required: true
   - type: textarea
     id: exclusions
     attributes:
-      label: Out of scope
-      description: State adjacent work this issue deliberately does not include.
+      label: What is NOT included? (out of scope)
+      description: Helps keep the task small.
     validations:
-      required: true
+      required: false
   - type: textarea
     id: acceptance
     attributes:
-      label: Acceptance criteria
-      description: Use observable outcomes a reviewer can verify.
+      label: How do we know it is done?
+      description: Checklist a reviewer can verify.
       placeholder: |
-        - [ ] …
-        - [ ] …
+        - [ ] Docs updated
+        - [ ] `pnpm test` still passes
+        - [ ] Screenshot added for UI change
     validations:
       required: true
   - type: textarea
     id: files
     attributes:
-      label: Likely files or documentation
-      description: Point contributors to the relevant area and domain references.
+      label: Where to look? (files or docs)
+      description: Point to relevant files, pages, or docs like DOMAIN_GLOSSARY.md.
     validations:
-      required: true
+      required: false
   - type: dropdown
     id: risk
     attributes:
-      label: Highest risk
+      label: Risk level
+      description: How risky is this change?
       options:
-        - Documentation only
-        - Isolated UI behavior
-        - Authenticated application behavior
-        - Database or tenant authorization
+        - Docs only (safest)
+        - Small UI change
+        - App behavior (needs login)
+        - Database or permissions (needs extra review)
         - Deployment or external service
     validations:
       required: true
   - type: checkboxes
     id: ready
     attributes:
-      label: Ready for contributor review
+      label: Ready check
       options:
-        - label: The task has no dependency on production credentials or private user data.
+        - label: This does not need real secrets or private user data to verify.
           required: true
-        - label: The acceptance criteria can be verified in one focused pull request.
+        - label: This can be done in one focused pull request.
           required: true

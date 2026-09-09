@@ -10,17 +10,19 @@ test('public and demo shells expose keyboard-reachable landmarks', async ({ page
   const focusedElement = page.locator(':focus')
   await expect(focusedElement).toBeVisible()
   await expect(focusedElement).toHaveAttribute('href')
-
   await page.goto('/demo/dashboard')
   await expect(page.getByRole('main')).toBeVisible()
-  await expect(page.getByRole('navigation', { name: /navigasi utama/i })).toBeVisible()
+  await expect(page.getByRole('navigation', { name: /navigasi utama|main navigation/i })).toBeVisible()
   await expect(page.locator('h1')).toHaveCount(1)
 
-  await page.getByRole('button', { name: 'Ubah bahasa' }).click()
-  const languageList = page.getByRole('listbox', { name: 'Bahasa' })
+  await page.getByRole('button', { name: /Ubah bahasa|Change language/i }).click()
+  const languageList = page.getByRole('listbox', { name: /Bahasa|Language/i })
   await expect(languageList).toBeVisible()
   await expect(languageList.locator('..')).toHaveClass(/motion-window-origin/)
-  await expect(page.getByRole('option', { name: /Bahasa Indonesia/ })).toHaveAttribute('aria-selected', 'true')
+  await expect(page.getByRole('option', { name: /Bahasa Indonesia|Indonesian/i })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  )
 })
 
 test('review route remains protected and preserves the intended return path', async ({ page }) => {
@@ -42,5 +44,5 @@ test('demo command palette supports keyboard-first navigation', async ({ page })
   const search = page.getByRole('textbox', { name: 'Cari halaman' })
   await expect(search).toBeVisible()
   await search.fill('manajemen')
-  await Promise.all([page.waitForURL(/\/demo\/manajemen$/, { timeout: 15_000 }), page.keyboard.press('Enter')])
+  await Promise.all([page.waitForURL(/\/demo\/management$/, { timeout: 15_000 }), page.keyboard.press('Enter')])
 })
