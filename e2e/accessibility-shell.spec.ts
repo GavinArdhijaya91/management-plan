@@ -19,7 +19,10 @@ test('public and demo shells expose keyboard-reachable landmarks', async ({ page
   const languageList = page.getByRole('listbox', { name: /Bahasa|Language/i })
   await expect(languageList).toBeVisible()
   await expect(languageList.locator('..')).toHaveClass(/motion-window-origin/)
-  await expect(page.getByRole('option', { name: /Bahasa Indonesia|Indonesian/i })).toHaveAttribute('aria-selected', 'true')
+  await expect(page.getByRole('option', { name: /Bahasa Indonesia|Indonesian/i })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  )
 })
 
 test('review route remains protected and preserves the intended return path', async ({ page }) => {
