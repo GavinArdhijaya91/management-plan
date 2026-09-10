@@ -1,9 +1,16 @@
+import { cookies, headers } from 'next/headers'
 import { Header } from '@/components/header'
 import { WorkspaceCalendar } from '@/app/calendar/_components/workspace-calendar'
+import { LOCALE_COOKIE, resolveLocale } from '@/app/_i18n/locale'
+import { workspaceCopy } from '@/app/_i18n/pages/workspace'
 import { createClient } from '@/lib/supabase/server'
 import { hasWorkspacePermission, requireActiveWorkspace } from '@/lib/workspace/context'
 
 export default async function CalendarPage() {
+  const cookieStore = await cookies()
+  const headerStore = await headers()
+  const locale = resolveLocale({ cookieLocale: cookieStore.get(LOCALE_COOKIE)?.value ?? null, acceptLanguageHeader: headerStore.get('accept-language') })
+  const t = workspaceCopy[locale]
   const workspace = await requireActiveWorkspace('/calendar')
   const supabase = await createClient()
   const { data, error } = await supabase
@@ -24,7 +31,7 @@ export default async function CalendarPage() {
         initialMonth={initialMonth}
         canWrite={hasWorkspacePermission(workspace, 'calendar.write')}
         canDelete={hasWorkspacePermission(workspace, 'calendar.delete')}
-        loadError={error ? 'Agenda gagal dimuat. Periksa permission kalender Anda.' : undefined}
+        loadError={error ? t.calendar.error : undefined}
       />
     </main>
   )

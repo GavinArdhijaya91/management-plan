@@ -1,4 +1,7 @@
+import { cookies, headers } from 'next/headers'
 import { Header } from '@/components/header'
+import { LOCALE_COOKIE, resolveLocale } from '@/app/_i18n/locale'
+import { workspaceCopy } from '@/app/_i18n/pages/workspace'
 import { createClient } from '@/lib/supabase/server'
 import { requireActiveWorkspace } from '@/lib/workspace/context'
 import { BanknotesIcon, CalendarDaysIcon, CheckCircleIcon, FlagIcon } from '@heroicons/react/24/outline'
@@ -11,6 +14,13 @@ function formatWorkspaceAmount(value: number, currencyCode: string | null) {
 }
 
 export default async function DashboardPage() {
+  const cookieStore = await cookies()
+  const headerStore = await headers()
+  const locale = resolveLocale({
+    cookieLocale: cookieStore.get(LOCALE_COOKIE)?.value ?? null,
+    acceptLanguageHeader: headerStore.get('accept-language'),
+  })
+  const t = workspaceCopy[locale]
   const workspace = await requireActiveWorkspace('/dashboard')
   const supabase = await createClient()
   const [transactions, goals, actions, events, recentTransactions, actuals, overdue, reviews] = await Promise.all([
@@ -64,10 +74,10 @@ export default async function DashboardPage() {
   const canManageMetrics = workspace.permission_codes.includes('metric.manage')
   const canFinalizeReview = workspace.permission_codes.includes('review.finalize')
   const cards = [
-    { label: 'Transaksi tercatat', value: transactions.count ?? 0, icon: BanknotesIcon },
-    { label: 'Goal aktif', value: goals.count ?? 0, icon: FlagIcon },
-    { label: 'Tindakan berjalan', value: actions.count ?? 0, icon: CheckCircleIcon },
-    { label: 'Agenda mendatang', value: events.count ?? 0, icon: CalendarDaysIcon },
+    { label: t.dashboard.cards.transactions, value: transactions.count ?? 0, icon: BanknotesIcon },
+    { label: t.dashboard.cards.goals, value: goals.count ?? 0, icon: FlagIcon },
+    { label: t.dashboard.cards.actions, value: actions.count ?? 0, icon: CheckCircleIcon },
+    { label: t.dashboard.cards.events, value: events.count ?? 0, icon: CalendarDaysIcon },
   ]
 
   return (
@@ -76,21 +86,19 @@ export default async function DashboardPage() {
       <div className="page-shell motion-page-enter">
         <div className="flex flex-col justify-between gap-5 border-b border-zinc-200 pb-6 md:flex-row md:items-end">
           <div>
-            <p className="app-label mb-2">Workspace / {workspace.workspace_name}</p>
-            <h1 className="app-heading">Dashboard usaha</h1>
-            <p className="mt-2 max-w-2xl text-sm text-zinc-500">
-              Kondisi aktual, komitmen berjalan, dan aktivitas terbaru dalam satu tampilan.
-            </p>
+            <p className="app-label mb-2">{t.badge} / {workspace.workspace_name}</p>
+            <h1 className="app-heading">{t.dashboard.title}</h1>
+            <p className="mt-2 max-w-2xl text-sm text-zinc-500">{t.dashboard.description}</p>
           </div>
           <Link href="/planning" className="app-button">
-            Buka planning
+            {t.dashboard.openPlanning}
             <ArrowUpRight className="size-4" aria-hidden="true" />
           </Link>
         </div>
 
         {unavailable && (
           <p role="alert" className="mt-6 rounded-xl bg-amber-50 p-4 text-sm text-amber-800">
-            Sebagian ringkasan belum dapat dimuat. Coba segarkan halaman.
+            {t.dashboard.alertPartial}
           </p>
         )}
 
@@ -108,7 +116,7 @@ export default async function DashboardPage() {
                 <p className="text-xs font-medium">{label}</p>
               </div>
               <p className="app-data mt-4 text-3xl font-semibold">{value}</p>
-              <p className="mt-1 text-xs text-zinc-400">Workspace aktif</p>
+              <p className="mt-1 text-xs text-zinc-400">{t.dashboard.cards.activeWorkspace}</p>
             </article>
           ))}
         </section>
@@ -117,13 +125,13 @@ export default async function DashboardPage() {
           <div className="app-card overflow-hidden">
             <div className="flex items-start justify-between gap-4 border-b border-zinc-200 px-5 py-4">
               <div>
-                <p className="app-label">Perlu keputusan</p>
+                <p className="app-label">{t.dashboard.decision.eyebrow}</p>
                 <h2 id="decision-heading" className="mt-1 text-lg font-semibold">
-                  Sinyal operasional
+                  {t.dashboard.decision.title}
                 </h2>
               </div>
               <span className="app-data text-sm font-semibold">
-                {attentionTargets.length + (overdue.data?.length ?? 0) + (reviews.data?.length ?? 0)} item
+                {attentionTargets.length + (overdue.data?.length ?? 0) + (reviews.data?.length ?? 0)} {t.dashboard.decision.countSuffix}
               </span>
             </div>
             {attentionTargets.length || overdue.data?.length || reviews.data?.length ? (
@@ -131,30 +139,30 @@ export default async function DashboardPage() {
                 {attentionTargets.length > 0 && (
                   <DecisionRow
                     icon={Gauge}
-                    title={`${attentionTargets.length} target perlu diperiksa`}
-                    detail="Sumber aktual belum tersedia atau berbeda melewati toleransi."
+                    title={`${attentionTargets.length} ${t.dashboard.decisionRows.attention}`}
+                    detail={t.dashboard.decisionRows.attentionDetail}
                     href="/planning/metrics"
-                    action={canManageMetrics ? 'Perbarui actual' : 'Lihat pengukuran'}
+                    action={canManageMetrics ? t.dashboard.decisionRows.attentionAction : t.dashboard.decisionRows.attentionActionView}
                     tone="warning"
                   />
                 )}
                 {(overdue.data?.length ?? 0) > 0 && (
                   <DecisionRow
                     icon={ListChecks}
-                    title={`${overdue.data?.length ?? 0} pekerjaan melewati tenggat`}
-                    detail={overdue.data?.[0]?.title ?? 'Tinjau prioritas dan penanggung jawab.'}
+                    title={`${overdue.data?.length ?? 0} ${t.dashboard.decisionRows.overdue}`}
+                    detail={overdue.data?.[0]?.title ?? t.dashboard.decisionRows.overdueFallback}
                     href="/planning"
-                    action="Buka planning"
+                    action={t.dashboard.decisionRows.overdueAction}
                     tone="danger"
                   />
                 )}
                 {(reviews.data?.length ?? 0) > 0 && (
                   <DecisionRow
                     icon={ClipboardCheck}
-                    title={`${reviews.data?.length ?? 0} evaluasi masih draft`}
-                    detail="Periksa readiness sebelum evidence dikunci."
+                    title={`${reviews.data?.length ?? 0} ${t.dashboard.decisionRows.review}`}
+                    detail={t.dashboard.decisionRows.reviewDetail}
                     href="/planning/reviews"
-                    action={canFinalizeReview ? 'Finalisasi evaluasi' : 'Lihat evaluasi'}
+                    action={canFinalizeReview ? t.dashboard.decisionRows.reviewAction : t.dashboard.decisionRows.reviewActionView}
                   />
                 )}
               </div>
@@ -162,33 +170,35 @@ export default async function DashboardPage() {
               <div className="flex items-start gap-3 px-5 py-8">
                 <CheckCircleIcon className="mt-0.5 size-5 shrink-0 text-emerald-600" aria-hidden="true" />
                 <div>
-                  <p className="text-sm font-semibold">Belum ada sinyal kritis</p>
-                  <p className="mt-1 text-sm text-zinc-500">
-                    Tambahkan target terukur agar dashboard dapat membandingkan rencana dan hasil aktual.
-                  </p>
+                  <p className="text-sm font-semibold">{t.dashboard.decisionRows.emptyTitle}</p>
+                  <p className="mt-1 text-sm text-zinc-500">{t.dashboard.decisionRows.emptyDesc}</p>
                 </div>
               </div>
             )}
           </div>
 
           <div className="app-card p-5">
-            <p className="app-label">Siklus keputusan</p>
-            <h2 className="mt-1 text-lg font-semibold">Lanjutkan dari data</h2>
+            <p className="app-label">{t.dashboard.cycle.eyebrow}</p>
+            <h2 className="mt-1 text-lg font-semibold">{t.dashboard.cycle.title}</h2>
             <ol className="mt-5 grid gap-3 text-sm">
-              <DecisionStep number="01" label="Tetapkan target terukur" complete={(actuals.data?.length ?? 0) > 0} />
+              <DecisionStep number="01" label={t.dashboard.cycle.steps[0]} complete={(actuals.data?.length ?? 0) > 0} doneLabel={t.dashboard.cycle.done} nextLabel={t.dashboard.cycle.next} />
               <DecisionStep
                 number="02"
-                label="Catat atau hubungkan actual"
+                label={t.dashboard.cycle.steps[1]}
                 complete={attentionTargets.length === 0 && (actuals.data?.length ?? 0) > 0}
+                doneLabel={t.dashboard.cycle.done}
+                nextLabel={t.dashboard.cycle.next}
               />
               <DecisionStep
                 number="03"
-                label="Evaluasi dan kunci evidence"
+                label={t.dashboard.cycle.steps[2]}
                 complete={(reviews.data?.length ?? 0) === 0 && (actuals.data?.length ?? 0) > 0}
+                doneLabel={t.dashboard.cycle.done}
+                nextLabel={t.dashboard.cycle.next}
               />
             </ol>
             <Link href="/planning/metrics" className="app-button mt-5 w-full">
-              Buka target dan actual
+              {t.dashboard.cycle.action}
               <ArrowUpRight className="size-4" aria-hidden="true" />
             </Link>
           </div>
@@ -197,14 +207,14 @@ export default async function DashboardPage() {
         <section className="app-card overflow-hidden">
           <div className="flex items-center justify-between gap-4">
             <div className="px-5 py-4">
-              <h2 className="text-sm font-semibold">Transaksi terbaru</h2>
-              <p className="mt-0.5 text-xs text-zinc-500">Aktivitas finansial terakhir pada workspace.</p>
+              <h2 className="text-sm font-semibold">{t.dashboard.recent.title}</h2>
+              <p className="mt-0.5 text-xs text-zinc-500">{t.dashboard.recent.description}</p>
             </div>
             <Link
               href="/management"
               className="mr-5 inline-flex items-center gap-1 text-xs font-medium text-zinc-600 hover:text-zinc-950"
             >
-              Lihat semua
+              {t.dashboard.recent.viewAll}
               <ArrowUpRight className="size-3.5" aria-hidden="true" />
             </Link>
           </div>
@@ -217,7 +227,7 @@ export default async function DashboardPage() {
                 >
                   <span className="text-zinc-600">{transaction.transaction_date}</span>
                   <span className="text-zinc-500">
-                    {transaction.transaction_type === 'sale' ? 'Penjualan' : 'Pengeluaran'}
+                    {transaction.transaction_type === 'sale' ? t.dashboard.recent.sale : t.dashboard.recent.expense}
                   </span>
                   <strong className="app-data text-right">
                     {formatWorkspaceAmount(Number(transaction.net_result), transaction.currency_code)}
@@ -229,10 +239,8 @@ export default async function DashboardPage() {
             <div className="flex items-start gap-3 border-t border-zinc-200 px-5 py-8">
               <BanknotesIcon className="mt-0.5 size-5 shrink-0 text-zinc-400" aria-hidden="true" />
               <div>
-                <p className="text-sm font-semibold text-zinc-800">Belum ada transaksi</p>
-                <p className="mt-1 max-w-sm text-sm text-zinc-500">
-                  Catat aktivitas finansial pertama agar ringkasan aktual mulai terbentuk.
-                </p>
+                <p className="text-sm font-semibold text-zinc-800">{t.dashboard.recent.emptyTitle}</p>
+                <p className="mt-1 max-w-sm text-sm text-zinc-500">{t.dashboard.recent.emptyDesc}</p>
               </div>
             </div>
           )}
@@ -276,13 +284,13 @@ function DecisionRow({
   )
 }
 
-function DecisionStep({ number, label, complete }: { number: string; label: string; complete: boolean }) {
+function DecisionStep({ number, label, complete, doneLabel, nextLabel }: { number: string; label: string; complete: boolean; doneLabel: string; nextLabel: string }) {
   return (
     <li className="grid grid-cols-[2rem_1fr_auto] items-center gap-3">
       <span className="app-data text-xs text-zinc-400">{number}</span>
       <span className={complete ? 'text-zinc-500 line-through' : 'font-medium text-zinc-800'}>{label}</span>
       <span className={`text-xs font-medium ${complete ? 'text-emerald-700' : 'text-zinc-400'}`}>
-        {complete ? 'Selesai' : 'Berikutnya'}
+        {complete ? doneLabel : nextLabel}
       </span>
     </li>
   )
