@@ -14,8 +14,12 @@ import { TransactionPagination } from '@/app/management/_components/transaction-
 import { TransactionInsights } from '@/app/management/_components/transaction-insights'
 import { TransactionExportDialog } from '@/app/management/_components/transaction-export-dialog'
 import { useState } from 'react'
+import { useLanguage } from '@/app/_i18n/language-provider'
+import { managementCopy } from '@/app/_i18n/pages/management'
 
 export default function ManajemenPage() {
+  const { locale } = useLanguage()
+  const copy = managementCopy[locale]
   const [exportOpen, setExportOpen] = useState(false)
   const {
     editingId,
@@ -60,8 +64,8 @@ export default function ManajemenPage() {
       <div className="page-shell motion-page-enter">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
           <div>
-            <h1 className="app-heading">Manajemen transaksi & penjualan</h1>
-            <p className="mt-2 text-zinc-500">Kelola transaksi, biaya pokok, dan hasil bersih usaha Anda.</p>
+            <h1 className="app-heading">{copy.title}</h1>
+            <p className="mt-2 text-zinc-500">{copy.description}</p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
             <button
@@ -70,7 +74,7 @@ export default function ManajemenPage() {
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium hover:bg-zinc-50"
             >
               <Download className="size-4" />
-              Ekspor
+              {copy.exportLabel}
             </button>
             <button
               type="button"
@@ -78,11 +82,11 @@ export default function ManajemenPage() {
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium hover:bg-zinc-50"
             >
               <RotateCcw className="size-4" />
-              Reset Demo
+              {copy.resetLabel}
             </button>
             <button onClick={openCreate} className="app-button w-full md:w-auto">
               <Plus className="size-5" />
-              Tambah Transaksi
+              {copy.addTransaction}
             </button>
           </div>
         </div>
@@ -122,13 +126,13 @@ export default function ManajemenPage() {
       <Modal
         open={modalOpen}
         onClose={closeModal}
-        title={editingId ? 'Edit transaksi' : 'Tambah transaksi'}
-        description="Data akan disimpan otomatis di perangkat ini."
+        title={editingId ? copy.modalEditTitle : copy.modalAddTitle}
+        description={copy.modalDescription}
       >
         <TransactionForm
           key={`${editingId ?? 'new'}-${modalOpen}`}
           initialValues={formInitialValues}
-          submitLabel={editingId === null ? 'Tambah transaksi' : 'Simpan perubahan'}
+          submitLabel={editingId === null ? copy.submitAdd : copy.submitEdit}
           onCancel={closeModal}
           onSubmit={saveTransaction}
         />
@@ -136,17 +140,17 @@ export default function ManajemenPage() {
 
       <ConfirmationDialog
         open={deleteId !== null}
-        title="Hapus transaksi?"
-        description="Transaksi yang dihapus tidak dapat dikembalikan, kecuali dengan mereset seluruh data demo."
-        confirmLabel="Hapus transaksi"
+        title={copy.deleteTitle}
+        description={copy.deleteDescription}
+        confirmLabel={copy.deleteConfirm}
         onCancel={() => setDeleteId(null)}
         onConfirm={confirmDelete}
       />
       <ConfirmationDialog
         open={resetOpen}
-        title="Kembalikan data demo?"
-        description="Semua transaksi buatan dan perubahan Anda akan diganti dengan data contoh awal."
-        confirmLabel="Reset data demo"
+        title={copy.resetTitle}
+        description={copy.resetDescription}
+        confirmLabel={copy.resetConfirm}
         onCancel={() => setResetOpen(false)}
         onConfirm={confirmReset}
       />

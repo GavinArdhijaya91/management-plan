@@ -3,32 +3,29 @@
 import { DemoDataNotice } from '@/app/_components/demo-data-notice'
 import { Header } from '@/components/header'
 import { CheckCircle2, Circle, Target } from 'lucide-react'
-
-const demoPlans = [
-  { title: 'Meningkatkan penjualan produk utama', status: 'Aktif', progress: 68 },
-  { title: 'Menekan biaya operasional bulanan', status: 'Ditinjau', progress: 42 },
-]
+import { useLanguage } from '@/app/_i18n/language-provider'
+import { planningCopy } from '@/app/_i18n/pages/planning'
 
 export default function DemoPlanningPage() {
+  const { locale } = useLanguage()
+  const copy = planningCopy[locale]
   return (
     <main className="app-shell">
       <Header mode="demo" />
       <div className="page-shell motion-page-enter">
-        <p className="app-label mb-3">Mode demo</p>
-        <h1 className="app-heading">Planning bisnis</h1>
-        <p className="mt-2 max-w-2xl text-zinc-500">
-          Lihat bagaimana rencana, target, dan tindakan saling terhubung sebelum membuat workspace.
-        </p>
+        <p className="app-label mb-3">{copy.eyebrow}</p>
+        <h1 className="app-heading">{copy.title}</h1>
+        <p className="mt-2 max-w-2xl text-zinc-500">{copy.description}</p>
         <div className="mt-6">
-          <DemoDataNotice>Perubahan pada halaman demo tidak masuk ke workspace privat.</DemoDataNotice>
+          <DemoDataNotice>{copy.demoNotice}</DemoDataNotice>
         </div>
         <div className="mt-6 grid gap-4">
-          {demoPlans.map((plan) => (
+          {copy.plans.map((plan) => (
             <article key={plan.title} className="app-card p-5 md:p-6">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <span className="inline-flex items-center gap-2 text-xs font-medium text-zinc-500">
-                    <Target className="size-4" /> Business goal
+                    <Target className="size-4" /> {copy.businessGoal}
                   </span>
                   <h2 className="mt-2 font-serif text-xl font-semibold">{plan.title}</h2>
                 </div>
@@ -39,10 +36,10 @@ export default function DemoPlanningPage() {
               </div>
               <div className="mt-4 grid gap-2 text-sm text-zinc-600 sm:grid-cols-2">
                 <span className="flex items-center gap-2">
-                  <CheckCircle2 className="size-4" /> Evaluasi hasil aktual
+                  <CheckCircle2 className="size-4" /> {copy.evaluate}
                 </span>
                 <span className="flex items-center gap-2">
-                  <Circle className="size-4" /> Tindakan berikutnya
+                  <Circle className="size-4" /> {copy.nextAction}
                 </span>
               </div>
             </article>

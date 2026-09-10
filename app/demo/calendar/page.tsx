@@ -9,6 +9,8 @@ import { DemoDataNotice } from '@/app/_components/demo-data-notice'
 import { ConfirmationDialog } from '@/app/management/_components/confirmation-dialog'
 import { useLocalStorage } from '@/app/_lib/use-local-storage'
 import type { DemoCalendarEvent } from '@/types'
+import { useLanguage } from '@/app/_i18n/language-provider'
+import { calendarCopy } from '@/app/_i18n/pages/calendar'
 
 const initialEvents: DemoCalendarEvent[] = [
   { id: 1, date: 15, month: 6, year: 2026, title: 'Bayar Supplier A', type: 'supplier', time: '10:00' },
@@ -19,7 +21,9 @@ const initialEvents: DemoCalendarEvent[] = [
 ]
 
 export default function KalenderPage() {
-  const [currentMonth, setCurrentMonth] = useState(new Date(2026, 6, 20)) // July 2026
+  const { locale } = useLanguage()
+  const copy = calendarCopy[locale]
+  const [currentMonth, setCurrentMonth] = useState(new Date(2026, 6, 20))
   const [selectedDate, setSelectedDate] = useState<number | null>(20)
   const [events, setEvents] = useLocalStorage<DemoCalendarEvent[]>('siapin:demo:events', initialEvents)
   const [modalOpen, setModalOpen] = useState(false)
@@ -33,7 +37,7 @@ export default function KalenderPage() {
     time: '09:00',
   })
 
-  const monthName = currentMonth.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })
+  const monthName = `${copy.months[currentMonth.getMonth()]} ${currentMonth.getFullYear()}`
   const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate()
   const firstDayOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay()
 
@@ -53,18 +57,7 @@ export default function KalenderPage() {
     }
   }
 
-  const getEventTypeLabel = (type: string) => {
-    switch (type) {
-      case 'supplier':
-        return 'Supplier'
-      case 'gaji':
-        return 'Gaji'
-      case 'stok':
-        return 'Stok'
-      default:
-        return 'Lainnya'
-    }
-  }
+  const getEventTypeLabel = (type: string) => copy.typeLabels[type] ?? copy.typeLabels.lainnya
 
   const monthEvents = events.filter(
     (event) => event.month === currentMonth.getMonth() && event.year === currentMonth.getFullYear(),
@@ -91,7 +84,7 @@ export default function KalenderPage() {
     setEventForm({ title: '', type: 'supplier', time: '09:00' })
     setModalOpen(false)
     setEditingId(null)
-    setToast(editingId === null ? 'Agenda berhasil ditambahkan.' : 'Agenda berhasil diperbarui.')
+    setToast(editingId === null ? copy.toast.added : copy.toast.updated)
   }
 
   const openCreate = () => {
@@ -108,12 +101,12 @@ export default function KalenderPage() {
     if (deleteId === null) return
     setEvents((current) => current.filter((item) => item.id !== deleteId))
     setDeleteId(null)
-    setToast('Agenda berhasil dihapus.')
+    setToast(copy.toast.deleted)
   }
   const confirmReset = () => {
     setEvents(initialEvents)
     setResetOpen(false)
-    setToast('Data kalender demo berhasil dikembalikan.')
+    setToast(copy.toast.reset)
   }
 
   return (
@@ -123,14 +116,14 @@ export default function KalenderPage() {
       <div className="motion-page-enter mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-8">
         <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
-            <h1 className="app-heading">Kalender &amp; pengingat</h1>
-            <p className="mt-2 text-zinc-500">Kelola jadwal penting dan pengingat bisnis Anda.</p>
+            <h1 className="app-heading">{copy.title}</h1>
+            <p className="mt-2 text-zinc-500">{copy.description}</p>
           </div>
           <button
             onClick={() => setResetOpen(true)}
             className="min-h-11 rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium hover:bg-zinc-50"
           >
-            Reset Demo
+            {copy.resetLabel}
           </button>
         </div>
         <DemoDataNotice />
@@ -156,7 +149,7 @@ export default function KalenderPage() {
             </div>
 
             <div className="grid grid-cols-7 gap-2 mb-4">
-              {['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'].map((day) => (
+              {copy.weekdays.map((day) => (
                 <div key={day} className="py-2 text-center font-mono text-xs font-medium uppercase text-zinc-500">
                   {day}
                 </div>
@@ -194,7 +187,7 @@ export default function KalenderPage() {
 
           <div className="app-card p-4 md:p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-4">
-              {selectedDate ? `${selectedDate} Juli 2026` : 'Pilih tanggal'}
+              {selectedDate ? `${selectedDate} ${copy.months[currentMonth.getMonth()]} ${currentMonth.getFullYear()}` : copy.selectDate}
             </h3>
 
             {selectedDateEvents.length > 0 ? (
@@ -205,7 +198,7 @@ export default function KalenderPage() {
                       <div className="flex-1">
                         <p className="font-medium text-sm">{event.title}</p>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs opacity-75">{event.time || 'Sepanjang hari'}</span>
+                          <span className="text-xs opacity-75">{event.time || copy.allDay}</span>
                           <span className="text-xs opacity-75">•</span>
                           <span className="text-xs opacity-75">{getEventTypeLabel(event.type)}</span>
                         </div>
@@ -215,11 +208,11 @@ export default function KalenderPage() {
                           onClick={() => openEdit(event)}
                           className="rounded px-2 py-1 text-xs opacity-75 hover:opacity-100"
                         >
-                          Edit
+                          {copy.edit}
                         </button>
                         <button
                           onClick={() => setDeleteId(event.id)}
-                          aria-label={`Hapus ${event.title}`}
+                          aria-label={`${copy.dialog.deleteTitle} ${event.title}`}
                           className="text-current opacity-60 hover:opacity-100 transition-opacity"
                         >
                           <X className="w-4 h-4" />
@@ -232,7 +225,7 @@ export default function KalenderPage() {
             ) : (
               <div className="py-8 text-center">
                 <Bell className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-                <p className="text-gray-500 text-sm">Tidak ada event</p>
+                <p className="text-gray-500 text-sm">{copy.empty}</p>
               </div>
             )}
 
@@ -241,13 +234,13 @@ export default function KalenderPage() {
               disabled={!selectedDate}
               className="app-button mt-4 w-full disabled:cursor-not-allowed disabled:opacity-40"
             >
-              + Tambah Event
+              + {copy.addEvent}
             </button>
           </div>
         </div>
 
         <div className="app-card mt-6 p-4 md:p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">Event Mendatang</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-4">{copy.upcoming}</h3>
           <div className="space-y-2">
             {[...monthEvents]
               .sort((a, b) => a.date - b.date)
@@ -263,7 +256,7 @@ export default function KalenderPage() {
                     <div>
                       <p className="text-sm font-medium text-gray-900">{event.title}</p>
                       <p className="text-xs text-gray-500">
-                        {event.date} Juli {event.time && `• ${event.time}`}
+                        {event.date} {copy.months[currentMonth.getMonth()]} {event.time && `• ${event.time}`}
                       </p>
                     </div>
                   </div>
@@ -277,23 +270,23 @@ export default function KalenderPage() {
       <Modal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        title={editingId === null ? 'Tambah event' : 'Edit event'}
+        title={editingId === null ? copy.form.addTitle : copy.form.editTitle}
         description={selectedDate ? `${selectedDate} ${monthName}` : undefined}
       >
         <form onSubmit={saveEvent} className="space-y-4">
           <label className="block text-sm font-medium">
-            Agenda
+            {copy.form.agenda}
             <input
               required
               value={eventForm.title}
               onChange={(event) => setEventForm({ ...eventForm, title: event.target.value })}
-              placeholder="Contoh: Bayar supplier"
+              placeholder={copy.form.agendaPlaceholder}
               className="app-input mt-1.5 w-full"
             />
           </label>
           <div className="grid grid-cols-2 gap-4">
             <label className="block text-sm font-medium">
-              Kategori
+              {copy.form.category}
               <select
                 value={eventForm.type}
                 onChange={(event) =>
@@ -304,14 +297,14 @@ export default function KalenderPage() {
                 }
                 className="app-input mt-1.5 w-full"
               >
-                <option value="supplier">Supplier</option>
-                <option value="gaji">Gaji</option>
-                <option value="stok">Stok</option>
-                <option value="lainnya">Lainnya</option>
+                <option value="supplier">{copy.typeLabels.supplier}</option>
+                <option value="gaji">{copy.typeLabels.gaji}</option>
+                <option value="stok">{copy.typeLabels.stok}</option>
+                <option value="lainnya">{copy.typeLabels.lainnya}</option>
               </select>
             </label>
             <label className="block text-sm font-medium">
-              Waktu
+              {copy.form.time}
               <input
                 required
                 type="time"
@@ -327,27 +320,27 @@ export default function KalenderPage() {
               onClick={() => setModalOpen(false)}
               className="min-h-11 rounded-xl border border-zinc-200 px-4 text-sm font-medium"
             >
-              Batal
+              {copy.form.cancel}
             </button>
             <button type="submit" className="app-button">
-              Simpan event
+              {copy.form.save}
             </button>
           </div>
         </form>
       </Modal>
       <ConfirmationDialog
         open={deleteId !== null}
-        title="Hapus agenda?"
-        description="Agenda yang dihapus tidak dapat dikembalikan kecuali melalui Reset Demo."
-        confirmLabel="Hapus agenda"
+        title={copy.dialog.deleteTitle}
+        description={copy.dialog.deleteDescription}
+        confirmLabel={copy.dialog.deleteConfirm}
         onCancel={() => setDeleteId(null)}
         onConfirm={confirmDelete}
       />
       <ConfirmationDialog
         open={resetOpen}
-        title="Kembalikan data kalender?"
-        description="Semua perubahan kalender lokal akan diganti dengan data awal demo."
-        confirmLabel="Reset Demo"
+        title={copy.dialog.resetTitle}
+        description={copy.dialog.resetDescription}
+        confirmLabel={copy.dialog.resetConfirm}
         onCancel={() => setResetOpen(false)}
         onConfirm={confirmReset}
       />
