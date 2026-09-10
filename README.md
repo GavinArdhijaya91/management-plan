@@ -1,4 +1,4 @@
-# Siapin Plan it first, then make it happen.
+# Siapin: Plan it first, then make it happen.
 
 > An open-source workspace that helps small businesses turn plans into real results.
 
@@ -87,7 +87,7 @@ You do not need to be a developer to contribute. Better words, clearer docs, bug
 | **Planning loop**              | Create plans, goals, initiatives, action items, measurable targets, actual results, and business reviews |
 | **Money**                      | Record simple transactions and link them to goals                                                        |
 | **Calendar & more**            | Calendar, notifications, profile, community posts, and a curated portfolio of finished reviews           |
-| **Safety**                     | PostgreSQL (Supabase) with Row Level Security on your workspace cannot see another workspace's data       |
+| **Safety**                     | PostgreSQL (Supabase) with Row Level Security on your workspace cannot see another workspace's data      |
 | **Quality**                    | Unit tests, database security contracts, and Playwright end-to-end tests                                 |
 
 What is next is tracked honestly in [ROADMAP.md](./ROADMAP.md) and [Product Direction](./docs/PRODUCT_DIRECTION.md).
@@ -109,6 +109,7 @@ Mobile is also supported for same pages, adapted for small screens.
 This is the full setup, start to end. No step is skipped.
 
 ### 1. What you need before you start
+
 - **Node.js 22.13 or newer**: check with `node -v`
 - **Git**
 - **pnpm** via Corepack (comes with Node.js): check with `pnpm -v`
