@@ -67,7 +67,6 @@ export default function HubungiKamiPage() {
         </DemoDataNotice>
 
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
-          {/* Contact Methods */}
           <div className="app-card p-4 md:p-6">
             <div className="flex items-start gap-3">
               <Mail className="mt-1 h-6 w-6 flex-shrink-0 text-zinc-950" />
@@ -103,7 +102,6 @@ export default function HubungiKamiPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-          {/* Contact Form */}
           <div className="app-card p-4 md:p-6 lg:col-span-2">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Kirim Pesan</h2>
 
@@ -200,7 +198,6 @@ export default function HubungiKamiPage() {
             </form>
           </div>
 
-          {/* FAQ */}
           <div className="app-card p-4 md:p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
               <MessageSquare className="w-5 h-5" />
