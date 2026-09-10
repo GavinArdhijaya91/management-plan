@@ -1,0 +1,238 @@
+import type { Locale } from '../dictionaries'
+
+interface MarketTrendsCopy {
+  eyebrow: string
+  title: string
+  description: string
+  demoNotice: string
+  resetLabel: string
+  addProduct: string
+  periodLabel: string
+  periodOptions: { '3': string; '6': string }
+  chartTitle: (period: string) => string
+  topOpportunity: string
+  topOpportunityDesc: (name: string, change: number) => string
+  needsReview: string
+  needsReviewDesc: (name: string, change: number) => string
+  assumptionLabel: string
+  monitoredProducts: string
+  empty: string
+  market: string
+  conditions: string[]
+  table: { product: string; edit: string }
+  howToTitle: string
+  howToDesc: string
+  modalAddTitle: string
+  modalEditTitle: string
+  form: { name: string; change: string; condition: string; cancel: string; save: string }
+  toast: { added: string; updated: string; reset: string }
+  initialProducts: { id: number; name: string; change: number; market: string }[]
+  trendSuffix: string
+}
+
+export const marketTrendsCopy: Record<Locale, MarketTrendsCopy> = {
+  id: {
+    eyebrow: 'Simulasi keputusan',
+    title: 'Analisis tren pasar',
+    description: 'Uji asumsi produk dan lihat prioritas tindakan yang dihasilkan.',
+    demoNotice: 'Data tren merupakan simulasi edukatif, bukan rekomendasi investasi atau riset pasar aktual.',
+    resetLabel: 'Reset Demo',
+    addProduct: 'Tambah produk',
+    periodLabel: 'Periode',
+    periodOptions: { '3': '3 bulan', '6': '6 bulan' },
+    chartTitle: (p) => `Tren penjualan, ${p} bulan terakhir`,
+    topOpportunity: 'Peluang utama',
+    topOpportunityDesc: (n, c) => `Pertumbuhan simulasi ${c}%. Validasi permintaan sebelum menambah stok.`,
+    needsReview: 'Perlu evaluasi',
+    needsReviewDesc: (n, c) => `Perubahan ${c}%. Periksa harga, promosi, dan relevansi produk.`,
+    assumptionLabel: 'Asumsi produk',
+    monitoredProducts: 'Produk yang dipantau',
+    empty: 'Belum ada produk pantauan.',
+    market: 'Pasar',
+    conditions: ['Sedang naik', 'Stabil', 'Menurun', 'Naik pesat'],
+    table: { product: 'Produk', edit: 'Edit' },
+    howToTitle: 'Cara memakai halaman ini',
+    howToDesc: 'Masukkan perubahan yang Anda amati, bandingkan produk, lalu jadikan hasilnya hipotesis untuk diuji melalui promosi kecil.',
+    modalAddTitle: 'Tambah produk pantauan',
+    modalEditTitle: 'Edit asumsi produk',
+    form: { name: 'Nama produk', change: 'Perubahan (%)', condition: 'Kondisi', cancel: 'Batal', save: 'Simpan' },
+    toast: { added: 'Produk pantauan ditambahkan.', updated: 'Asumsi tren diperbarui.', reset: 'Data tren demo berhasil dikembalikan.' },
+    initialProducts: [
+      { id: 1, name: 'Produk A', change: 25, market: 'Sedang naik' },
+      { id: 2, name: 'Produk B', change: 15, market: 'Stabil' },
+      { id: 3, name: 'Produk C', change: -10, market: 'Menurun' },
+      { id: 4, name: 'Produk D', change: 32, market: 'Naik pesat' },
+    ],
+    trendSuffix: '',
+  },
+  en: {
+    eyebrow: 'Decision simulation',
+    title: 'Market trend analysis',
+    description: 'Test product assumptions and see the resulting action priorities.',
+    demoNotice: 'Trend data is an educational simulation, not investment advice or real market research.',
+    resetLabel: 'Reset Demo',
+    addProduct: 'Add product',
+    periodLabel: 'Period',
+    periodOptions: { '3': '3 months', '6': '6 months' },
+    chartTitle: (p) => `Sales trend, last ${p} months`,
+    topOpportunity: 'Top opportunity',
+    topOpportunityDesc: (n, c) => `Simulated growth ${c}%. Validate demand before adding stock.`,
+    needsReview: 'Needs review',
+    needsReviewDesc: (n, c) => `Change ${c}%. Check pricing, promotion and product relevance.`,
+    assumptionLabel: 'Product assumptions',
+    monitoredProducts: 'Monitored products',
+    empty: 'No monitored products yet.',
+    market: 'Market',
+    conditions: ['Rising', 'Stable', 'Declining', 'Surging'],
+    table: { product: 'Product', edit: 'Edit' },
+    howToTitle: 'How to use this page',
+    howToDesc: 'Enter observed changes, compare products, then treat the result as a hypothesis to test with a small promotion.',
+    modalAddTitle: 'Add monitored product',
+    modalEditTitle: 'Edit product assumption',
+    form: { name: 'Product name', change: 'Change (%)', condition: 'Condition', cancel: 'Cancel', save: 'Save' },
+    toast: { added: 'Monitored product added.', updated: 'Trend assumption updated.', reset: 'Demo trend data restored.' },
+    initialProducts: [
+      { id: 1, name: 'Product A', change: 25, market: 'Rising' },
+      { id: 2, name: 'Product B', change: 15, market: 'Stable' },
+      { id: 3, name: 'Product C', change: -10, market: 'Declining' },
+      { id: 4, name: 'Product D', change: 32, market: 'Surging' },
+    ],
+    trendSuffix: '',
+  },
+  ja: {
+    eyebrow: '意思決定シミュレーション',
+    title: '市場トレンド分析',
+    description: '製品の仮説を検証し、優先アクションを確認しましょう。',
+    demoNotice: 'トレンドデータは教育用シミュレーションであり、投資助言ではありません。',
+    resetLabel: 'デモをリセット',
+    addProduct: '製品を追加',
+    periodLabel: '期間',
+    periodOptions: { '3': '3ヶ月', '6': '6ヶ月' },
+    chartTitle: (p) => `販売トレンド（直近${p}ヶ月）`,
+    topOpportunity: '最大の機会',
+    topOpportunityDesc: (n, c) => `シミュレーション成長率 ${c}%。在庫追加前に需要を検証しましょう。`,
+    needsReview: '要確認',
+    needsReviewDesc: (n, c) => `変化 ${c}%。価格・販促・適合性を確認しましょう。`,
+    assumptionLabel: '製品仮説',
+    monitoredProducts: '監視中の製品',
+    empty: '監視中の製品はまだありません。',
+    market: '市場',
+    conditions: ['上昇中', '安定', '下降', '急上昇'],
+    table: { product: '製品', edit: '編集' },
+    howToTitle: 'このページの使い方',
+    howToDesc: '観測した変化を入力し、製品を比較して小さな販促で仮説を検証しましょう。',
+    modalAddTitle: '監視製品を追加',
+    modalEditTitle: '製品仮説を編集',
+    form: { name: '製品名', change: '変化（%）', condition: '状態', cancel: 'キャンセル', save: '保存' },
+    toast: { added: '監視製品を追加しました。', updated: 'トレンド仮説を更新しました。', reset: 'デモデータを復元しました。' },
+    initialProducts: [
+      { id: 1, name: '製品A', change: 25, market: '上昇中' },
+      { id: 2, name: '製品B', change: 15, market: '安定' },
+      { id: 3, name: '製品C', change: -10, market: '下降' },
+      { id: 4, name: '製品D', change: 32, market: '急上昇' },
+    ],
+    trendSuffix: '',
+  },
+  es: {
+    eyebrow: 'Simulación de decisiones',
+    title: 'Análisis de tendencias',
+    description: 'Prueba hipótesis de producto y ve las prioridades de acción.',
+    demoNotice: 'Los datos son una simulación educativa, no asesoramiento de inversión.',
+    resetLabel: 'Restablecer demo',
+    addProduct: 'Añadir producto',
+    periodLabel: 'Periodo',
+    periodOptions: { '3': '3 meses', '6': '6 meses' },
+    chartTitle: (p) => `Tendencia de ventas, últimos ${p} meses`,
+    topOpportunity: 'Oportunidad principal',
+    topOpportunityDesc: (n, c) => `Crecimiento simulado ${c}%. Valida la demanda antes de reponer.`,
+    needsReview: 'Requiere evaluación',
+    needsReviewDesc: (n, c) => `Cambio ${c}%. Revisa precio, promoción y relevancia.`,
+    assumptionLabel: 'Hipótesis de producto',
+    monitoredProducts: 'Productos monitorizados',
+    empty: 'Aún no hay productos monitorizados.',
+    market: 'Mercado',
+    conditions: ['En alza', 'Estable', 'En baja', 'En fuerte alza'],
+    table: { product: 'Producto', edit: 'Editar' },
+    howToTitle: 'Cómo usar esta página',
+    howToDesc: 'Introduce cambios observados, compara productos y prueba la hipótesis con una pequeña promoción.',
+    modalAddTitle: 'Añadir producto',
+    modalEditTitle: 'Editar hipótesis',
+    form: { name: 'Nombre del producto', change: 'Cambio (%)', condition: 'Condición', cancel: 'Cancelar', save: 'Guardar' },
+    toast: { added: 'Producto añadido.', updated: 'Hipótesis actualizada.', reset: 'Datos de demo restablecidos.' },
+    initialProducts: [
+      { id: 1, name: 'Producto A', change: 25, market: 'En alza' },
+      { id: 2, name: 'Producto B', change: 15, market: 'Estable' },
+      { id: 3, name: 'Producto C', change: -10, market: 'En baja' },
+      { id: 4, name: 'Producto D', change: 32, market: 'En fuerte alza' },
+    ],
+    trendSuffix: '',
+  },
+  fr: {
+    eyebrow: 'Simulation de décision',
+    title: 'Analyse des tendances',
+    description: 'Testez des hypothèses produit et voyez les priorités d’action.',
+    demoNotice: 'Données simulées à but pédagogique, non un conseil en investissement.',
+    resetLabel: 'Réinitialiser la démo',
+    addProduct: 'Ajouter un produit',
+    periodLabel: 'Période',
+    periodOptions: { '3': '3 mois', '6': '6 mois' },
+    chartTitle: (p) => `Tendance des ventes, ${p} derniers mois`,
+    topOpportunity: 'Opportunité principale',
+    topOpportunityDesc: (n, c) => `Croissance simulée ${c}%. Validez la demande avant de restocker.`,
+    needsReview: 'À évaluer',
+    needsReviewDesc: (n, c) => `Évolution ${c}%. Vérifiez prix, promotion et pertinence.`,
+    assumptionLabel: 'Hypothèses produit',
+    monitoredProducts: 'Produits suivis',
+    empty: 'Aucun produit suivi pour l’instant.',
+    market: 'Marché',
+    conditions: ['En hausse', 'Stable', 'En baisse', 'En forte hausse'],
+    table: { product: 'Produit', edit: 'Modifier' },
+    howToTitle: 'Comment utiliser cette page',
+    howToDesc: 'Saisissez les variations observées, comparez les produits et testez l’hypothèse avec une petite promotion.',
+    modalAddTitle: 'Ajouter un produit suivi',
+    modalEditTitle: 'Modifier l’hypothèse',
+    form: { name: 'Nom du produit', change: 'Variation (%)', condition: 'Condition', cancel: 'Annuler', save: 'Enregistrer' },
+    toast: { added: 'Produit ajouté.', updated: 'Hypothèse mise à jour.', reset: 'Données de démo restaurées.' },
+    initialProducts: [
+      { id: 1, name: 'Produit A', change: 25, market: 'En hausse' },
+      { id: 2, name: 'Produit B', change: 15, market: 'Stable' },
+      { id: 3, name: 'Produit C', change: -10, market: 'En baisse' },
+      { id: 4, name: 'Produit D', change: 32, market: 'En forte hausse' },
+    ],
+    trendSuffix: '',
+  },
+  de: {
+    eyebrow: 'Entscheidungssimulation',
+    title: 'Markttrend-Analyse',
+    description: 'Testen Sie Produkthypothesen und sehen Sie Handlungsprioritäten.',
+    demoNotice: 'Trenddaten sind eine pädagogische Simulation, keine Anlageberatung.',
+    resetLabel: 'Demo zurücksetzen',
+    addProduct: 'Produkt hinzufügen',
+    periodLabel: 'Zeitraum',
+    periodOptions: { '3': '3 Monate', '6': '6 Monate' },
+    chartTitle: (p) => `Verkaufstrend, letzte ${p} Monate`,
+    topOpportunity: 'Top-Chance',
+    topOpportunityDesc: (n, c) => `Simuliertes Wachstum ${c}%. Nachfrage vor Aufstockung prüfen.`,
+    needsReview: 'Prüfbedarf',
+    needsReviewDesc: (n, c) => `Veränderung ${c}%. Preis, Promotion und Relevanz prüfen.`,
+    assumptionLabel: 'Produktannahmen',
+    monitoredProducts: 'Beobachtete Produkte',
+    empty: 'Noch keine beobachteten Produkte.',
+    market: 'Markt',
+    conditions: ['Steigend', 'Stabil', 'Fallend', 'Stark steigend'],
+    table: { product: 'Produkt', edit: 'Bearbeiten' },
+    howToTitle: 'So nutzen Sie diese Seite',
+    howToDesc: 'Geben Sie beobachtete Veränderungen ein, vergleichen Sie Produkte und testen Sie die Hypothese mit einer kleinen Aktion.',
+    modalAddTitle: 'Beobachtetes Produkt hinzufügen',
+    modalEditTitle: 'Annahme bearbeiten',
+    form: { name: 'Produktname', change: 'Veränderung (%)', condition: 'Zustand', cancel: 'Abbrechen', save: 'Speichern' },
+    toast: { added: 'Beobachtetes Produkt hinzugefügt.', updated: 'Annahme aktualisiert.', reset: 'Demo-Daten wiederhergestellt.' },
+    initialProducts: [
+      { id: 1, name: 'Produkt A', change: 25, market: 'Steigend' },
+      { id: 2, name: 'Produkt B', change: 15, market: 'Stabil' },
+      { id: 3, name: 'Produkt C', change: -10, market: 'Fallend' },
+      { id: 4, name: 'Produkt D', change: 32, market: 'Stark steigend' },
+    ],
+    trendSuffix: '',
+  },
+}
