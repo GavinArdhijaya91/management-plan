@@ -16,7 +16,6 @@ export function useLocalStorage<T>(key: string, initialValue: T, decode?: (store
         if (decoded === null) {
           window.localStorage.removeItem(key)
         } else {
-          // Hydration-safe synchronization with the browser storage boundary.
           // eslint-disable-next-line react-hooks/set-state-in-effect
           setValue(decoded)
         }
@@ -32,9 +31,7 @@ export function useLocalStorage<T>(key: string, initialValue: T, decode?: (store
     if (!ready) return
     try {
       window.localStorage.setItem(key, JSON.stringify(value))
-    } catch {
-      // The UI remains usable when storage is unavailable or full.
-    }
+    } catch {}
   }, [key, ready, value])
 
   return [value, setValue, ready] as const
