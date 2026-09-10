@@ -55,7 +55,7 @@ export function isLocale(value: string | null): value is Locale {
   return localeCodes.includes(value as Locale)
 }
 
-// Dynamic import map — only the active locale chunk is loaded on the client
+// Dynamic import map: only the active locale chunk is loaded on the client
 const dictionaryLoaders: Record<Locale, () => Promise<{ default: Dictionary }>> = {
   id: () => import('./dictionaries/id'),
   ja: () => import('./dictionaries/ja'),

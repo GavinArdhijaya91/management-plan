@@ -1,4 +1,4 @@
-# Siapin Plan it first, then make it happen.
+# Siapin: Plan it first, then make it happen.
 
 > An open-source workspace that helps small businesses turn plans into real results.
 
@@ -99,6 +99,10 @@ What is next is tracked honestly in [ROADMAP.md](./ROADMAP.md) and [Product Dire
 | Landing                           | Dashboard                             | Management                             | Calendar                            |
 | --------------------------------- | ------------------------------------- | -------------------------------------- | ----------------------------------- |
 | ![Landing](./desktop-landing.png) | ![Dashboard](./desktop-dashboard.png) | ![Management](./desktop-manajemen.png) | ![Calendar](./desktop-kalender.png) |
+
+| Market Trends                                 | Planning                            |
+| --------------------------------------------- | ----------------------------------- |
+| ![Market Trends](./desktop-market-trends.png) | ![Planning](./desktop-planning.png) |
 
 Mobile is also supported for same pages, adapted for small screens.
 
