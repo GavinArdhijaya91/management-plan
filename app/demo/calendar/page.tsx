@@ -136,9 +136,7 @@ export default function KalenderPage() {
         <DemoDataNotice />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-          {/* Calendar */}
           <div className="app-card p-4 md:p-6 lg:col-span-2">
-            {/* Calendar Header */}
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-serif text-2xl font-semibold text-zinc-950">{monthName}</h2>
               <div className="flex gap-2">
@@ -157,7 +155,6 @@ export default function KalenderPage() {
               </div>
             </div>
 
-            {/* Weekday Headers */}
             <div className="grid grid-cols-7 gap-2 mb-4">
               {['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'].map((day) => (
                 <div key={day} className="py-2 text-center font-mono text-xs font-medium uppercase text-zinc-500">
@@ -166,7 +163,6 @@ export default function KalenderPage() {
               ))}
             </div>
 
-            {/* Calendar Days */}
             <div className="grid grid-cols-7 gap-2">
               {emptyDays.map((i) => (
                 <div key={`empty-${i}`} className="aspect-square" />
@@ -196,7 +192,6 @@ export default function KalenderPage() {
             </div>
           </div>
 
-          {/* Events Sidebar */}
           <div className="app-card p-4 md:p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-4">
               {selectedDate ? `${selectedDate} Juli 2026` : 'Pilih tanggal'}
@@ -251,7 +246,6 @@ export default function KalenderPage() {
           </div>
         </div>
 
-        {/* Upcoming Events */}
         <div className="app-card mt-6 p-4 md:p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-4">Event Mendatang</h3>
           <div className="space-y-2">

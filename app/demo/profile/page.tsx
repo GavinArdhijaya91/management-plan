@@ -34,7 +34,6 @@ export default function ProfilePage() {
   const [toast, setToast] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   useEffect(() => {
-    // Synchronize the editable draft after persisted browser data is hydrated.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (ready) setDraft(profile)
   }, [profile, ready])
