@@ -1,8 +1,11 @@
 import { randomUUID } from 'node:crypto'
+import { cookies, headers } from 'next/headers'
 import { Plus } from 'lucide-react'
 import { createPrivateTransactionAction } from '@/app/management/actions'
 import { PrivateTransactionExportButton } from '@/app/management/_components/private-transaction-export-button'
 import { Header } from '@/components/header'
+import { LOCALE_COOKIE, resolveLocale } from '@/app/_i18n/locale'
+import { workspaceCopy } from '@/app/_i18n/pages/workspace'
 import { createClient } from '@/lib/supabase/server'
 import { requireActiveWorkspace } from '@/lib/workspace/context'
 
@@ -16,6 +19,13 @@ export default async function ManagementPage({
 }: {
   searchParams: Promise<{ error?: string; success?: string }>
 }) {
+  const cookieStore = await cookies()
+  const headerStore = await headers()
+  const locale = resolveLocale({
+    cookieLocale: cookieStore.get(LOCALE_COOKIE)?.value ?? null,
+    acceptLanguageHeader: headerStore.get('accept-language'),
+  })
+  const t = workspaceCopy[locale]
   const workspace = await requireActiveWorkspace('/management')
   const feedback = await searchParams
   const canWrite = workspace.permission_codes.includes('transaction.write')
@@ -33,9 +43,11 @@ export default async function ManagementPage({
       <div className="page-shell motion-page-enter">
         <div className="flex flex-col justify-between gap-4 border-b border-zinc-200 pb-6 md:flex-row md:items-end">
           <div>
-            <p className="app-label mb-2">Workspace / {workspace.workspace_name}</p>
-            <h1 className="app-heading">Manajemen transaksi</h1>
-            <p className="mt-2 text-sm text-zinc-500">Ledger aktual dari database workspace privat.</p>
+            <p className="app-label mb-2">
+              {t.badge} / {workspace.workspace_name}
+            </p>
+            <h1 className="app-heading">{t.management.title}</h1>
+            <p className="mt-2 text-sm text-zinc-500">{t.management.description}</p>
           </div>
           <PrivateTransactionExportButton />
         </div>

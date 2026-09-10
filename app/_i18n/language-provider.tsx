@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, u
 import { getDictionary, type Dictionary, type Locale } from './dictionaries'
 import { LOCALE_COOKIE, LOCALE_STORAGE_KEY } from './locale'
 import { isLocale } from './dictionaries'
+import { matchLocale } from './locale'
 
 const CHANGE_EVENT = 'siapin:locale-change'
 
@@ -31,6 +32,12 @@ function getStorageLocale(): Locale | null {
   return isLocale(stored) ? stored : null
 }
 
+function getBrowserLocale(): Locale | null {
+  if (typeof navigator === 'undefined') return null
+  const languages = navigator.languages ? [...navigator.languages] : navigator.language ? [navigator.language] : []
+  return matchLocale(languages)
+}
+
 function subscribe(callback: () => void) {
   window.addEventListener('storage', callback)
   window.addEventListener(CHANGE_EVENT, callback)
@@ -54,6 +61,9 @@ export function LanguageProvider({
     if (storage) return storage
     const cookie = getCookieLocale()
     if (isLocale(cookie)) return cookie as Locale
+    // Fallback to browser language when no explicit choice yet (cross-device first visit)
+    const browser = getBrowserLocale()
+    if (browser) return browser
     return initialLocale ?? 'id'
   }, [initialLocale])
 
@@ -82,6 +92,14 @@ export function LanguageProvider({
     window.localStorage.setItem(LOCALE_STORAGE_KEY, nextLocale)
     setCookieLocale(nextLocale)
     window.dispatchEvent(new Event(CHANGE_EVENT))
+    // Ensure server-side rendering on next navigation/refresh uses the new locale
+    // and that browser translation/cache sees the change as user preference
+    try {
+      // Refresh cookie sync without full reload - next request will carry new cookie
+      if (typeof document !== 'undefined') {
+        document.documentElement.lang = nextLocale
+      }
+    } catch {}
   }, [])
 
   useEffect(() => {
@@ -95,8 +113,16 @@ export function LanguageProvider({
       setCookieLocale(storage)
     } else if (!storage && isLocale(cookie)) {
       window.localStorage.setItem(LOCALE_STORAGE_KEY, cookie as Locale)
+    } else if (!storage && !isLocale(cookie)) {
+      // First visit: persist browser language as explicit choice for cross-device consistency
+      const browser = getBrowserLocale()
+      if (browser && browser !== initialLocale) {
+        window.localStorage.setItem(LOCALE_STORAGE_KEY, browser)
+        setCookieLocale(browser)
+        window.dispatchEvent(new Event(CHANGE_EVENT))
+      }
     }
-  }, [])
+  }, [initialLocale])
 
   const value = useMemo(() => ({ dictionary, locale, setLocale }), [dictionary, locale, setLocale])
 
