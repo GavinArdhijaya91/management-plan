@@ -21,7 +21,10 @@ export default async function ManagementPage({
 }) {
   const cookieStore = await cookies()
   const headerStore = await headers()
-  const locale = resolveLocale({ cookieLocale: cookieStore.get(LOCALE_COOKIE)?.value ?? null, acceptLanguageHeader: headerStore.get('accept-language') })
+  const locale = resolveLocale({
+    cookieLocale: cookieStore.get(LOCALE_COOKIE)?.value ?? null,
+    acceptLanguageHeader: headerStore.get('accept-language'),
+  })
   const t = workspaceCopy[locale]
   const workspace = await requireActiveWorkspace('/management')
   const feedback = await searchParams
@@ -40,7 +43,9 @@ export default async function ManagementPage({
       <div className="page-shell motion-page-enter">
         <div className="flex flex-col justify-between gap-4 border-b border-zinc-200 pb-6 md:flex-row md:items-end">
           <div>
-            <p className="app-label mb-2">{t.badge} / {workspace.workspace_name}</p>
+            <p className="app-label mb-2">
+              {t.badge} / {workspace.workspace_name}
+            </p>
             <h1 className="app-heading">{t.management.title}</h1>
             <p className="mt-2 text-sm text-zinc-500">{t.management.description}</p>
           </div>

@@ -9,7 +9,10 @@ import { hasWorkspacePermission, requireActiveWorkspace } from '@/lib/workspace/
 export default async function CalendarPage() {
   const cookieStore = await cookies()
   const headerStore = await headers()
-  const locale = resolveLocale({ cookieLocale: cookieStore.get(LOCALE_COOKIE)?.value ?? null, acceptLanguageHeader: headerStore.get('accept-language') })
+  const locale = resolveLocale({
+    cookieLocale: cookieStore.get(LOCALE_COOKIE)?.value ?? null,
+    acceptLanguageHeader: headerStore.get('accept-language'),
+  })
   const t = workspaceCopy[locale]
   const workspace = await requireActiveWorkspace('/calendar')
   const supabase = await createClient()

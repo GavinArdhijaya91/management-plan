@@ -86,7 +86,9 @@ export default async function DashboardPage() {
       <div className="page-shell motion-page-enter">
         <div className="flex flex-col justify-between gap-5 border-b border-zinc-200 pb-6 md:flex-row md:items-end">
           <div>
-            <p className="app-label mb-2">{t.badge} / {workspace.workspace_name}</p>
+            <p className="app-label mb-2">
+              {t.badge} / {workspace.workspace_name}
+            </p>
             <h1 className="app-heading">{t.dashboard.title}</h1>
             <p className="mt-2 max-w-2xl text-sm text-zinc-500">{t.dashboard.description}</p>
           </div>
@@ -131,7 +133,8 @@ export default async function DashboardPage() {
                 </h2>
               </div>
               <span className="app-data text-sm font-semibold">
-                {attentionTargets.length + (overdue.data?.length ?? 0) + (reviews.data?.length ?? 0)} {t.dashboard.decision.countSuffix}
+                {attentionTargets.length + (overdue.data?.length ?? 0) + (reviews.data?.length ?? 0)}{' '}
+                {t.dashboard.decision.countSuffix}
               </span>
             </div>
             {attentionTargets.length || overdue.data?.length || reviews.data?.length ? (
@@ -142,7 +145,11 @@ export default async function DashboardPage() {
                     title={`${attentionTargets.length} ${t.dashboard.decisionRows.attention}`}
                     detail={t.dashboard.decisionRows.attentionDetail}
                     href="/planning/metrics"
-                    action={canManageMetrics ? t.dashboard.decisionRows.attentionAction : t.dashboard.decisionRows.attentionActionView}
+                    action={
+                      canManageMetrics
+                        ? t.dashboard.decisionRows.attentionAction
+                        : t.dashboard.decisionRows.attentionActionView
+                    }
                     tone="warning"
                   />
                 )}
@@ -162,7 +169,11 @@ export default async function DashboardPage() {
                     title={`${reviews.data?.length ?? 0} ${t.dashboard.decisionRows.review}`}
                     detail={t.dashboard.decisionRows.reviewDetail}
                     href="/planning/reviews"
-                    action={canFinalizeReview ? t.dashboard.decisionRows.reviewAction : t.dashboard.decisionRows.reviewActionView}
+                    action={
+                      canFinalizeReview
+                        ? t.dashboard.decisionRows.reviewAction
+                        : t.dashboard.decisionRows.reviewActionView
+                    }
                   />
                 )}
               </div>
@@ -181,7 +192,13 @@ export default async function DashboardPage() {
             <p className="app-label">{t.dashboard.cycle.eyebrow}</p>
             <h2 className="mt-1 text-lg font-semibold">{t.dashboard.cycle.title}</h2>
             <ol className="mt-5 grid gap-3 text-sm">
-              <DecisionStep number="01" label={t.dashboard.cycle.steps[0]} complete={(actuals.data?.length ?? 0) > 0} doneLabel={t.dashboard.cycle.done} nextLabel={t.dashboard.cycle.next} />
+              <DecisionStep
+                number="01"
+                label={t.dashboard.cycle.steps[0]}
+                complete={(actuals.data?.length ?? 0) > 0}
+                doneLabel={t.dashboard.cycle.done}
+                nextLabel={t.dashboard.cycle.next}
+              />
               <DecisionStep
                 number="02"
                 label={t.dashboard.cycle.steps[1]}
@@ -284,7 +301,19 @@ function DecisionRow({
   )
 }
 
-function DecisionStep({ number, label, complete, doneLabel, nextLabel }: { number: string; label: string; complete: boolean; doneLabel: string; nextLabel: string }) {
+function DecisionStep({
+  number,
+  label,
+  complete,
+  doneLabel,
+  nextLabel,
+}: {
+  number: string
+  label: string
+  complete: boolean
+  doneLabel: string
+  nextLabel: string
+}) {
   return (
     <li className="grid grid-cols-[2rem_1fr_auto] items-center gap-3">
       <span className="app-data text-xs text-zinc-400">{number}</span>

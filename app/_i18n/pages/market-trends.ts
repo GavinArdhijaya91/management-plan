@@ -52,11 +52,16 @@ export const marketTrendsCopy: Record<Locale, MarketTrendsCopy> = {
     conditions: ['Sedang naik', 'Stabil', 'Menurun', 'Naik pesat'],
     table: { product: 'Produk', edit: 'Edit' },
     howToTitle: 'Cara memakai halaman ini',
-    howToDesc: 'Masukkan perubahan yang Anda amati, bandingkan produk, lalu jadikan hasilnya hipotesis untuk diuji melalui promosi kecil.',
+    howToDesc:
+      'Masukkan perubahan yang Anda amati, bandingkan produk, lalu jadikan hasilnya hipotesis untuk diuji melalui promosi kecil.',
     modalAddTitle: 'Tambah produk pantauan',
     modalEditTitle: 'Edit asumsi produk',
     form: { name: 'Nama produk', change: 'Perubahan (%)', condition: 'Kondisi', cancel: 'Batal', save: 'Simpan' },
-    toast: { added: 'Produk pantauan ditambahkan.', updated: 'Asumsi tren diperbarui.', reset: 'Data tren demo berhasil dikembalikan.' },
+    toast: {
+      added: 'Produk pantauan ditambahkan.',
+      updated: 'Asumsi tren diperbarui.',
+      reset: 'Data tren demo berhasil dikembalikan.',
+    },
     initialProducts: [
       { id: 1, name: 'Produk A', change: 25, market: 'Sedang naik' },
       { id: 2, name: 'Produk B', change: 15, market: 'Stabil' },
@@ -86,11 +91,16 @@ export const marketTrendsCopy: Record<Locale, MarketTrendsCopy> = {
     conditions: ['Rising', 'Stable', 'Declining', 'Surging'],
     table: { product: 'Product', edit: 'Edit' },
     howToTitle: 'How to use this page',
-    howToDesc: 'Enter observed changes, compare products, then treat the result as a hypothesis to test with a small promotion.',
+    howToDesc:
+      'Enter observed changes, compare products, then treat the result as a hypothesis to test with a small promotion.',
     modalAddTitle: 'Add monitored product',
     modalEditTitle: 'Edit product assumption',
     form: { name: 'Product name', change: 'Change (%)', condition: 'Condition', cancel: 'Cancel', save: 'Save' },
-    toast: { added: 'Monitored product added.', updated: 'Trend assumption updated.', reset: 'Demo trend data restored.' },
+    toast: {
+      added: 'Monitored product added.',
+      updated: 'Trend assumption updated.',
+      reset: 'Demo trend data restored.',
+    },
     initialProducts: [
       { id: 1, name: 'Product A', change: 25, market: 'Rising' },
       { id: 2, name: 'Product B', change: 15, market: 'Stable' },
@@ -124,7 +134,11 @@ export const marketTrendsCopy: Record<Locale, MarketTrendsCopy> = {
     modalAddTitle: '監視製品を追加',
     modalEditTitle: '製品仮説を編集',
     form: { name: '製品名', change: '変化（%）', condition: '状態', cancel: 'キャンセル', save: '保存' },
-    toast: { added: '監視製品を追加しました。', updated: 'トレンド仮説を更新しました。', reset: 'デモデータを復元しました。' },
+    toast: {
+      added: '監視製品を追加しました。',
+      updated: 'トレンド仮説を更新しました。',
+      reset: 'デモデータを復元しました。',
+    },
     initialProducts: [
       { id: 1, name: '製品A', change: 25, market: '上昇中' },
       { id: 2, name: '製品B', change: 15, market: '安定' },
@@ -157,7 +171,13 @@ export const marketTrendsCopy: Record<Locale, MarketTrendsCopy> = {
     howToDesc: 'Introduce cambios observados, compara productos y prueba la hipótesis con una pequeña promoción.',
     modalAddTitle: 'Añadir producto',
     modalEditTitle: 'Editar hipótesis',
-    form: { name: 'Nombre del producto', change: 'Cambio (%)', condition: 'Condición', cancel: 'Cancelar', save: 'Guardar' },
+    form: {
+      name: 'Nombre del producto',
+      change: 'Cambio (%)',
+      condition: 'Condición',
+      cancel: 'Cancelar',
+      save: 'Guardar',
+    },
     toast: { added: 'Producto añadido.', updated: 'Hipótesis actualizada.', reset: 'Datos de demo restablecidos.' },
     initialProducts: [
       { id: 1, name: 'Producto A', change: 25, market: 'En alza' },
@@ -188,10 +208,17 @@ export const marketTrendsCopy: Record<Locale, MarketTrendsCopy> = {
     conditions: ['En hausse', 'Stable', 'En baisse', 'En forte hausse'],
     table: { product: 'Produit', edit: 'Modifier' },
     howToTitle: 'Comment utiliser cette page',
-    howToDesc: 'Saisissez les variations observées, comparez les produits et testez l’hypothèse avec une petite promotion.',
+    howToDesc:
+      'Saisissez les variations observées, comparez les produits et testez l’hypothèse avec une petite promotion.',
     modalAddTitle: 'Ajouter un produit suivi',
     modalEditTitle: 'Modifier l’hypothèse',
-    form: { name: 'Nom du produit', change: 'Variation (%)', condition: 'Condition', cancel: 'Annuler', save: 'Enregistrer' },
+    form: {
+      name: 'Nom du produit',
+      change: 'Variation (%)',
+      condition: 'Condition',
+      cancel: 'Annuler',
+      save: 'Enregistrer',
+    },
     toast: { added: 'Produit ajouté.', updated: 'Hypothèse mise à jour.', reset: 'Données de démo restaurées.' },
     initialProducts: [
       { id: 1, name: 'Produit A', change: 25, market: 'En hausse' },
@@ -222,11 +249,22 @@ export const marketTrendsCopy: Record<Locale, MarketTrendsCopy> = {
     conditions: ['Steigend', 'Stabil', 'Fallend', 'Stark steigend'],
     table: { product: 'Produkt', edit: 'Bearbeiten' },
     howToTitle: 'So nutzen Sie diese Seite',
-    howToDesc: 'Geben Sie beobachtete Veränderungen ein, vergleichen Sie Produkte und testen Sie die Hypothese mit einer kleinen Aktion.',
+    howToDesc:
+      'Geben Sie beobachtete Veränderungen ein, vergleichen Sie Produkte und testen Sie die Hypothese mit einer kleinen Aktion.',
     modalAddTitle: 'Beobachtetes Produkt hinzufügen',
     modalEditTitle: 'Annahme bearbeiten',
-    form: { name: 'Produktname', change: 'Veränderung (%)', condition: 'Zustand', cancel: 'Abbrechen', save: 'Speichern' },
-    toast: { added: 'Beobachtetes Produkt hinzugefügt.', updated: 'Annahme aktualisiert.', reset: 'Demo-Daten wiederhergestellt.' },
+    form: {
+      name: 'Produktname',
+      change: 'Veränderung (%)',
+      condition: 'Zustand',
+      cancel: 'Abbrechen',
+      save: 'Speichern',
+    },
+    toast: {
+      added: 'Beobachtetes Produkt hinzugefügt.',
+      updated: 'Annahme aktualisiert.',
+      reset: 'Demo-Daten wiederhergestellt.',
+    },
     initialProducts: [
       { id: 1, name: 'Produkt A', change: 25, market: 'Steigend' },
       { id: 2, name: 'Produkt B', change: 15, market: 'Stabil' },

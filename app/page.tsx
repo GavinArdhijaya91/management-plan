@@ -172,7 +172,9 @@ export default function Home() {
       <section id="cara-kerja" className="border-y border-zinc-200 bg-white px-4 py-20 md:px-6 md:py-28">
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[.85fr_1.15fr] lg:items-start">
           <Reveal className="lg:sticky lg:top-28">
-            <h2 className="text-4xl font-semibold leading-tight tracking-[-0.04em] md:text-5xl">{copy.howItWorks.title}</h2>
+            <h2 className="text-4xl font-semibold leading-tight tracking-[-0.04em] md:text-5xl">
+              {copy.howItWorks.title}
+            </h2>
             <p className="mt-5 max-w-lg leading-7 text-zinc-500">{copy.howItWorks.description}</p>
           </Reveal>
           <Reveal delay={100}>
@@ -195,7 +197,9 @@ export default function Home() {
         <Reveal className="mx-auto grid max-w-7xl gap-8 rounded-lg bg-zinc-950 p-6 text-white md:p-10 lg:grid-cols-[1fr_.8fr] lg:items-end">
           <div>
             <CheckCircle2 className="size-8" />
-            <h2 className="mt-7 max-w-3xl text-4xl font-semibold leading-[1.05] tracking-[-0.04em] md:text-5xl">{copy.cta.title}</h2>
+            <h2 className="mt-7 max-w-3xl text-4xl font-semibold leading-[1.05] tracking-[-0.04em] md:text-5xl">
+              {copy.cta.title}
+            </h2>
             <p className="mt-5 max-w-2xl text-zinc-400">{copy.cta.description}</p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row lg:justify-self-end">

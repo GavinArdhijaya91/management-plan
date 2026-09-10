@@ -187,7 +187,9 @@ export default function KalenderPage() {
 
           <div className="app-card p-4 md:p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-4">
-              {selectedDate ? `${selectedDate} ${copy.months[currentMonth.getMonth()]} ${currentMonth.getFullYear()}` : copy.selectDate}
+              {selectedDate
+                ? `${selectedDate} ${copy.months[currentMonth.getMonth()]} ${currentMonth.getFullYear()}`
+                : copy.selectDate}
             </h3>
 
             {selectedDateEvents.length > 0 ? (

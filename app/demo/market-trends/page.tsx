@@ -92,23 +92,22 @@ export default function TrenPasarPage() {
             </select>
           </label>
         </div>
-        <SalesChart
-          data={visibleTrend}
-          type="line"
-          title={copy.chartTitle(period)}
-          variant="monochrome"
-        />
+        <SalesChart data={visibleTrend} type="line" title={copy.chartTitle(period)} variant="monochrome" />
         <section className="my-6 grid gap-4 md:grid-cols-2">
           <div className="app-card p-5">
             <TrendingUp className="size-5" />
-            <h2 className="mt-4 font-serif text-lg font-semibold">{copy.topOpportunity}: {strongest?.name}</h2>
+            <h2 className="mt-4 font-serif text-lg font-semibold">
+              {copy.topOpportunity}: {strongest?.name}
+            </h2>
             <p className="mt-1 text-sm text-zinc-500">
               {strongest ? copy.topOpportunityDesc(strongest.name, strongest.change) : ''}
             </p>
           </div>
           <div className="app-card p-5">
             <AlertCircle className="size-5 text-zinc-500" />
-            <h2 className="mt-4 font-serif text-lg font-semibold">{copy.needsReview}: {weakest?.name}</h2>
+            <h2 className="mt-4 font-serif text-lg font-semibold">
+              {copy.needsReview}: {weakest?.name}
+            </h2>
             <p className="mt-1 text-sm text-zinc-500">
               {weakest ? copy.needsReviewDesc(weakest.name, weakest.change) : ''}
             </p>
