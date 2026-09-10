@@ -1,6 +1,5 @@
 import type { Enums, Tables, TablesInsert, TablesUpdate } from './database.types'
 
-// Identity and workspace access
 export type ProfileRow = Tables<'profiles'>
 export type ProfilePreferenceRow = Tables<'profile_preferences'>
 export type WorkspaceRow = Tables<'workspaces'>
@@ -8,7 +7,6 @@ export type WorkspaceMemberAccessRow = Tables<'workspace_member_access'>
 export type WorkspaceInvitationAccessRow = Tables<'workspace_invitation_access'>
 export type WorkspaceRoleRow = Tables<'workspace_roles'>
 
-// Planning and review
 export type BusinessPlanRow = Tables<'business_plans'>
 export type BusinessGoalRow = Tables<'business_goals'>
 export type MetricDefinitionRow = Tables<'metric_definitions'>
@@ -23,7 +21,6 @@ export type BusinessReviewSummaryRow = Tables<'business_review_summaries'>
 export type BusinessReviewGoalTargetSnapshotRow = Tables<'business_review_goal_target_snapshots'>
 export type BusinessReviewActionItemSnapshotRow = Tables<'business_review_action_item_snapshots'>
 
-// Financial operations
 export type TransactionRow = Tables<'transactions'>
 export type TransactionInsert = TablesInsert<'transactions'>
 export type TransactionUpdate = TablesUpdate<'transactions'>
@@ -33,7 +30,6 @@ export type FinancialAccountBalanceRow = Tables<'financial_account_balances'>
 export type TransactionCategoryRow = Tables<'transaction_categories'>
 export type TransactionCategoryActualRow = Tables<'transaction_category_actuals'>
 
-// Portfolio, achievements, and notifications
 export type BusinessPortfolioRow = Tables<'business_portfolios'>
 export type BusinessPortfolioEvidenceRow = Tables<'business_portfolio_evidence'>
 export type WorkspaceAchievementDetailRow = Tables<'workspace_achievement_details'>
