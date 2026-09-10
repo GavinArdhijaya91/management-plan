@@ -1,4 +1,4 @@
-# Siapin Plan it first, then make it happen.
+# Siapin: Plan it first, then make it happen.
 
 > An open-source workspace that helps small businesses turn plans into real results.
 
