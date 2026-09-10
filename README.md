@@ -96,9 +96,9 @@ What is next is tracked honestly in [ROADMAP.md](./ROADMAP.md) and [Product Dire
 
 ## Screenshots
 
-| Landing                           | Dashboard                             | Management                             | Calendar                            |
-| --------------------------------- | ------------------------------------- | -------------------------------------- | ----------------------------------- |
-| ![Landing](./desktop-landing.png) | ![Dashboard](./desktop-dashboard.png) | ![Management](./desktop-manajemen.png) | ![Calendar](./desktop-kalender.png) |
+| Landing                  | Dashboard                             | Management                             | Calendar                            |
+| ------------------------ | ------------------------------------- | -------------------------------------- | ----------------------------------- |
+| ![Landing](./Siapin.png) | ![Dashboard](./desktop-dashboard.png) | ![Management](./desktop-manajemen.png) | ![Calendar](./desktop-kalender.png) |
 
 Mobile is also supported for same pages, adapted for small screens.
 
