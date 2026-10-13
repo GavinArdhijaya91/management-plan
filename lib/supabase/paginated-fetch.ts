@@ -8,15 +8,16 @@ import type { SupabaseClient } from '@supabase/supabase-js'
  * habis sehingga ekspor/laporan tidak pernah kehilangan baris (B1).
  */
 export async function fetchAllPages<T>(
-  build: (from: number, to: number) => {
-     
+  build: (
+    from: number,
+    to: number,
+  ) => {
     range: (from: number, to: number) => any
   },
   pageSize = 200,
 ): Promise<T[]> {
   const rows: T[] = []
   for (let from = 0; ; from += pageSize) {
-     
     const { data, error } = await build(from, from + pageSize - 1).range(from, from + pageSize - 1)
     if (error) throw new Error(`Paginated fetch failed: ${error.message}`)
     const page = (data ?? []) as T[]
@@ -33,7 +34,6 @@ export const EXPORT_PAGE_SIZE = 500
  * diterima tidak cocok dengan total dari database.
  */
 export async function fetchFullTransactionExport(
-   
   supabase: SupabaseClient<any>,
   args: {
     target_workspace_id: string
@@ -41,13 +41,11 @@ export async function fetchFullTransactionExport(
     period_start?: string
     period_end?: string
   },
-   
 ): Promise<any[]> {
   const all: unknown[] = []
-   
+
   let expectedTotal: number | null = null
   for (let offset = 0; ; offset += EXPORT_PAGE_SIZE) {
-     
     const { data, error } = await supabase.rpc('prepare_transaction_export_page', {
       ...args,
       result_offset: offset,
@@ -60,10 +58,8 @@ export async function fetchFullTransactionExport(
     if (page.length < EXPORT_PAGE_SIZE) break
   }
   if (expectedTotal !== null && all.length !== expectedTotal) {
-    throw new Error(
-      `EXPORT_ROW_COUNT_MISMATCH: expected ${expectedTotal} rows but received ${all.length}.`,
-    )
+    throw new Error(`EXPORT_ROW_COUNT_MISMATCH: expected ${expectedTotal} rows but received ${all.length}.`)
   }
-   
+
   return all as any[]
 }

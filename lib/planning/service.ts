@@ -56,11 +56,7 @@ export async function getPlanningBoard() {
         .select('*')
         .eq('workspace_id', workspace.workspace_id)
         .limit(1000),
-      supabase
-        .from('planning_overdue_evaluations')
-        .select('*')
-        .eq('workspace_id', workspace.workspace_id)
-        .limit(1000),
+      supabase.from('planning_overdue_evaluations').select('*').eq('workspace_id', workspace.workspace_id).limit(1000),
       supabase.rpc('get_workspace_member_directory', {
         target_workspace_id: workspace.workspace_id,
       }),

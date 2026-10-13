@@ -43,9 +43,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
           <p
             role={isError ? 'alert' : 'status'}
             className={`mt-6 rounded-lg border p-4 text-sm ${
-              isError
-                ? 'border-red-200 bg-red-50 text-red-700'
-                : 'border-emerald-200 bg-emerald-50 text-emerald-700'
+              isError ? 'border-red-200 bg-red-50 text-red-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'
             }`}
           >
             {notice}

@@ -244,7 +244,7 @@ async function ingestBpsRequest(request: Request) {
       while (queue.length && Date.now() < deadline) {
         const next = queue.shift()
         if (!next) return
-         
+
         await ingestOne(next)
       }
     }),
