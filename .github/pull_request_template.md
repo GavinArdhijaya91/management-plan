@@ -1,6 +1,14 @@
 ## What does this PR do?
 
 <!-- In 1–2 simple sentences: what problem does this solve and who benefits? -->
+<!-- Judul PR wajib Conventional Commits (dicek otomatis), karena squash-merge memakai judul sebagai pesan commit. Satu PR = satu tujuan; migrasi database di PR tersendiri berlabel `security` bila menyentuh RLS/RPC. -->
+
+## Security impact
+
+<!-- Wajib diisi: Apakah PR ini mengubah izin atau akses data? Jika ya, jelaskan dan tandai label `security`. -->
+
+- [ ] PR ini TIDAK mengubah izin/akses data, ATAU perubahan izin dijelaskan di bawah:
+- <!-- ... -->
 
 ## How to check it
 

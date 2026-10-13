@@ -23,30 +23,44 @@ export async function getPlanningBoard() {
   ])
   const supabase = await createClient()
 
+  // B1: batas eksplisit — jangan mengandalkan max_rows implisit PostgREST.
+  // Papan penuh tetap butuh pagination/filter bila workspace tumbuh besar.
   const [plansResult, goalsResult, initiativesResult, actionsResult, actualsResult, overdueResult, membersResult] =
     await Promise.all([
       supabase
         .from('business_plans')
         .select('*')
         .eq('workspace_id', workspace.workspace_id)
-        .order('updated_at', { ascending: false }),
+        .order('updated_at', { ascending: false })
+        .limit(1000),
       supabase
         .from('business_goals')
         .select('*')
         .eq('workspace_id', workspace.workspace_id)
-        .order('target_date', { ascending: true }),
+        .order('target_date', { ascending: true })
+        .limit(1000),
       supabase
         .from('business_initiatives')
         .select('*')
         .eq('workspace_id', workspace.workspace_id)
-        .order('created_at', { ascending: true }),
+        .order('created_at', { ascending: true })
+        .limit(1000),
       supabase
         .from('action_items')
         .select('*')
         .eq('workspace_id', workspace.workspace_id)
-        .order('due_on', { ascending: true }),
-      supabase.from('goal_target_actual_reconciliation').select('*').eq('workspace_id', workspace.workspace_id),
-      supabase.from('planning_overdue_evaluations').select('*').eq('workspace_id', workspace.workspace_id),
+        .order('due_on', { ascending: true })
+        .limit(1000),
+      supabase
+        .from('goal_target_actual_reconciliation')
+        .select('*')
+        .eq('workspace_id', workspace.workspace_id)
+        .limit(1000),
+      supabase
+        .from('planning_overdue_evaluations')
+        .select('*')
+        .eq('workspace_id', workspace.workspace_id)
+        .limit(1000),
       supabase.rpc('get_workspace_member_directory', {
         target_workspace_id: workspace.workspace_id,
       }),

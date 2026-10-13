@@ -1,6 +1,7 @@
 import { Header } from '@/components/header'
 import { createClient } from '@/lib/supabase/server'
 import { hasWorkspacePermission, requireActiveWorkspace } from '@/lib/workspace/context'
+import { resolvePageNotice } from '@/lib/auth/feedback-codes'
 import { Database, ExternalLink, TrendingUp } from 'lucide-react'
 import { MarketTrendChart } from './_components/market-trend-chart'
 import { FactualObservationChart } from './_components/factual-observation-chart'
@@ -50,6 +51,9 @@ export default async function MarketTrendsPage({ searchParams }: MarketTrendsPag
       .limit(200),
   ])
   const feedback = await searchParams
+  // S2: hanya kode allowlist yang dirender; teks asing diabaikan.
+  const errorNotice = resolvePageNotice(feedback.error)
+  const successNotice = resolvePageNotice(feedback.success)
   const productNames = new Map(data?.map((product) => [product.id, product.name]))
   const canConfigure = hasWorkspacePermission(workspace, 'market.write')
   const factualObservations = (observationsResult.data ?? []).map((observation) => ({
@@ -74,14 +78,14 @@ export default async function MarketTrendsPage({ searchParams }: MarketTrendsPag
             Bandingkan catatan internal dengan bukti statistik resmi tanpa mencampur sumbernya.
           </p>
         </div>
-        {feedback.error && (
+        {errorNotice && (
           <p role="alert" className="mt-6 rounded-xl bg-red-50 p-4 text-sm text-red-700">
-            {feedback.error}
+            {errorNotice}
           </p>
         )}
-        {feedback.success && (
+        {successNotice && (
           <p role="status" className="mt-6 rounded-xl bg-emerald-50 p-4 text-sm text-emerald-700">
-            {feedback.success}
+            {successNotice}
           </p>
         )}
         {error ? (

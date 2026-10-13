@@ -4448,6 +4448,17 @@ export type Database = {
           transaction_type: Database["public"]["Enums"]["transaction_type"]
         }[]
       }
+      prepare_transaction_export_page: {
+        Args: {
+          period_end?: string
+          period_start?: string
+          result_limit?: number
+          result_offset?: number
+          target_format: string
+          target_workspace_id: string
+        }
+        Returns: Json
+      }
       publish_business_portfolio: {
         Args: {
           requested_public_slug: string

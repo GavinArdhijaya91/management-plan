@@ -86,8 +86,16 @@ async function ingestBpsRequest(request: Request) {
   let acceptedCount = 0
   let failedBindings = 0
   let fetchedCount = 0
+  let timedOutBindings = 0
 
-  for (const binding of dueBindings) {
+  // B3: anggaran waktu — berhenti mengambil binding baru setelah ~40 dtk
+  // agar fungsi tidak terpotong platform (maxDuration 60) dan meninggalkan
+  // job "running" yang memblokir 30 menit.
+  const deadline = Date.now() + 40_000
+  const queue = [...dueBindings]
+  const CONCURRENCY = 3
+
+  const ingestOne = async (binding: (typeof dueBindings)[number]) => {
     const startedAt = new Date().toISOString()
     const runResult = await supabase
       .from('market_source_sync_runs')
@@ -104,7 +112,7 @@ async function ingestBpsRequest(request: Request) {
 
     if (runResult.error) {
       failedBindings += 1
-      continue
+      return
     }
 
     try {
@@ -162,7 +170,7 @@ async function ingestBpsRequest(request: Request) {
           })
           .eq('id', runResult.data.id)
         if (updateResult.error) throw new Error('BPS_RUN_UPDATE_FAILED')
-        continue
+        return
       }
 
       const documents = await fetchBpsDocuments(parseBpsBinding(binding.external_identifier), apiKey)
@@ -229,12 +237,27 @@ async function ingestBpsRequest(request: Request) {
     }
   }
 
+  // 3 pekerja paralel + anggaran waktu: binding yang belum sempat diproses
+  // dilaporkan sebagai timedOut, bukan dibiarkan "running" 30 menit.
+  await Promise.all(
+    Array.from({ length: CONCURRENCY }, async () => {
+      while (queue.length && Date.now() < deadline) {
+        const next = queue.shift()
+        if (!next) return
+         
+        await ingestOne(next)
+      }
+    }),
+  )
+  timedOutBindings = queue.length
+
   return apiSuccess({
     acceptedCount,
     bindingCount: dueBindings.length,
     failedBindings,
     fetchedCount,
     skippedBindings: selectedBindings.length - dueBindings.length,
+    timedOutBindings,
   })
 }
 
