@@ -3,6 +3,7 @@ import { login } from '@/app/auth/actions'
 import { AuthFeedback, AuthField, AuthShell } from '@/app/auth/_components/auth-shell'
 import { PasswordField } from '@/app/auth/_components/password-field'
 import { getSafeInternalPath } from '@/lib/auth/redirect'
+import { resolveAuthError } from '@/lib/auth/feedback-codes'
 
 export default async function LoginPage({
   searchParams,
@@ -11,10 +12,12 @@ export default async function LoginPage({
 }) {
   const params = await searchParams
   const next = getSafeInternalPath(params.next, '/workspace/select')
+  // S2: hanya kode allowlist yang dirender; teks asing dari URL diabaikan.
+  const errorMessage = resolveAuthError(params.error)
 
   return (
     <AuthShell title="Masuk ke workspace" description="Akses data usaha privat menggunakan akun Siapin kamu.">
-      {params.error && <AuthFeedback>{params.error}</AuthFeedback>}
+      {errorMessage && <AuthFeedback>{errorMessage}</AuthFeedback>}
       <form action={login} className="space-y-5">
         <input type="hidden" name="next" value={next} />
         <AuthField label="Email" name="email" type="email" maxLength={254} autoComplete="email" />

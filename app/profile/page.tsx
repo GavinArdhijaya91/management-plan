@@ -1,6 +1,7 @@
 import { Header } from '@/components/header'
 import { createClient } from '@/lib/supabase/server'
 import { requireAuthenticatedUser } from '@/lib/auth/session'
+import { resolvePageNotice } from '@/lib/auth/feedback-codes'
 import { ProfileEditor } from '@/app/profile/_components/profile-editor'
 
 interface ProfilePageProps {
@@ -24,6 +25,9 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
   ])
   const profile = profileResult.data
   const preferences = preferenceResult.data
+  // S2: hanya kode allowlist yang dirender.
+  const notice = resolvePageNotice(feedback.error ?? feedback.success)
+  const isError = Boolean(feedback.error && notice)
 
   return (
     <main className="app-shell">
@@ -35,16 +39,14 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
           <p className="mt-2 text-sm text-zinc-500">Identitas akun dan preferensi lintas workspace.</p>
         </div>
 
-        {(feedback.error || feedback.success) && (
+        {notice && (
           <p
-            role={feedback.error ? 'alert' : 'status'}
+            role={isError ? 'alert' : 'status'}
             className={`mt-6 rounded-lg border p-4 text-sm ${
-              feedback.error
-                ? 'border-red-200 bg-red-50 text-red-700'
-                : 'border-emerald-200 bg-emerald-50 text-emerald-700'
+              isError ? 'border-red-200 bg-red-50 text-red-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'
             }`}
           >
-            {feedback.error ?? feedback.success}
+            {notice}
           </p>
         )}
 

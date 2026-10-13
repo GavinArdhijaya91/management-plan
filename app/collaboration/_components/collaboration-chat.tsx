@@ -84,6 +84,10 @@ function conversationTitle(conversation: ChatConversation, currentUserId: string
   return directory.find((member) => member.user_id === counterpartId)?.display_name ?? 'Anggota workspace'
 }
 
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
 export function CollaborationChat({
   canManage,
   canModerate,
@@ -122,6 +126,10 @@ export function CollaborationChat({
   const bottomRef = useRef<HTMLDivElement | null>(null)
   const lastTypingBroadcastAt = useRef(0)
   const typingTimeouts = useRef(new Map<string, number>())
+  // B2: satu "niat kirim" = satu requestId sampai sukses.
+  const pendingRequestId = useRef<string | null>(null)
+  const markReadTimeout = useRef<number | null>(null)
+  const selectedConversationIdRef = useRef<string | null>(null)
 
   const directoryByUserId = useMemo(() => new Map(directory.map((member) => [member.user_id, member])), [directory])
   const publishesActivity = directoryByUserId.get(currentUserId)?.show_activity_status ?? true
@@ -139,6 +147,54 @@ export function CollaborationChat({
     return grouped
   }, [attachments])
 
+  // B5: presence workspace hanya bergantung pada workspace — pindah
+  // percakapan tidak boleh memutus status online.
+  useEffect(() => {
+    const workspacePresence = supabase.channel(`workspace:${workspaceId}`, {
+      config: {
+        private: true,
+        presence: { key: currentUserId },
+      },
+    })
+
+    workspacePresence.on('presence', { event: 'sync' }, () => {
+      setOnlineUsers(Object.keys(workspacePresence.presenceState()))
+    })
+
+    workspacePresence.on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'chat_messages',
+        filter: `workspace_id=eq.${workspaceId}`,
+      },
+      ({ new: record }) => {
+        const incoming = record as ChatMessage
+        if (incoming.sender_id === currentUserId || incoming.conversation_id === selectedConversationIdRef.current)
+          return
+        setUnreadByConversation((current) => ({
+          ...current,
+          [incoming.conversation_id]: (current[incoming.conversation_id] ?? 0) + 1,
+        }))
+      },
+    )
+
+    workspacePresence.subscribe(async (status) => {
+      if (status === 'SUBSCRIBED' && publishesActivity) {
+        await workspacePresence.track({ online_at: new Date().toISOString() })
+      }
+    })
+
+    return () => {
+      void supabase.removeChannel(workspacePresence)
+    }
+  }, [currentUserId, publishesActivity, supabase, workspaceId])
+
+  const selectedConversationId = selectedConversation?.id
+  useEffect(() => {
+    selectedConversationIdRef.current = selectedConversationId ?? null
+  }, [selectedConversationId])
   useEffect(() => {
     if (!selectedConversation) return
     const activeTypingTimeouts = typingTimeouts.current
@@ -149,12 +205,6 @@ export function CollaborationChat({
       config: {
         private: true,
         broadcast: { self: false, ack: true },
-      },
-    })
-    const workspacePresence = supabase.channel(`workspace:${workspaceId}`, {
-      config: {
-        private: true,
-        presence: { key: currentUserId },
       },
     })
 
@@ -237,6 +287,9 @@ export function CollaborationChat({
       .on('broadcast', { event: 'typing' }, ({ payload }) => {
         const userId = typeof payload?.userId === 'string' ? payload.userId : null
         if (!userId || userId === currentUserId) return
+        // S5: jangan percaya userId mentah — hanya tampilkan bila pengirim
+        // adalah anggota percakapan ini.
+        if (!members.some((member) => member.user_id === userId)) return
         setTypingUsers((current) => [...new Set([...current, userId])])
         const previousTimeout = activeTypingTimeouts.get(userId)
         if (previousTimeout) window.clearTimeout(previousTimeout)
@@ -248,50 +301,30 @@ export function CollaborationChat({
       })
       .subscribe()
 
-    workspacePresence
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'chat_messages',
-          filter: `workspace_id=eq.${workspaceId}`,
-        },
-        ({ new: record }) => {
-          const incoming = record as ChatMessage
-          if (incoming.sender_id === currentUserId || incoming.conversation_id === selectedConversation.id) return
-          setUnreadByConversation((current) => ({
-            ...current,
-            [incoming.conversation_id]: (current[incoming.conversation_id] ?? 0) + 1,
-          }))
-        },
-      )
-      .on('presence', { event: 'sync' }, () => {
-        setOnlineUsers(Object.keys(workspacePresence.presenceState()))
-      })
-      .subscribe(async (status) => {
-        if (status === 'SUBSCRIBED' && publishesActivity) {
-          await workspacePresence.track({ online_at: new Date().toISOString() })
-        }
-      })
-
     return () => {
       for (const timeout of activeTypingTimeouts.values()) window.clearTimeout(timeout)
       activeTypingTimeouts.clear()
       void supabase.removeChannel(channel)
-      void supabase.removeChannel(workspacePresence)
     }
-  }, [currentUserId, publishesActivity, router, selectedConversation, supabase, workspaceId])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedConversationId, currentUserId, supabase])
 
   useEffect(() => {
     const newest = messages.at(-1)
     if (!selectedConversation || !newest) return
-    void supabase.rpc('mark_chat_conversation_read', {
-      target_conversation_id: selectedConversation.id,
-      delivered_through: newest.created_at,
-      read_through: newest.created_at,
-    })
+    // Debounce ±1 dtk: percakapan ramai tidak memicu 1 RPC per pesan.
+    if (markReadTimeout.current) window.clearTimeout(markReadTimeout.current)
+    markReadTimeout.current = window.setTimeout(() => {
+      void supabase.rpc('mark_chat_conversation_read', {
+        target_conversation_id: selectedConversation.id,
+        delivered_through: newest.created_at,
+        read_through: newest.created_at,
+      })
+    }, 1000)
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    return () => {
+      if (markReadTimeout.current) window.clearTimeout(markReadTimeout.current)
+    }
   }, [messages, selectedConversation, supabase])
 
   const broadcastTyping = () => {
@@ -346,26 +379,53 @@ export function CollaborationChat({
   const sendMessage = async (event: FormEvent) => {
     event.preventDefault()
     if (!selectedConversation || !body.trim() || sending) return
+    // B2: validasi lampiran SEBELUM pesan dibuat, dan pakai ulang requestId
+    // yang sama sampai pengiriman sukses agar retry tidak menggandakan pesan.
+    if (file) {
+      if (!allowedAttachmentTypes.has(file.type) || file.size > 10 * 1024 * 1024) {
+        setToast('Lampiran tidak didukung atau melebihi 10 MB.')
+        return
+      }
+      try {
+        const header = new Uint8Array(await file.slice(0, 12).arrayBuffer())
+        if (!hasExpectedFileSignature(file.type, header)) {
+          setToast('Isi lampiran tidak cocok dengan tipe file yang dipilih.')
+          return
+        }
+      } catch {
+        setToast('Lampiran tidak dapat dibaca.')
+        return
+      }
+    }
     setSending(true)
-    const requestId = crypto.randomUUID()
+    const requestId = pendingRequestId.current ?? crypto.randomUUID()
+    pendingRequestId.current = requestId
+    // B4: cocokkan mention pada batas kata, nama terpanjang dulu,
+    // agar "@Anang" tidak ikut me-mention "Ana".
+    const sortedDirectory = [...activeDirectory].sort((a, b) => b.display_name.length - a.display_name.length)
+    const mentioned_user_ids = sortedDirectory
+      .filter(
+        (member) =>
+          member.user_id !== currentUserId &&
+          new RegExp(`@${escapeRegExp(member.display_name)}(?![\\p{L}\\p{N}_])`, 'u').test(body),
+      )
+      .map((member) => member.user_id)
     const { data: messageId, error } = await supabase.rpc('send_chat_message', {
       target_conversation_id: selectedConversation.id,
       message_body: body,
       request_id: requestId,
       reply_to_id: replyTo?.id,
-      mentioned_user_ids: activeDirectory
-        .filter((member) => member.user_id !== currentUserId && body.includes(`@${member.display_name}`))
-        .map((member) => member.user_id),
+      mentioned_user_ids,
     })
     if (error || !messageId) {
       setToast(
-        error?.message === 'Chat message rate limit exceeded'
-          ? 'Terlalu banyak pesan. Tunggu sebentar.'
-          : 'Pesan gagal dikirim.',
+        // Cocokkan kode stabil, bukan kalimat pesan SQL.
+        error?.code === 'P0001' ? 'Terlalu banyak pesan. Tunggu sebentar.' : 'Pesan gagal dikirim.',
       )
       setSending(false)
       return
     }
+    pendingRequestId.current = null
 
     try {
       const { data: persistedMessage } = await supabase.from('chat_messages').select('*').eq('id', messageId).single()

@@ -40,7 +40,8 @@ the same object.
 | Restricted planning | plan hierarchy under `business_plans` | owner-managed role/member grants | Child records inherit plan visibility; managers have no implicit bypass. |
 | Review preparation | `business_reviews` and snapshot tables | review RPCs | Finalized evidence is immutable. |
 | Transaction editing | `transactions` | permitted table writes | Amount is unsigned; type supplies financial direction. |
-| Transaction export | `prepare_transaction_export` | canonical RPC only | Requires `transaction.export`, remains workspace-scoped, separates currencies, and records audit evidence. |
+| Transaction export | `prepare_transaction_export_page` (paginated; legacy `prepare_transaction_export` kept) | canonical RPC only | Requires `transaction.export`, remains workspace-scoped, separates currencies, and records audit evidence. Callers must loop pages and compare `total_count` with rows received — PostgREST `max_rows` truncates silently. |
+| Invitation management | `create/revoke_workspace_invitation`, `resend_workspace_invitation_record` | invitation RPCs | Gated by `member.manage` permission (not hardcoded owner role); invitations toward the owner role stay owner-only. |
 | Transaction result | `transaction_financial_results` | read-only | `net_result` is calculated consistently by the database. |
 | Manual market note | `market_snapshots` | permitted table write | A workspace member's dated observation; never present it as external provider evidence. |
 | External market configuration | `market_product_source_bindings` and controlled source catalogs | permitted binding write; migration-owned catalogs | Provider credentials stay in trusted deployment secrets, never browser-readable rows. |

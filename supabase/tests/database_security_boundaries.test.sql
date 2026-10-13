@@ -37,6 +37,7 @@ declare
     'mark_notification_read(target_notification_id uuid)',
     'orchestrate_my_workspace_notifications(target_workspace_id uuid, reference_time timestamp with time zone)',
     'prepare_transaction_export(target_workspace_id uuid, target_format text, period_start date, period_end date)',
+    'prepare_transaction_export_page(target_workspace_id uuid, target_format text, period_start date, period_end date, result_offset integer, result_limit integer)',
     'publish_business_portfolio(target_business_portfolio_id uuid, requested_public_slug text, should_publish boolean)',
     'publish_community_post(target_community_post_id uuid)',
     'refresh_business_review_snapshots(target_business_review_id uuid)',
@@ -353,6 +354,18 @@ begin
     'execute'
   ) then
     raise exception 'Transaction export RPC execution boundary is invalid';
+  end if;
+
+  if not has_function_privilege(
+    'authenticated',
+    'public.prepare_transaction_export_page(uuid,text,date,date,integer,integer)',
+    'execute'
+  ) or has_function_privilege(
+    'anon',
+    'public.prepare_transaction_export_page(uuid,text,date,date,integer,integer)',
+    'execute'
+  ) then
+    raise exception 'Paginated transaction export RPC execution boundary is invalid';
   end if;
 
   if exists (
